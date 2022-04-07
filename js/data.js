@@ -1,197 +1,214 @@
 $(function() {
-    d3.csv("employeesByIndustry.csv").then(function(data){
-        
-        
+    d3.csv("population-estimate.csv").then(function(pops) {
 
-        //get numbers to be numbers
-        //remove the "(1)" from area titles
-        data.forEach((el)=>{
-            for(let propt in el){
-                if(propt !== "State" && propt !== "Area"){
-                    el[propt] = +el[propt];
-                }
-               
-            }
-            if(el.Area.indexOf("(") !== -1){
-                el.Area = el.Area.substring(0, el.Area.indexOf("("));
-            }
-        })
+        d3.csv("employeesByIndustry.csv").then(function(data){
+            //get population data
+            let popEstimates = new Map();
+            popEstimates.set(2018, new Map());
+            popEstimates.set(2019, new Map());
+            popEstimates.set(2020, new Map());
 
-        let origData = JSON.parse(JSON.stringify(data));
-        console.log(origData);
-
-
-        let industries = new Set();
-
-        //split industry and year
-        data.forEach((el)=>{
-            for(let propt in el){
-                if(propt.indexOf('-') !== -1){
-                    let p = propt.split('-'); //first is year, second is industry
-                    
-                    //if the year property doesn't already exist
-                    if(!el[p[0]]){
-                        el[p[0]] = []; //create empty array for the year
-                    }
-                    el[p[0]].push({
-                        Industry: p[1],
-                        Employees: el[propt] 
-                    });
-
-                    industries.add(p[1]);
-                    delete el[propt];
-                }
-               
-            }
-        })
-        
-
-        //organize by state
-        data.sort((a,b)=>(a.State - b.State));
-
-        let dataByState = new Map();
-        data.forEach((el)=>{
-            if(dataByState.has(el.State)){
-                dataByState.get(el.State)[el.Area] = {2018: el[2018], 2019: el[2019], 2020:el[2020]};
-            }
-            else{
-                dataByState.set(el.State, {});
-            }
-        })
-
-
-
-        //split into years
-        let dataByYear = new Map();
-        dataByYear.set(2018, new Map());
-        dataByYear.set(2019, new Map());
-        dataByYear.set(2020, new Map());
-        
-        data.forEach((el)=>{
-            let area = el.Area;
-            if(!dataByYear.get(2018).has(el.State)){
-                dataByYear.get(2018).set(el.State, []);
-            }
-            dataByYear.get(2018).get(el.State).push({Area: el.Area, Employment: el[2018]});
-            if(!dataByYear.get(2019).has(el.State)){
-                dataByYear.get(2019).set(el.State, []);
-            }
-            dataByYear.get(2019).get(el.State).push({Area: el.Area, Employment: el[2019]});
-            if(!dataByYear.get(2020).has(el.State)){
-                dataByYear.get(2020).set(el.State, []);
-            }
-            dataByYear.get(2020).get(el.State).push({Area: el.Area, Employment: el[2020]});
+            pops.forEach((el)=>{
+                popEstimates.get(2018).set(el.NAME, el.POPESTIMATE2018);
+                popEstimates.get(2019).set(el.NAME, el.POPESTIMATE2019);
+                popEstimates.get(2020).set(el.NAME, el.POPESTIMATE2020);
+            })
             
-        })
-        
-        let dataByIndustry = new Map();
-        for (let ind of industries){
-            dataByIndustry.set(ind, new Map());
-            dataByIndustry.get(ind).set(2018, new Map());
-            dataByIndustry.get(ind).set(2019, new Map());
-            dataByIndustry.get(ind).set(2020, new Map());
-        }
-        data.forEach((el)=>{
-            let state = el.State;
-            let area = el.Area;
-            el[2018].forEach((el)=> {
-                let currentInd = dataByIndustry.get(el.Industry);
-                //no areas from this state yet
-                if(!currentInd.get(2018).has(state)){
-                    currentInd.get(2018).set(state, new Map());    
+            console.log(popEstimates);
+
+            //get numbers to be numbers
+            //remove the "(1)" from area titles
+            data.forEach((el)=>{
+                for(let propt in el){
+                    if(propt !== "State" && propt !== "Area"){
+                        el[propt] = +el[propt];
+                    }
+                
                 }
-                //add to state
-                currentInd.get(2018).get(state).set(area, el.Employees);
-            })
-            el[2019].forEach((el)=> {
-                let currentInd = dataByIndustry.get(el.Industry);
-                //no areas from this state yet
-                if(!currentInd.get(2019).has(state)){
-                    currentInd.get(2019).set(state, new Map());    
+                if(el.Area.indexOf("(") !== -1){
+                    el.Area = el.Area.substring(0, el.Area.indexOf("("));
                 }
-                //add to state
-                currentInd.get(2019).get(state).set(area, el.Employees);
             })
-            el[2020].forEach((el)=> {
-                let currentInd = dataByIndustry.get(el.Industry);
-                //no areas from this state yet
-                if(!currentInd.get(2020).has(state)){
-                    currentInd.get(2020).set(state, new Map());    
+
+            let origData = JSON.parse(JSON.stringify(data));
+            console.log(origData);
+
+
+            let industries = new Set();
+
+            //split industry and year
+            data.forEach((el)=>{
+                for(let propt in el){
+                    if(propt.indexOf('-') !== -1){
+                        let p = propt.split('-'); //first is year, second is industry
+                        
+                        //if the year property doesn't already exist
+                        if(!el[p[0]]){
+                            el[p[0]] = []; //create empty array for the year
+                        }
+                        el[p[0]].push({
+                            Industry: p[1],
+                            Employees: el[propt] 
+                        });
+
+                        industries.add(p[1]);
+                        delete el[propt];
+                    }
+                
                 }
-                //add to state
-                currentInd.get(2020).get(state).set(area, el.Employees);
             })
-        })
+            
 
+            //organize by state
+            data.sort((a,b)=>(a.State - b.State));
 
-        
-
-
-        //NOTES ABOUT DATA:
-        //a NaN value means that there is no data. 0 means 0. not the same thing!
-
-        //origData      array of original Data from CSV file.
-        //industries    a Set of all industries.
-        //data          an array of all major areas. sorted by state
-        //dataByState   a Map of all States. Key is State, value a JS object. 
-                            //JS object structure: {
-                            // Area: {
-                                    // 2018: [Industry: ___, Employees: __] 
-                            // }
-                            // }
-
-        // dataByYear   a Map of [year --> map of [state --> [objects for each area]]]
-                        //example: 
-                        // 2018 => Map
-                                // Alabama => [ {
-                                //                 Area: ___, 
-                                //                 Employment: [ {Industry: ___, Employees:___ }, ...]
-                                //              }, ...
-                                //            ]
+            let dataByState = new Map();
+            data.forEach((el)=>{
+                if(dataByState.has(el.State)){
+                    dataByState.get(el.State)[el.Area] = {2018: el[2018], 2019: el[2019], 2020:el[2020]};
+                }
+                else{
+                    dataByState.set(el.State, {});
+                }
+            })
 
 
 
-        
-        console.log(data);
-        console.log(dataByYear);
-        console.log(dataByState);
-        console.log(dataByIndustry);
+            //split into years
+            let dataByYear = new Map();
+            dataByYear.set(2018, new Map());
+            dataByYear.set(2019, new Map());
+            dataByYear.set(2020, new Map());
+            
+            data.forEach((el)=>{
+                let area = el.Area;
+                if(!dataByYear.get(2018).has(el.State)){
+                    dataByYear.get(2018).set(el.State, []);
+                }
+                dataByYear.get(2018).get(el.State).push({Area: el.Area, Employment: el[2018]});
+                if(!dataByYear.get(2019).has(el.State)){
+                    dataByYear.get(2019).set(el.State, []);
+                }
+                dataByYear.get(2019).get(el.State).push({Area: el.Area, Employment: el[2019]});
+                if(!dataByYear.get(2020).has(el.State)){
+                    dataByYear.get(2020).set(el.State, []);
+                }
+                dataByYear.get(2020).get(el.State).push({Area: el.Area, Employment: el[2020]});
+                
+            })
+            
+            let dataByIndustry = new Map();
+            for (let ind of industries){
+                dataByIndustry.set(ind, new Map());
+                dataByIndustry.get(ind).set(2018, new Map());
+                dataByIndustry.get(ind).set(2019, new Map());
+                dataByIndustry.get(ind).set(2020, new Map());
+            }
+            data.forEach((el)=>{
+                let state = el.State;
+                let area = el.Area;
+                el[2018].forEach((el)=> {
+                    let currentInd = dataByIndustry.get(el.Industry);
+                    //no areas from this state yet
+                    if(!currentInd.get(2018).has(state)){
+                        currentInd.get(2018).set(state, new Map());    
+                    }
+                    //add to state
+                    currentInd.get(2018).get(state).set(area, el.Employees);
+                })
+                el[2019].forEach((el)=> {
+                    let currentInd = dataByIndustry.get(el.Industry);
+                    //no areas from this state yet
+                    if(!currentInd.get(2019).has(state)){
+                        currentInd.get(2019).set(state, new Map());    
+                    }
+                    //add to state
+                    currentInd.get(2019).get(state).set(area, el.Employees);
+                })
+                el[2020].forEach((el)=> {
+                    let currentInd = dataByIndustry.get(el.Industry);
+                    //no areas from this state yet
+                    if(!currentInd.get(2020).has(state)){
+                        currentInd.get(2020).set(state, new Map());    
+                    }
+                    //add to state
+                    currentInd.get(2020).get(state).set(area, el.Employees);
+                })
+            })
 
 
-        // console.log(getStateByYear(dataByYear, 2018));
-        // console.log(getIndustryForYear(dataByIndustry, "Mining and Logging", 2018));
-        // console.log(getIndustryForYearInState(dataByIndustry, "Mining and Logging", 2018, "Alaska"));
-        // console.log(getEmploymentForYear(dataByYear, 2018));
+            
 
 
-        //EXAMPLE
-        console.log("EXAMPLE ZOOM DATA");
+            //NOTES ABOUT DATA:
+            //a NaN value means that there is no data. 0 means 0. not the same thing!
 
-        // example of a zoom:
-        
-        //level 1: all states and their total employment in a given year
-        console.log(getStateByYear(dataByYear, 2018))
-        
-        //zooming into Alabama 
-        //level 2: Alabama information – total employment in each major area (city
-        console.log(getCityTotalsForStateByYear(dataByState, "Alabama", 2018));
+            //origData      array of original Data from CSV file.
+            //industries    a Set of all industries.
+            //data          an array of all major areas. sorted by state
+            //dataByState   a Map of all States. Key is State, value a JS object. 
+                                //JS object structure: {
+                                // Area: {
+                                        // 2018: [Industry: ___, Employees: __] 
+                                // }
+                                // }
 
-        //zooming into a specific area for specific industries
-        // level 3: Alabama major areas — employment for each industry
-        console.log(getCitySpecificsByYear(dataByState, "Alabama", 2018, "Anniston-Oxford-Jacksonville"));
-
-
-
-        // HERE IS WHERE YOU WOULD CREATE VISUALIZATIONS.
-        // When the time comes, I'll move the functions into a separate JS file that we can include
-        // before all the rest of the JS files in the html doc so that there's no "function dne" issues.
-        // Ideally, you'll pass in a few of the datasets created above and then just use functions inside each object
-        // to generate the data that you need for each level.
+            // dataByYear   a Map of [year --> map of [state --> [objects for each area]]]
+                            //example: 
+                            // 2018 => Map
+                                    // Alabama => [ {
+                                    //                 Area: ___, 
+                                    //                 Employment: [ {Industry: ___, Employees:___ }, ...]
+                                    //              }, ...
+                                    //            ]
 
 
 
+            
+            console.log(data);
+            console.log(dataByYear);
+            console.log(dataByState);
+            console.log(dataByIndustry);
 
 
+            // console.log(getStateByYear(dataByYear, 2018));
+            // console.log(getIndustryForYear(dataByIndustry, "Mining and Logging", 2018));
+            // console.log(getIndustryForYearInState(dataByIndustry, "Mining and Logging", 2018, "Alaska"));
+            // console.log(getEmploymentForYear(dataByYear, 2018));
+
+
+            //EXAMPLE
+            console.log("EXAMPLE ZOOM DATA");
+
+            // example of a zoom:
+            
+            //level 1: all states and their total employment in a given year
+            console.log(getStateByYear(dataByYear, 2018))
+            
+            //zooming into Alabama 
+            //level 2: Alabama information – total employment in each major area (city
+            console.log(getCityTotalsForStateByYear(dataByState, "Alabama", 2018));
+
+            //zooming into a specific area for specific industries
+            // level 3: Alabama major areas — employment for each industry
+            console.log(getCitySpecificsByYear(dataByState, "Alabama", 2018, "Anniston-Oxford-Jacksonville"));
+
+
+
+            // HERE IS WHERE YOU WOULD CREATE VISUALIZATIONS.
+            // When the time comes, I'll move the functions into a separate JS file that we can include
+            // before all the rest of the JS files in the html doc so that there's no "function dne" issues.
+            // Ideally, you'll pass in a few of the datasets created above and then just use functions inside each object
+            // to generate the data that you need for each level.
+
+
+            // FOR SCATTERPLOT:
+            console.log(getUSPopulationForYear(popEstimates, 2018));
+            console.log(getStatePopulationForYear(popEstimates, "California", 2018));
+
+
+
+        });
     });
 });
 
@@ -364,4 +381,20 @@ function getEmploymentForYear(data, year){
         })
     }
     return ret;
+}
+
+
+// get an array of employment for all areas in a given year. NOT separated by State
+//data: popEstimate
+//returns a number
+function getUSPopulationForYear(data, year){
+    return data.get(year).get("United States");
+}
+
+
+// get an array of employment for all areas in a given year. NOT separated by State
+//data: popEstimate
+//returns a number
+function getStatePopulationForYear(data, state, year){
+    return data.get(year).get(state);
 }
