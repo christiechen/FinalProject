@@ -139,6 +139,7 @@ $(function() {
 
             
 
+            let functions = new DataFunctions();
 
             //NOTES ABOUT DATA:
             //a NaN value means that there is no data. 0 means 0. not the same thing!
@@ -183,15 +184,15 @@ $(function() {
             // example of a zoom:
             
             //level 1: all states and their total employment in a given year
-            console.log(getStateByYear(dataByYear, 2018))
+            console.log(functions.getStateByYear(dataByYear, 2018))
             
             //zooming into Alabama 
             //level 2: Alabama information – total employment in each major area (city
-            console.log(getCityTotalsForStateByYear(dataByState, "Alabama", 2018));
+            console.log(functions.getCityTotalsForStateByYear(dataByState, "Alabama", 2018));
 
             //zooming into a specific area for specific industries
             // level 3: Alabama major areas — employment for each industry
-            console.log(getCitySpecificsByYear(dataByState, "Alabama", 2018, "Anniston-Oxford-Jacksonville"));
+            console.log(functions.getCitySpecificsByYear(dataByState, "Alabama", 2018, "Anniston-Oxford-Jacksonville"));
 
 
 
@@ -203,8 +204,8 @@ $(function() {
 
 
             // FOR SCATTERPLOT:
-            console.log(getUSPopulationForYear(popEstimates, 2018));
-            console.log(getStatePopulationForYear(popEstimates, "California", 2018));
+            console.log(functions.getUSPopulationForYear(popEstimates, 2018));
+            console.log(functions.getStatePopulationForYear(popEstimates, "California", 2018));
 
 
 
@@ -213,188 +214,3 @@ $(function() {
 });
 
 
-
-//THESE FUNCTIONS CAN ONLY BE USED WITH CERTAIN DATASETS. ATTEMPTS TO USE WITHOUT FOLLOWING GUIDANCE MAY FAIL
-
-
-//get an array of all TOTALS for a given year
-// data: the dataByYear Map
-//output:
-// [
-//     {
-//         State: _____,
-//         TotalEmployees: _____
-//     }, ... 
-// ]
-function getStateByYear(data, year){
-    let yearData = data.get(year);
-    let ret = [];
-
-    for (let [state, areas] of yearData){
-        let totalForIndIndustries = areas.find((el)=>el.Area==='Total');
-        if(!totalForIndIndustries){
-            continue;
-        }
-        let totalAcrossIndustries = totalForIndIndustries.Employment.find((el)=> el.Industry === 'Total');
-
-        let obj = {
-            State: state,
-            TotalEmployees: totalAcrossIndustries.Employees
-        }
-        ret.push(obj);
-    }
-
-    return ret;
-}
-
-
-//get an array of all TOTALS in a GIVEN STATE's cities in a given year
-// data: dataByState
-//output:
-// [
-//     {
-//         State: _____,
-//         Area: _____,
-//         TotalEmployees: _____
-//     }, ... 
-// ]
-
-function getCityTotalsForStateByYear(data, state,  yearFilter){
-    let workingData = data.get(state);
-    let ret = [];
-    for (let props in workingData){
-        let year = workingData[props][yearFilter]; 
-        for(let i = 0; i< year.length; i++){
-            if(year[i].Industry === 'Total'){
-                let obj = {
-                    State: state,
-                    Area: props,
-                    TotalEmployees: year[i].Employees
-                };
-                ret.push(obj);
-                break;
-            }
-        }
-    }
-
-    return ret;
-}
-
-//get an array of employment for all industries in a given area in a given state for a given year.
-// data: dataByState
-//output: 
-// [
-//     {
-//         State: ____, 
-//         Area: _____, 
-//         Industry: ____,
-//         Employees: ____,
-//     }, ...
-// ]
-function getCitySpecificsByYear(data, state, yearFilter, area){
-    let workingData = data.get(state);
-    workingData = workingData[area][yearFilter];
-    let ret = [];
-
-    workingData.forEach((el)=>{
-        //skip the "total" measure
-        if(el.Industry === 'Total'){
-            return false;
-        }
-
-        let obj = {
-            State: state,
-            Area: area,
-            Industry: el.Industry,
-            Employees: el.Employees
-        }
-        ret.push(obj);
-    })
-
-    return ret;
-}
-
-
-//get an array of employment for a given industry in a given year.
-// data: the dataByIndustry Map
-//output: 
-// [
-//     {
-//         State: ____, 
-//         Area: _____, 
-//         Employees: ____,
-//     }, ...
-// ]
-function getIndustryForYear(data, industry, year){
-    let workingData= data.get(industry).get(year);
-    let ret = [];
-    for (let [state, areas] of workingData){
-        for(let [area, employees] of areas){
-            let obj = {
-                State: state,
-                Area: area, 
-                Employees: employees
-            }
-
-            ret.push(obj);
-        }
-    }
-
-    return ret;
-}
-
-
-//get an array of employment for a given industry in a given year FOR A GIVEN STATE. Separated by AREA
-// data: the dataByIndustry Map
-// output
-// [
-//     {
-//         State: ____, 
-//         Area: _____, 
-//         Employees: ____,
-//     }, ...
-// ]
-function getIndustryForYearInState(data, industry, year, state){
-    let workingData = getIndustryForYear(data, industry, year);
-    let ret = workingData.filter((el)=> el.State === state);
-    return ret;
-
-}
-
-// get an array of employment for all areas in a given year. NOT separated by State
-//data: dataByYear
-function getEmploymentForYear(data, year){
-    let workingData = data.get(year);
-    let ret = [];
-    for (let [state, areas] of workingData){
-        areas.forEach((areaEmp)=>{
-            areaEmp.Employment.forEach((indEmp)=>{
-                let obj = {
-                    State: state,
-                    Area: areaEmp.Area,
-                    Employment: indEmp.Employees,
-                    Industry: indEmp.Industry
-                }
-
-                ret.push(obj);
-            })
-        })
-    }
-    return ret;
-}
-
-
-// get an array of employment for all areas in a given year. NOT separated by State
-//data: popEstimate
-//returns a number
-function getUSPopulationForYear(data, year){
-    return data.get(year).get("United States");
-}
-
-
-// get an array of employment for all areas in a given year. NOT separated by State
-//data: popEstimate
-//returns a number
-function getStatePopulationForYear(data, state, year){
-    return data.get(year).get(state);
-}
