@@ -139,7 +139,7 @@ $(function() {
 
             
 
-            let functions = new DataFunctions();
+            let functions = new DataFunctions(data, dataByYear, dataByState, dataByIndustry, popEstimates);
 
             //NOTES ABOUT DATA:
             //a NaN value means that there is no data. 0 means 0. not the same thing!
@@ -184,29 +184,37 @@ $(function() {
             // example of a zoom:
             
             //level 1: all states and their total employment in a given year
-            console.log(functions.getStateByYear(dataByYear, 2018))
+            console.log(functions.getStateByYear(2018))
             
             //zooming into Alabama 
             //level 2: Alabama information – total employment in each major area (city
-            console.log(functions.getCityTotalsForStateByYear(dataByState, "Alabama", 2018));
+            console.log(functions.getCityTotalsForStateByYear("Alabama", 2018));
 
             //zooming into a specific area for specific industries
             // level 3: Alabama major areas — employment for each industry
-            console.log(functions.getCitySpecificsByYear(dataByState, "Alabama", 2018, "Anniston-Oxford-Jacksonville"));
-
-
-
-            // HERE IS WHERE YOU WOULD CREATE VISUALIZATIONS.
-            // When the time comes, I'll move the functions into a separate JS file that we can include
-            // before all the rest of the JS files in the html doc so that there's no "function dne" issues.
-            // Ideally, you'll pass in a few of the datasets created above and then just use functions inside each object
-            // to generate the data that you need for each level.
+            console.log(functions.getCitySpecificsByYear("Alabama", 2018, "Anniston-Oxford-Jacksonville"));
 
 
             // FOR SCATTERPLOT:
             console.log(functions.getUSPopulationForYear(popEstimates, 2018));
             console.log(functions.getStatePopulationForYear(popEstimates, "California", 2018));
 
+
+
+            // HERE IS WHERE YOU WOULD CREATE VISUALIZATIONS.
+            // Ideally, you'll pass in a few of the datasets created above and then just use functions inside each object
+            // to generate the data that you need for each level.
+
+
+
+            let barChartScope = new BarChartScope("barChartScopeSection", functions);
+            let barChartNoScope = new BarChartNoScope("barChartNoScopeSection", functions);
+            let scatterChartScope = new ScatterChartScope("scatterChartScopeSection", functions);
+            let scatterChartNoScope = new ScatterChartNoScope("scatterChartNoScopeSection", functions);
+            let pieChartScope = new PieChartScope("pieChartScopeSection", functions);
+            let pieChartNoScope = new PieChartNoScope("pieChartNoScopeSection", functions);
+            let lineChartScope = new LineChartScope("lineChartScopeSection", functions);
+            let lineChartNoScope = new LineChartNoScope("lineChartNoScopeSection", functions);
 
 
         });

@@ -1,7 +1,12 @@
 
-function DataFunctions (){
+function DataFunctions (data, dataByYear, dataByState, dataByIndustry, popEstimates){
 	//function object
-    // console.log("initialize");
+    var self = this;
+    self.data = data;
+    self.dataByYear = dataByYear;
+    self.dataByState = dataByState;
+    self.dataByIndustry = dataByIndustry;
+    self.popEstimates = popEstimates;
 }
 
 
@@ -21,8 +26,10 @@ function DataFunctions (){
 //         TotalEmployees: _____
 //     }, ... 
 // ]
-DataFunctions.prototype.getStateByYear = function(data, year){
-    let yearData = data.get(year);
+DataFunctions.prototype.getStateByYear = function(year){
+    var self = this;
+
+    let yearData = self.dataByYear.get(year);
     let ret = [];
 
     for (let [state, areas] of yearData){
@@ -54,8 +61,10 @@ DataFunctions.prototype.getStateByYear = function(data, year){
 //     }, ... 
 // ]
 
-DataFunctions.prototype.getCityTotalsForStateByYear = function(data, state,  yearFilter){
-    let workingData = data.get(state);
+DataFunctions.prototype.getCityTotalsForStateByYear = function(state,  yearFilter){
+    var self = this;
+
+    let workingData = self.dataByState.get(state);
     let ret = [];
     for (let props in workingData){
         let year = workingData[props][yearFilter]; 
@@ -86,8 +95,10 @@ DataFunctions.prototype.getCityTotalsForStateByYear = function(data, state,  yea
 //         Employees: ____,
 //     }, ...
 // ]
-DataFunctions.prototype.getCitySpecificsByYear = function(data, state, yearFilter, area){
-    let workingData = data.get(state);
+DataFunctions.prototype.getCitySpecificsByYear = function(state, yearFilter, area){
+    var self = this;
+
+    let workingData = self.dataByState.get(state);
     workingData = workingData[area][yearFilter];
     let ret = [];
 
@@ -120,8 +131,10 @@ DataFunctions.prototype.getCitySpecificsByYear = function(data, state, yearFilte
 //         Employees: ____,
 //     }, ...
 // ]
-DataFunctions.prototype.getIndustryForYear = function(data, industry, year){
-    let workingData= data.get(industry).get(year);
+DataFunctions.prototype.getIndustryForYear = function(industry, year){
+    var self = this;
+    
+    let workingData= self.dataByIndustry.get(industry).get(year);
     let ret = [];
     for (let [state, areas] of workingData){
         for(let [area, employees] of areas){
@@ -149,8 +162,10 @@ DataFunctions.prototype.getIndustryForYear = function(data, industry, year){
 //         Employees: ____,
 //     }, ...
 // ]
-DataFunctions.prototype.getIndustryForYearInState = function(data, industry, year, state){
-    let workingData = getIndustryForYear(data, industry, year);
+DataFunctions.prototype.getIndustryForYearInState = function(industry, year, state){
+    var self = this;
+
+    let workingData = getIndustryForYear(ndustry, year);
     let ret = workingData.filter((el)=> el.State === state);
     return ret;
 
@@ -158,8 +173,10 @@ DataFunctions.prototype.getIndustryForYearInState = function(data, industry, yea
 
 // get an array of employment for all areas in a given year. NOT separated by State
 //data: dataByYear
-DataFunctions.prototype.getEmploymentForYear = function(data, year){
-    let workingData = data.get(year);
+DataFunctions.prototype.getEmploymentForYear = function(year){
+    var self = this;
+
+    let workingData = self.dataByYear.get(year);
     let ret = [];
     for (let [state, areas] of workingData){
         areas.forEach((areaEmp)=>{
@@ -183,7 +200,9 @@ DataFunctions.prototype.getEmploymentForYear = function(data, year){
 //data: popEstimate
 //returns a number
 DataFunctions.prototype.getUSPopulationForYear = function(data, year){
-    return data.get(year).get("United States");
+    var self = this;
+
+    return self.popEstimates.get(year).get("United States");
 }
 
 
@@ -191,5 +210,6 @@ DataFunctions.prototype.getUSPopulationForYear = function(data, year){
 //data: popEstimate
 //returns a number
 DataFunctions.prototype.getStatePopulationForYear = function(data, state, year){
-    return data.get(year).get(state);
+    var self = this;
+    return self.popEstimates.get(year).get(state);
 }
