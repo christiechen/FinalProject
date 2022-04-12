@@ -1,7 +1,30 @@
-section{
+section.body-section > section{
     border:1px solid black;
 }
 
 svg{
     border: 1px solid red;
+}
+
+section.entire-body{
+    display: flex;
+    column-gap: 90px;
+}
+
+
+/* hide body until click, deactivated for now */
+section.entire-body{
+    display: none;
+}
+#intro .new{
+    display: none;
+}
+
+.body-section > section{
+    display:none;
+}
+
+#questions{
+    height: 80vh;
+    overflow: scroll;
 }

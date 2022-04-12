@@ -12,56 +12,137 @@
 </head>
 <body>
     <h1> Final Project </h1>
-
-    <h2> bar chart scope </h2>
-    <section id="barChartScopeSection">
-        
-    </section>
-
-    <h2> bar chart no scope </h2>
-    <section id="barChartNoScopeSection">
-        
-    </section>
-
-    <h2> scatter chart scope </h2>
-    <section id="scatterChartScopeSection">
-        
-    </section>
-
-    <section id="scatterChartScopeSection">
-        
-    </section>
-    
-    <h2> scatter chart no scope </h2>
-    <section id="scatterChartNoScopeSection">
-        
-    </section>
-    
-    <h2> pie chart scope </h2>
-    <section id="pieChartScopeSection">
-        
-    </section>
-
-    <h2> pie chart no scope </h2>
-    <section id="pieChartNoScopeSection">
-        
-    </section>
+    <div id="intro">
+        <div class="options">
+            Choose a visualization
+            <button value="barChartScopeSection"> Bar Chart Scope </button>
+            <button value="barChartNoScopeSection"> Bar Chart No Scope </button>
+            <button value="scatterChartScopeSection"> Scatter Chart Scope </button>
+            <button value="scatterChartNoScopeSection"> Scatter Chart No Scope </button>
+            <button value="pieChartScopeSection"> Pie Chart Scope </button>
+            <button value="pieChartNoScopeSection"> Pie Chart No Scope </button>
+            <button value="lineChartScopeSection"> Line Chart Scope </button>
+            <button value="lineChartNoScopeSection"> Line Chart No Scope </button>
+        </div>
+        <div class="new"">
+            <button> New Session </button>
+        </div>
+    </div>
     
 
-    <h2> line chart scope </h2>
-    <section id="lineChartScopeSection">
-        
-    </section>
+    <section class="entire-body">
+        <section class="body-section">
+            <section id="barChartScopeSection">
+                <h2> bar chart scope </h2>
+                
+            </section>
 
-    <h2> line chart no scope </h2>
-    <section id="lineChartNoScopeSection">
-        
-    </section>
+            <section id="barChartNoScopeSection">
+                <h2> bar chart no scope </h2>
+                
+            </section>
 
+            <section id="scatterChartScopeSection">
+                <h2> scatter chart scope </h2>
+                
+            </section>
+
+            
+            <section id="scatterChartNoScopeSection">
+                <h2> scatter chart no scope </h2>
+                
+            </section>
+            
+            <section id="pieChartScopeSection">
+                <h2> pie chart scope </h2>
+                
+            </section>
+
+            <section id="pieChartNoScopeSection">
+                <h2> pie chart no scope </h2>
+                
+            </section>
+            
+
+            <section id="lineChartScopeSection">
+                <h2> line chart scope </h2>
+                
+            </section>
+
+            <section id="lineChartNoScopeSection">
+                <h2> line chart no scope </h2>
+                
+            </section>
+        </section>
+
+        <section class="body-section" id="questions">
+            <h2> questions </h2>
+            <ol>
+                <li> 
+                    first question here
+                    <div>
+                        <form>
+                            <input class='correct' type="radio" id='q1-1' name="q1" value="q1-1">
+                            <label for="q1-1">1st answer</label><br>
+                            <input type="radio" id="q1-2" name="q1" value="q1-2">
+                            <label for="q1-2">2nd answer</label><br>  
+                            <input type="radio" id="q1-3" name="q1" value="q1-3">
+                            <label for="q1-3"> 3rd answer </label><br><br>
+                        </form>                    
+                    </div>
+                </li>
+                <li> 
+                    second question here
+                    <div>
+                        <form>
+                            <input class='correct' type="radio" id='q2-1' name="q2" value="q2-1">
+                            <label for="q2-1">1st answer</label><br>
+                            <input type="radio" id="q2-2" name="q2" value="q2-2">
+                            <label for="q2-2">2nd answer</label><br>  
+                            <input type="radio" id="q2-3" name="q2" value="q2-3">
+                            <label for="q2-3"> 3rd answer </label><br><br>
+                        </form>                    
+                    </div>
+                </li>
+                <li> 
+                    third question here
+                    <div>
+                        <form>
+                            <input class='correct' type="radio" id='q3-1' name="q3" value="q-1">
+                            <label for="q3-1">1st answer</label><br>
+                            <input type="radio" id="q3-2" name="q3" value="q-2">
+                            <label for="q3-2">2nd answer</label><br>  
+                            <input type="radio" id="q3-3" name="q3" value="q-3">
+                            <label for="q3-3"> 3rd answer </label><br><br>
+                        </form>                    
+                    </div>
+                </li>
+                <li> 
+                    fourth question here
+                    <div>
+                        <form>
+                            <input class='correct' type="radio" id='q4-1' name="q4" value="q4-1">
+                            <label for="q4-1">1st answer</label><br>
+                            <input type="radio" id="q4-2" name="q4" value="q4-2">
+                            <label for="q4-2">2nd answer</label><br>  
+                            <input type="radio" id="q4-3" name="q4" value="q4-3">
+                            <label for="q4-3"> 3rd answer </label><br><br>
+                        </form>                    
+                    </div>
+                </li>
+
+            </ol>
+            <button id='finalSubmit' class='submit' > Submit </button>
+        </section>
+
+    </section> 
+<!-- entire body end  -->
 
     <script src="js/jquery.min.js"></script>
     <script src="js/d3/d3.min.js"></script>
 
+
+    <script src="js/main.js"></script>
 
     <script src="js/dataFunctions.js"></script>
     <script src="js/data.js"></script>
