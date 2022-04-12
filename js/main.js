@@ -1,29 +1,29 @@
-  // beginning page — hidden for now
+  // beginning page — disabled hidden for now
 
   let startTime;
-$("#intro .options button").click(function(){
-  $('.entire-body').css('display', 'flex'); //show vis
-  $("#intro .options").css('display', 'none'); //hide choices
-  $("#intro .new").css('display', 'block'); //visible new button
-  $(`#${this.value}`).css('display', 'block');
+// $("#intro .options button").click(function(){
+//   $('.entire-body').css('display', 'flex'); //show vis
+//   $("#intro .options").css('display', 'none'); //hide choices
+//   $("#intro .new").css('display', 'block'); //visible new button
+//   $(`#${this.value}`).css('display', 'block');
 
-  console.log("=======================");
-  console.log("START SESSION");
-  console.log(`TYPE: ${this.value}`);
+//   console.log("=======================");
+//   console.log("START SESSION");
+//   console.log(`TYPE: ${this.value}`);
 
-  //start time
-  let date = new Date();
-  startTime = date.getTime();
-})
-$("#intro .new button").click(()=>{
-  $('.entire-body').css('display', 'none'); //hide vis
-  $("#intro .options").css('display', 'block'); //show choices
-  $("#intro .new").css('display', 'none'); //hide new button
-  $(`.body-section > section`).css('display', 'none');
+//   //start time
+//   let date = new Date();
+//   startTime = date.getTime();
+// })
+// $("#intro .new button").click(()=>{
+//   $('.entire-body').css('display', 'none'); //hide vis
+//   $("#intro .options").css('display', 'block'); //show choices
+//   $("#intro .new").css('display', 'none'); //hide new button
+//   $(`.body-section > section`).css('display', 'none');
 
-  //clear all checked radios
-  $('input:checked').attr('checked',false)
-})
+//   //clear all checked radios
+//   $('input:checked').attr('checked',false)
+// })
 
 
 

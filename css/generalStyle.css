@@ -13,7 +13,7 @@ section.entire-body{
 
 
 /* hide body until click, deactivated for now */
-section.entire-body{
+/* section.entire-body{
     display: none;
 }
 #intro .new{
@@ -27,4 +27,4 @@ section.entire-body{
 #questions{
     height: 80vh;
     overflow: scroll;
-}
+} */
