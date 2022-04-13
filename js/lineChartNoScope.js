@@ -47,8 +47,8 @@ LineChartNoScope.prototype.initVis = function(){
 
     self.sumState = d3.group(self.stateData, (d) => d.State);
 
-    console.log(state2019);
-    console.log(self.sumState);
+    //console.log(state2019);
+    //console.log(self.sumState);
 
     //console.log(self.functions.dataByState);
 
