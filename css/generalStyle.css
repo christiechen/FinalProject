@@ -14,7 +14,7 @@ section.entire-body{
 
 /* full page functionality, hide body until click, deactivated for ease of development*/
 
-/* #intro{
+#intro{
     width: fit-content;
     margin-left: auto;
     margin-right: auto;
@@ -24,9 +24,9 @@ section.entire-body{
 #intro button{
     display: block;
     margin:10px;
-} */
+}
 
-/* section.entire-body{
+section.entire-body{
     display: none;
 }
 #intro .new{
@@ -40,5 +40,5 @@ section.entire-body{
 #questions{
     height: 80vh;
     overflow: scroll;
-} */
+}
 

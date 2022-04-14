@@ -28,6 +28,9 @@ $(function() {
                 if(el.Area.indexOf("(") !== -1){
                     el.Area = el.Area.substring(0, el.Area.indexOf("("));
                 }
+                if(el.State.indexOf("(") !== -1){
+                    el.State = el.State.substring(0, el.State.indexOf("("));
+                }
             })
 
             let origData = JSON.parse(JSON.stringify(data));
@@ -165,10 +168,13 @@ $(function() {
 
 
 
-            
+            console.log("FULL DATA")
             console.log(data);
+            console.log("DATA BY YEAR")
             console.log(dataByYear);
+            console.log("DATA BY STATE")
             console.log(dataByState);
+            console.log("DATA BY INDUSTRY")
             console.log(dataByIndustry);
 
 
@@ -196,8 +202,8 @@ $(function() {
 
 
             // FOR SCATTERPLOT:
-            console.log(functions.getUSPopulationForYear(popEstimates, 2018));
-            console.log(functions.getStatePopulationForYear(popEstimates, "California", 2018));
+            console.log(functions.getUSPopulationForYear(2018));
+            console.log(functions.getStatePopulationForYear("California", 2018));
 
 
 
@@ -217,6 +223,10 @@ $(function() {
             let lineChartNoScope = new LineChartNoScope("lineChartNoScopeSection", functions);
 
 
+            // GET ALL STATES AND AREAS FOR LEGENDS
+            console.log(functions.getAllStates());
+            console.log(functions.getAllAreas());
+            console.log(functions.getAllIndustries());
         });
     });
 });

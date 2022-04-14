@@ -199,7 +199,7 @@ DataFunctions.prototype.getEmploymentForYear = function(year){
 // get an array of employment for all areas in a given year. NOT separated by State
 //data: popEstimate
 //returns a number
-DataFunctions.prototype.getUSPopulationForYear = function(data, year){
+DataFunctions.prototype.getUSPopulationForYear = function(year){
     var self = this;
 
     return self.popEstimates.get(year).get("United States");
@@ -209,7 +209,43 @@ DataFunctions.prototype.getUSPopulationForYear = function(data, year){
 // get an array of employment for all areas in a given year. NOT separated by State
 //data: popEstimate
 //returns a number
-DataFunctions.prototype.getStatePopulationForYear = function(data, state, year){
+DataFunctions.prototype.getStatePopulationForYear = function(state, year){
     var self = this;
     return self.popEstimates.get(year).get(state);
+}
+
+
+// get an array of all states
+//returns an array of all states
+DataFunctions.prototype.getAllStates = function(){
+    var self = this;
+
+    return Array.from(self.dataByState.keys());
+}
+
+// get an array of all areas
+//data: data
+//returns an array of objects with state and area props
+DataFunctions.prototype.getAllAreas = function(state, year){
+    var self = this;
+
+    let workingData = self.data
+    let ret = [];
+    workingData.forEach((el)=>{
+        let obj = {
+            State: el.State,
+            Area: el.Area
+        }
+        ret.push(obj)
+    })
+    return ret;
+}
+
+// get an array of all industries
+//data: data
+//returns an array of objects with state and area props
+DataFunctions.prototype.getAllIndustries = function(state, year){
+    var self = this;
+
+    return Array.from(self.dataByIndustry.keys());
 }
