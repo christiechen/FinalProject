@@ -226,7 +226,7 @@ DataFunctions.prototype.getAllStates = function(){
 // get an array of all areas
 //data: data
 //returns an array of objects with state and area props
-DataFunctions.prototype.getAllAreas = function(state, year){
+DataFunctions.prototype.getAllAreas = function(){
     var self = this;
 
     let workingData = self.data
@@ -244,7 +244,7 @@ DataFunctions.prototype.getAllAreas = function(state, year){
 // get an array of all industries
 //data: data
 //returns an array of objects with state and area props
-DataFunctions.prototype.getAllIndustries = function(state, year){
+DataFunctions.prototype.getAllIndustries = function(){
     var self = this;
 
     return Array.from(self.dataByIndustry.keys());
