@@ -162,7 +162,6 @@ PieChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
         .innerRadius(0)
         .outerRadius(self.radius);
 
-    // console.log(currArcData)
 
     // run the updateChart function with this selected option
 

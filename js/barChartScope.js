@@ -74,7 +74,6 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
 
     //     // adapt this for the bar chart
     var self = this;
-    console.log(scopeLevel, scopedInto, currYear)
 
     self.tip = d3.tip().attr('class', "d3-tip")
         .direction('se')
@@ -210,7 +209,6 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
     }
 
 
-    console.log(scopeLevel, scopedInto, currYear)
 
 
 

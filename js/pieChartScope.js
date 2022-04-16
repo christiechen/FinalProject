@@ -125,7 +125,6 @@ PieChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
 
     //     // adapt this for the pie chart
     var self = this;
-    console.log(scopeLevel, scopedInto, currYear)
     self.svg.selectAll(".arcs").remove();
 
     var g = d3.select(".arcGroup")
@@ -164,7 +163,6 @@ PieChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
         var areaData = self.functions.getCityTotalsForStateByYear(selectedState, currYear)
         currArcData = areaData;
     }
-    console.log(currArcData)
 
     g.selectAll(".arcs")
         .data(pie(currArcData))

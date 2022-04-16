@@ -220,7 +220,6 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
         barData = barData.filter(d => { return !isNaN(d["TotalEmployees"]) })
 
         var max = barData[barData.length - 1]["TotalEmployees"]
-        console.log(max)
         x.domain(barData.map(function (d) { return d["State"]; }))
         y.domain([0, max])
 
@@ -241,7 +240,6 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
     }
 
 
-    console.log(barData)
 
 
 
