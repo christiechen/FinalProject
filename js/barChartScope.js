@@ -109,7 +109,7 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
 
     var bars = self.svg.selectAll("rect");
 
-    if (scopeLevel == "areas") {
+    if (scopeLevel == "industries") {
         var indData = self.functions.getCitySpecificsByYear(selectedState, currYear, selectedArea)
         barData = indData;
         barData.sort(function (a, b) {
@@ -143,7 +143,7 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
             .style("text-anchor", "end")
         self.svg.select(".yAxis").call(d3.axisLeft(y))
     }
-    else if (scopeLevel == "industries") {
+    else if (scopeLevel == "states") {
         var stateData = self.functions.getStateByYear(currYear);
         barData = stateData;
         barData.sort(function (a, b) {
@@ -175,7 +175,7 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
             .attr("transform", "translate(-10,0)rotate(-45)")
             .style("text-anchor", "end")
         self.svg.select(".yAxis").call(d3.axisLeft(y))
-    } else if (scopeLevel == "states") {
+    } else if (scopeLevel == "areas") {
         var areaData = self.functions.getCityTotalsForStateByYear(selectedState, currYear)
         barData = areaData;
         barData.sort(function (a, b) {
@@ -209,6 +209,8 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
         self.svg.select(".yAxis").call(d3.axisLeft(y))
     }
 
+
+    console.log(scopeLevel, scopedInto, currYear)
 
 
 
