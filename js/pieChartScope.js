@@ -109,7 +109,6 @@ PieChartScope.prototype.initVis = function () {
         }else if(self.scopeLevel == "states"){
             self.scopeLevel = "industries"
         }
-        self.currObj = 
         self.update(self.scopeLevel, self.currObj, self.currYear)
     })
     self.svg.selectAll(".arcs").exit().remove();

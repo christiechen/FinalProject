@@ -165,7 +165,7 @@ DataFunctions.prototype.getIndustryForYear = function(industry, year){
 DataFunctions.prototype.getIndustryForYearInState = function(industry, year, state){
     var self = this;
 
-    let workingData = getIndustryForYear(ndustry, year);
+    let workingData = getIndustryForYear(industry, year);
     let ret = workingData.filter((el)=> el.State === state);
     return ret;
 
