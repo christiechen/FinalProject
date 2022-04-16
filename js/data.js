@@ -36,6 +36,9 @@ $(function() {
             let origData = JSON.parse(JSON.stringify(data));
             console.log(origData);
 
+            data = data.filter((el)=> {
+                return (el.State !== 'District of Columbia')
+            })
 
             let industries = new Set();
 

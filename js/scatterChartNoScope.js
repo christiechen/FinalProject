@@ -60,13 +60,18 @@ ScatterChartNoScope.prototype.initVis = function(){
         
         self.maxEmpLevel = 0;
         self.xAxisTopDom = 0; //top domain for x scale
+        let tempMax = 0;
         self.workingData.forEach((el) => {
             let currentEmpLevel = self.functions.getStatePopulationForYear(el.State, year);
             el.TotalEmployees = el.TotalEmployees * 1000;
-            self.maxEmpLevel = self.maxEmpLevel > el.TotalEmployees ? self.maxEmpLevel : el.TotalEmployees;
+            if(tempMax < el.TotalEmployees){
+                tempMax = el.TotalEmployees;
+            }
             self.xAxisTopDom = self.xAxisTopDom > el.TotalEmployees/currentEmpLevel ? self.xAxisTopDom : el.TotalEmployees/currentEmpLevel ;
 
         })
+        self.maxEmpLevel = tempMax;
+
     }
 
     self.industryLevel = function(year){
