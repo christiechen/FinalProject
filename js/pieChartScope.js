@@ -54,7 +54,7 @@ PieChartScope.prototype.initVis = function () {
         .value(function (d) { return d["TotalEmployees"] });
 
     var g = self.svg.append("g")
-        .attr("transform", "translate(250,200)")
+        .attr("transform", `translate(${self.svgWidth/2},${self.svgHeight/2})`)
         .attr("class", "arcGroup")
         .attr("width", 500)
         .attr("height", 400);

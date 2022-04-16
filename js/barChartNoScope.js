@@ -23,7 +23,7 @@ function BarChartNoScope(id, functions) {
 BarChartNoScope.prototype.initVis = function () {
     var self = this;
 
-    self.margin = { top: 60, right: 20, bottom: 60, left: 50 };
+    self.margin = { top: 30, right: 20, bottom: 60, left: 50 };
     self.svgWidth = 500; //get current width of container on page
     self.svgHeight = 400;
 
@@ -139,7 +139,7 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
         .padding(0.2);
 
     var y = d3.scaleLinear()
-        .range([self.svgHeight - self.margin.bottom, 0]);
+        .range([self.svgHeight - self.margin.bottom, self.margin.top]);
 
     var bars = self.svg.selectAll("rect");
 
