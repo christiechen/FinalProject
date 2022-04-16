@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css?family=Red Hat Mono" rel="stylesheet"/>
     
     <link rel="stylesheet" href="css/generalStyle.css">
+    <link rel="stylesheet" href="css/vis.css">
 </head>
 <body>
     <h1> Final Project </h1>
@@ -50,6 +51,14 @@
             
             <section id="scatterChartNoScopeSection">
                 <h2> scatter chart no scope </h2>
+                <select id="scatterLevel"></select>
+                <select id="scatterYear"></select>
+                <button id="scatterFilter"> Update Chart </button>
+                <h5 class="loc"> </h5>
+                <div class = 'multipleLegendDiv'>
+                    <div class="svgLegend scatterLegend"> </div> 
+                    <div class="svgLegend industryLegend"> </div> 
+                </div>
                 
             </section>
             
@@ -139,6 +148,7 @@
 
     <script src="js/jquery.min.js"></script>
     <script src="js/d3/d3.min.js"></script>
+    <script type="text/javascript" src="js/d3-tip/index.js"></script>
 
 
     <script src="js/main.js"></script>

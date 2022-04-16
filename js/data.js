@@ -224,9 +224,11 @@ $(function() {
 
 
             // GET ALL STATES AND AREAS FOR LEGENDS
-            console.log(functions.getAllStates());
-            console.log(functions.getAllAreas());
-            console.log(functions.getAllIndustries());
+            // console.log(functions.getAllStates());
+            // console.log(functions.getAllAreas());
+            // console.log(functions.getAllIndustries());
+            console.log(functions.getStatePopulationForYear("District of Columbia", 2018));
+
         });
     });
 });

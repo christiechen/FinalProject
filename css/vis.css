@@ -1,0 +1,45 @@
+.axis-label{
+    fill: black;
+}
+.svgLegend{
+    height: 100px;
+    overflow-y: scroll;
+    margin-bottom: 10px;
+    background-color: lightgray;
+    border-radius: 10px;
+    padding: 15px;
+}
+.svgLegend div.selected{
+    font-weight: 800;
+}
+.multipleLegendDiv{
+    display: flex;
+    justify-content: space-around;
+}
+.multipleLegendDiv > div{
+    width: 35%;
+}
+
+.d3-tip{
+    font-size: 12px;
+    background-color: lightblue;
+    padding: 3px;
+}
+
+.d3-tip p {
+    margin: 2px;
+}
+
+
+/* SCATTER */
+#scatterChartNoScopeSection .axis-label{
+    font-size: 10px;
+}
+
+#scatterChartNoScopeSection circle{
+    position: relative;
+}
+#scatterChartNoScopeSection circle.background{
+    opacity: 0.05;
+}
+
