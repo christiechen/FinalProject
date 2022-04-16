@@ -1,30 +1,232 @@
 
-function BarChartScope (id, functions){
+function BarChartScope(id, functions) {
     var self = this;
     self.sectionId = id;
     self.functions = functions;
+    self.scopeLevel = "states"
+    self.currObj = { State: 'California', Area: 'Los Angeles-Long Beach-Anaheim', Industry: 'Trade, transportation, and utilities', Employees: 1113.3 }
+    self.currYear = 2018
 
     self.initVis();
 }
 
 
 
-
-
-
 //initialize vis
-BarChartScope.prototype.initVis = function(){
+BarChartScope.prototype.initVis = function () {
     var self = this;
 
     self.margin = { top: 60, right: 20, bottom: 60, left: 50 };
     self.svgWidth = 500; //get current width of container on page
     self.svgHeight = 400;
-    
-    let svg = d3.select(`#${self.sectionId}`)
-            .append("svg")
-            .attr("width", self.svgWidth)
-            .attr("height", self.svgHeight);
+
+    self.radius = (Math.min(self.svgWidth, self.svgHeight) / 2) - 20;
+
+
+    self.svg = d3.select(`#${self.sectionId}`)
+        .append("svg")
+        .attr("width", self.svgWidth)
+        .attr("height", self.svgHeight);
+
+    d3.select("#barChartScopeYearButton")
+        .selectAll('option')
+        .data([2018, 2019, 2020])
+        .enter()
+        .append('option')
+        .text(function (d) { return d; })
+        .attr("value", function (d) { return d; });
+
+
+
+
+    d3.select("#barChartScopeYearButton").on("change", function () {
+        // recover the option that has been chosen
+        self.currYear = parseInt(d3.select(this).property("value"))
+        if (self.scopeLevel == "areas") {
+            self.scopeLevel = "states"
+        } else if (self.scopeLevel == "industries") {
+            self.scopeLevel = "areas"
+        } else if (self.scopeLevel == "states") {
+            self.scopeLevel = "industries"
+        }
+        self.update(self.scopeLevel, self.currObj, self.currYear)
+    })
+
+    self.svg.append("g")
+        .attr("class", "yAxis")
+        .attr("transform", 'translate(40,0)')
+
+    self.svg.append("g")
+        .attr("class", "xAxis")
+        .attr("transform", `translate(50, ${self.svgHeight - 50})`)
+
+
+    self.update(self.scopeLevel, self.currObj, self.currYear)
 
 
 }
 
+
+// create state/industry/area search feature, depending on what option is selected
+// dropdown
+
+BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
+
+    //     // adapt this for the bar chart
+    var self = this;
+    console.log(scopeLevel, scopedInto, currYear)
+
+    self.tip = d3.tip().attr('class', "d3-tip")
+        .direction('se')
+
+        .html(function (event, d) {
+            let state = d.State ? `<p> State: ${d.State} </p>` : '';
+            let area = d.Area ? `<p> Area: ${d.Area} </p>` : ``;
+            let industry = d.Industry ? `<p> Industry: ${d.Industry} </p>` : ``;
+            let emp = d.Employees ? `<p> Employment: ${d.Employees} </p>` : `<p> Employment: ${d["TotalEmployees"]} </p>`;
+            let text = `<div> ${state} ${area} ${industry} ${emp} </div>`;
+            return text;
+
+        });
+
+
+    var barData = []
+
+    var selectedState = null
+    var selectedArea = null
+
+    if (self.currObj != null) {
+        selectedState = scopedInto["State"]
+        selectedArea = scopedInto["Area"]
+    }
+
+    var x = d3.scaleBand()
+        .range([0, self.svgWidth])
+        .padding(0.2);
+
+    var y = d3.scaleLinear()
+        .range([self.svgHeight, 0]);
+
+    var bars = self.svg.selectAll("rect");
+
+    if (scopeLevel == "areas") {
+        var indData = self.functions.getCitySpecificsByYear(selectedState, currYear, selectedArea)
+        barData = indData;
+        barData.sort(function (a, b) {
+            return a["Employees"] - b["Employees"]
+        })
+        barData = barData.filter(d => { return !isNaN(d["Employees"]) })
+
+        var max = barData[barData.length - 1]["Employees"]
+        x.domain(barData.map(function (d) { return d["Industry"]; }))
+        y.domain([0, max])
+
+
+        bars
+            .data(barData)
+            .join("rect")
+            .attr("class", "rects")
+            .attr("x", function (d) { return x(d["Industry"]); })
+            .attr("y", function (d) { return y(d["Employees"]); })
+            .attr("width", x.bandwidth())
+            .attr("height", function (d) { return self.svgHeight - y(d["Employees"]); })
+            .attr("fill", "#69b3a2")
+            .on("mouseover", self.tip.show)
+            .on("mouseout", self.tip.hide)
+            .on("click", function (d, i) {
+                self.currObj = i
+                self.update(self.scopeLevel, self.currObj, self.currYear)
+            });
+        self.svg.select(".xAxis").call(d3.axisBottom(x))
+            .selectAll("text")
+            .attr("transform", "translate(-10,0)rotate(-45)")
+            .style("text-anchor", "end")
+        self.svg.select(".yAxis").call(d3.axisLeft(y))
+    }
+    else if (scopeLevel == "industries") {
+        var stateData = self.functions.getStateByYear(currYear);
+        barData = stateData;
+        barData.sort(function (a, b) {
+            return a["TotalEmployees"] - b["TotalEmployees"]
+        })
+        barData = barData.filter(d => { return !isNaN(d["TotalEmployees"]) })
+
+        var max = barData[barData.length - 1]["TotalEmployees"]
+        x.domain(barData.map(function (d) { return d["State"]; }))
+        y.domain([0, max])
+
+        bars
+            .data(barData)
+            .join("rect")
+            .attr("class", "rects")
+            .attr("x", function (d) { return x(d["State"]); })
+            .attr("y", function (d) { return y(d["TotalEmployees"]); })
+            .attr("width", x.bandwidth())
+            .attr("height", function (d) { return self.svgHeight - y(d["TotalEmployees"]); })
+            .attr("fill", "#69b3a2")
+            .on("mouseover", self.tip.show)
+            .on("mouseout", self.tip.hide)
+            .on("click", function (d, i) {
+                self.currObj = i
+                self.update(self.scopeLevel, self.currObj, self.currYear)
+            });
+        self.svg.select(".xAxis").call(d3.axisBottom(x))
+            .selectAll("text")
+            .attr("transform", "translate(-10,0)rotate(-45)")
+            .style("text-anchor", "end")
+        self.svg.select(".yAxis").call(d3.axisLeft(y))
+    } else if (scopeLevel == "states") {
+        var areaData = self.functions.getCityTotalsForStateByYear(selectedState, currYear)
+        barData = areaData;
+        barData.sort(function (a, b) {
+            return a["TotalEmployees"] - b["TotalEmployees"]
+        })
+        barData = barData.filter(d => { return !isNaN(d["TotalEmployees"]) })
+        var max = barData[barData.length - 1]["TotalEmployees"]
+        x.domain(barData.map(function (d) { return d["Area"]; }))
+        y.domain([0, max])
+
+
+        bars
+            .data(barData)
+            .join("rect")
+            .attr("class", "rects")
+            .attr("x", function (d) { return x(d["Area"]); })
+            .attr("y", function (d) { return y(d["TotalEmployees"]); })
+            .attr("width", x.bandwidth())
+            .attr("height", function (d) { return self.svgHeight - y(d["TotalEmployees"]); })
+            .attr("fill", "#69b3a2")
+            .on("mouseover", self.tip.show)
+            .on("mouseout", self.tip.hide)
+            .on("click", function (d, i) {
+                self.currObj = i
+                self.update(self.scopeLevel, self.currObj, self.currYear)
+            });
+        self.svg.select(".xAxis").call(d3.axisBottom(x))
+            .selectAll("text")
+            .attr("transform", "translate(-10,0)rotate(-45)")
+            .style("text-anchor", "end")
+        self.svg.select(".yAxis").call(d3.axisLeft(y))
+    }
+
+
+
+
+
+
+
+    self.svg.call(self.tip);
+
+    if (scopeLevel == "areas") {
+        self.scopeLevel = "industries"
+    }
+    else if (scopeLevel == "industries") {
+        self.scopeLevel = "states"
+    } else if (scopeLevel == "states") {
+        self.scopeLevel = "areas"
+    }
+
+
+
+
+}
