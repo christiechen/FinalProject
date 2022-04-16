@@ -54,11 +54,11 @@ BarChartScope.prototype.initVis = function () {
 
     self.svg.append("g")
         .attr("class", "yAxis")
-        .attr("transform", 'translate(40,0)')
+        .attr("transform", `translate(${self.margin.left},0)`)
 
     self.svg.append("g")
         .attr("class", "xAxis")
-        .attr("transform", `translate(50, ${self.svgHeight - 50})`)
+        .attr("transform", `translate(50, ${self.svgHeight - self.margin.bottom})`)
 
 
     self.update(self.scopeLevel, self.currObj, self.currYear)
@@ -100,11 +100,11 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
     }
 
     var x = d3.scaleBand()
-        .range([0, self.svgWidth])
+        .range([0, self.svgWidth-self.margin.right-self.margin.left])
         .padding(0.2);
 
     var y = d3.scaleLinear()
-        .range([self.svgHeight, 0]);
+        .range([self.svgHeight - self.margin.bottom, self.margin.top]);
 
     var bars = self.svg.selectAll("rect");
 
@@ -128,7 +128,7 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
             .attr("x", function (d) { return x(d["Industry"]); })
             .attr("y", function (d) { return y(d["Employees"]); })
             .attr("width", x.bandwidth())
-            .attr("height", function (d) { return self.svgHeight - y(d["Employees"]); })
+            .attr("height", function (d) { return self.svgHeight - self.margin.bottom- y(d["Employees"]); })
             .attr("fill", "#69b3a2")
             .on("mouseover", self.tip.show)
             .on("mouseout", self.tip.hide)
@@ -158,10 +158,10 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
             .data(barData)
             .join("rect")
             .attr("class", "rects")
-            .attr("x", function (d) { return x(d["State"]); })
+            .attr("x", function (d) { return self.margin.left + x(d["State"]); })
             .attr("y", function (d) { return y(d["TotalEmployees"]); })
             .attr("width", x.bandwidth())
-            .attr("height", function (d) { return self.svgHeight - y(d["TotalEmployees"]); })
+            .attr("height", function (d) { return self.svgHeight - self.margin.bottom - y(d["TotalEmployees"]); })
             .attr("fill", "#69b3a2")
             .on("mouseover", self.tip.show)
             .on("mouseout", self.tip.hide)
@@ -193,7 +193,7 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
             .attr("x", function (d) { return x(d["Area"]); })
             .attr("y", function (d) { return y(d["TotalEmployees"]); })
             .attr("width", x.bandwidth())
-            .attr("height", function (d) { return self.svgHeight - y(d["TotalEmployees"]); })
+            .attr("height", function (d) { return self.svgHeight - self.margin.bottom - y(d["TotalEmployees"]); })
             .attr("fill", "#69b3a2")
             .on("mouseover", self.tip.show)
             .on("mouseout", self.tip.hide)

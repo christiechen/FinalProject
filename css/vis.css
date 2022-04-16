@@ -43,3 +43,11 @@
     opacity: 0.05;
 }
 
+
+select{
+    display: block;
+}
+
+.selectGroup select {
+    display: inline-block;
+}

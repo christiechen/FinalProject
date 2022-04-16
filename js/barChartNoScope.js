@@ -66,11 +66,11 @@ BarChartNoScope.prototype.initVis = function () {
 
     self.svg.append("g")
         .attr("class", "yAxis")
-        .attr("transform", 'translate(40,0)')
+        .attr("transform", `translate(${self.margin.left},0)`)
 
     self.svg.append("g")
         .attr("class", "xAxis")
-        .attr("transform", `translate(50, ${self.svgHeight - 50})`)
+        .attr("transform", `translate(${self.margin.left}, ${self.svgHeight - self.margin.bottom})`)
 
 
 
@@ -135,11 +135,11 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
 
 
     var x = d3.scaleBand()
-        .range([0, self.svgWidth])
+        .range([0, self.svgWidth - self.margin.left - self.margin.right])
         .padding(0.2);
 
     var y = d3.scaleLinear()
-        .range([self.svgHeight, 0]);
+        .range([self.svgHeight - self.margin.bottom, 0]);
 
     var bars = self.svg.selectAll("rect");
 
@@ -173,10 +173,10 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
         bars
             .data(barData)
             .join("rect")
-            .attr("x", function (d) { return x(d["Area"]); })
+            .attr("x", function (d) { return self.margin.left + x(d["Area"]); })
             .attr("y", function (d) { return y(d["TotalEmployees"]); })
             .attr("width", x.bandwidth())
-            .attr("height", function (d) { return self.svgHeight - y(d["TotalEmployees"]); })
+            .attr("height", function (d) { return self.svgHeight - self.margin.bottom - y(d["TotalEmployees"]); })
             .attr("fill", "#69b3a2")
             .attr("class", "yAxis")
     }
@@ -204,10 +204,10 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
         bars
             .data(barData)
             .join("rect")
-            .attr("x", function (d) { return x(d["Industry"]); })
+            .attr("x", function (d) { return self.margin.left +  x(d["Industry"]); })
             .attr("y", function (d) { return y(d["Employees"]); })
             .attr("width", x.bandwidth())
-            .attr("height", function (d) { return self.svgHeight - y(d["Employees"]); })
+            .attr("height", function (d) { return self.svgHeight - self.margin.bottom - y(d["Employees"]); })
             .attr("fill", "#69b3a2")
     } else if (selectedOption == "states") {
         d3.select("#barChartNoScopeStatesButton").style("display", "none");
@@ -232,10 +232,10 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
         bars
             .data(barData)
             .join("rect")
-            .attr("x", function (d) { return x(d["State"]); })
+            .attr("x", function (d) { return self.margin.left + x(d["State"]); })
             .attr("y", function (d) { return y(d["TotalEmployees"]); })
             .attr("width", x.bandwidth())
-            .attr("height", function (d) { return self.svgHeight - y(d["TotalEmployees"]); })
+            .attr("height", function (d) { return self.svgHeight - self.margin.bottom - y(d["TotalEmployees"]); })
             .attr("fill", "#69b3a2")
     }
 

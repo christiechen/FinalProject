@@ -19,7 +19,7 @@ function ScatterChartNoScope (id, functions){
 ScatterChartNoScope.prototype.initVis = function(){
     var self = this;
 
-    self.margin = { top: 60, right: 20, bottom: 40, left: 45 };
+    self.margin = { top: 60, right: 20, bottom: 40, left: 50 };
     self.svgWidth = 500; //get current width of container on page
     self.svgHeight = 400;
     
@@ -143,7 +143,7 @@ ScatterChartNoScope.prototype.initVis = function(){
         .append("text")
         .text("#employment in " + self.num)
         .attr("x", -20)
-        .attr("y", -30)
+        .attr("y", -40)
         .attr("class", "axis-label")
         .attr("transform", "rotate(-90)")
         .attr("text-anchor", "end");
@@ -321,9 +321,9 @@ ScatterChartNoScope.prototype.initVis = function(){
 
     })
     
-    // self.update("States", 2018)
+    self.update("States", 2018)
     // self.update("Areas", 2018)
-    self.update("Industries", 2018)
+    // self.update("Industries", 2018)
     
 };
 
@@ -363,7 +363,6 @@ ScatterChartNoScope.prototype.update = function(level, year){
     self.yScale.domain([0, self.maxEmpLevel]);
     self.yAxis.scale(self.yScale);
 
-    console.log(self.xAxisTopDom);
     self.xScale.domain([0, self.xAxisTopDom * 100]); 
     self.xAxis.scale(self.xScale);
 
@@ -375,16 +374,6 @@ ScatterChartNoScope.prototype.update = function(level, year){
 
     self.tip = d3.tip().attr('class', "d3-tip")
         .direction('se')
-        // .offset(function(event, d) {
-        //     let y;
-        //     if(d.Employees){
-        //         y = self.yScale(d.Employees);
-        //     }
-        //     else{
-        //         y = self.yScale(d.TotalEmployees);
-        //     }
-        //     return [-self.svgHeight + self.margin.bottom + y,0];
-        // })
         .html(function(event, d) {
            let state = d.State? `<p> State: ${d.State} </p>` : '';
            let area = d.Area ? `<p> Area: ${d.Area} </p>` : ``;
