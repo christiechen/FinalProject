@@ -30,6 +30,9 @@ PieChartScope.prototype.initVis = function () {
     self.radius = (Math.min(self.svgWidth, self.svgHeight) / 2) - 20;
 
 
+    self.color = d3.scaleOrdinal()
+        .range(['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00','#ffff33','#a65628','#f781bf','#999999'])
+
     self.svg = d3.select(`#${self.sectionId}`)
         .append("svg")
         .attr("width", self.svgWidth)
@@ -65,7 +68,7 @@ PieChartScope.prototype.initVis = function () {
         .attr("class", "arcs")
         .attr("fill", (data, i) => {
             let value = data.data;
-            return d3.schemeSet3[i];
+            return self.color(value.State);
 
         })
         .attr("d", arc);
@@ -170,8 +173,17 @@ PieChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
         .append("path")
         .attr("fill", (data, i) => {
             let value = data.data;
-            return d3.schemeSet3[i];
-
+            
+            if(self.scopeLevel === "states"){
+                return self.color(value.State);
+            }
+            if(self.scopeLevel === "areas"){
+                return self.color(value.Area);
+            }
+            if(self.scopeLevel === "industries"){
+                return self.color(value.Industry);
+            }
+            
         })
         .attr("d", arc)
         .attr("class", "arcs")
