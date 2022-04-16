@@ -244,6 +244,18 @@ DataFunctions.prototype.getAllAreas = function(){
 // get an array of all industries
 //data: data
 //returns an array of objects with state and area props
+DataFunctions.prototype.getAllAreasInState = function(state){
+    var self = this;
+
+    let workingData = self.dataByState.get(state);
+    
+    return Array.from(Object.getOwnPropertyNames(workingData));
+}
+
+
+// get an array of all industries
+//data: data
+//returns an array of objects with state and area props
 DataFunctions.prototype.getAllIndustries = function(){
     var self = this;
 
