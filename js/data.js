@@ -256,8 +256,8 @@ $(function() {
             // console.log(functions.getAllStates());
             // console.log(functions.getAllAreas());
             // console.log(functions.getAllIndustries());
-            console.log(functions.getStatePopulationForYear("District of Columbia", 2018));
-            console.log(functions.getAllAreasInState("California"));
+            // console.log(functions.getStatePopulationForYear("District of Columbia", 2018));
+            // console.log(functions.getAllAreasInState("California"));
 
         });
     });

@@ -4,7 +4,8 @@ function ScatterChartScope (id, functions){
     self.sectionId = id;
     self.functions = functions;
 
-    self.hierarchy = [];
+    self.num = 'each state'
+    // self.currentState = [];
     self.initVis();
 }
 
@@ -56,6 +57,7 @@ ScatterChartScope.prototype.initVis = function(){
     //Further data processing can be done here and stored as self.XX so that it could be simply called when update function is called (like in linecharts)
 
     console.log(state2018);
+
 
     self.x = d3
         .scaleLinear()
@@ -109,9 +111,21 @@ ScatterChartScope.prototype.initVis = function(){
 
     // color palette
     self.color = d3.scaleOrdinal()
-        .range(['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00','#ffff33','#a65628','#f781bf','#999999'])
+        .range(['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00','#e5e540','#a65628','#f781bf','#999999'])
 
     self.zoomStatus = "states";
+
+    self.tip = d3.tip().attr('class', "d3-tip")
+        .direction('se')
+        .html(function(event, d) {
+           let state = d.State? `<p> State: ${d.State} </p>` : '';
+           let area = d.Area ? `<p> Area: ${d.Area} </p>` : ``;
+           let industry = d.Industry ? `<p> Industry: ${d.Industry} </p>` : ``;
+           let emp = d.Employees ? `<p> Employment: ${d.Employees * 1000} </p>` : `<p> Employment: ${d.TotalEmployees * 1000} </p>`;
+           let text = `<div> ${state} ${area} ${industry} ${emp} </div>`;
+           return text;
+           
+        });
 
     self.svg.selectAll(".dot")
         .data(state2018)
@@ -119,14 +133,31 @@ ScatterChartScope.prototype.initVis = function(){
         .attr("class","dot")
         .attr("cx", function (d) { return self.x(d.TotalEmployees*1000/d.population * 100); } )
         .attr("cy", function (d) { return self.y(d.TotalEmployees*1000); } )
-        .attr("r", 3)
+        .attr("r", 4)
         .attr("fill",function(d){ return self.color(d.State)})
         .on("click",function(event,d){
             self.update(d, +$("#yearGroupButton option:selected").text());
+            self.zoom = d;
+        })
+        .on("mouseover", self.tip.show)
+        .on("mouseout", self.tip.hide);
+   
+    self.svg.call(self.tip);
+
+    //fill state legend
+    let allStates = self.functions.getAllStates();
+
+    d3.select(`#${self.sectionId} .scatterLegend`)
+        .selectAll('.legendBubble')
+        .data(allStates)
+        .enter()
+        .append("div")
+        .attr("class", 'legendBubble')
+        .attr("style", (d)=> `color: ${self.color(d)}`)
+        .text((d) => {
+            return d;
         });
-
-
-
+    
 
     self.xAxisGroup = self.svg 
         .select(".x-axis")
@@ -143,14 +174,78 @@ ScatterChartScope.prototype.initVis = function(){
         // recover the option that has been chosen
         const selectedYear = d3.select(this).property("value")
         // run the updateChart function with this selected option
-        self.updateYear(selectedYear)
+        self.updateYear(+selectedYear);
     });
 }
 
 //Update the chart (update the year)
-ScatterChartScope.prototype.updateYear = function(selectedYear){
+ScatterChartScope.prototype.updateYear = function(year){
     var self = this;
-    console.log(selectedYear);
+    let workingData;
+    self.num = "each state"
+
+    //all areas in selected state in selected yeaer
+    workingData = self.functions.getStateByYear(year);
+    console.log(workingData);
+    //update x and y axis scale
+    self.y.domain([0, d3.max(workingData, function(d) { return d.TotalEmployees * 1000; })]);    
+    self.yAxis.scale(self.y);
+
+    console.log(year)
+    let max = d3.max(workingData, function(d) { return d.TotalEmployees * 1000 / 
+    self.functions.getStatePopulationForYear(d.State, year) * 100; });
+    self.x.domain([0, max]);
+    console.log(max); 
+    self.xAxis.scale(self.x);
+
+
+    self.tip = d3.tip().attr('class', "d3-tip")
+        .direction('se')
+        .html(function(event, d) {
+        let state = d.State? `<p> State: ${d.State} </p>` : '';
+        let area = d.Area ? `<p> Area: ${d.Area} </p>` : ``;
+        let industry = d.Industry ? `<p> Industry: ${d.Industry} </p>` : ``;
+        let emp = d.Employees ? `<p> Employment: ${d.Employees * 1000} </p>` : `<p> Employment: ${d.TotalEmployees * 1000} </p>`;
+        let text = `<div> ${state} ${area} ${industry} ${emp} </div>`;
+        return text;
+        
+        });
+
+    self.svg.selectAll(".dot")
+        .data(workingData)
+        .join("circle")
+        .attr("class","dot")
+        .attr("cx", function (d) { 
+            if(d.TotalEmployees){
+                return self.x(d.TotalEmployees*1000/self.functions.getStatePopulationForYear(d.State, year) * 100); 
+            } 
+            return self.x(d.Employees*1000/self.functions.getStatePopulationForYear(d.State, year) * 100); 
+        })
+        .attr("cy", function (d) { 
+            if(d.TotalEmployees){
+                return self.y(d.TotalEmployees*1000);
+            }
+            return self.y(d.Employees*1000); 
+        })
+        .attr("r", 4)
+        .attr("fill",function(d){ return self.color(d.State)})
+        .on("click",function(event,d){
+            self.update(d, +$("#yearGroupButton option:selected").text());
+        })
+        .on("mouseover", self.tip.show)
+        .on("mouseout", self.tip.hide);
+   
+    self.svg.call(self.tip);
+    
+    self.xAxisGroup = self.svg 
+        .select(".x-axis")
+        .call(self.xAxis)
+        .attr("transform", `translate(0, ${self.svgHeight-self.margin.bottom})`);
+        
+    self.yAxisGroup = self.svg 
+        .select(".y-axis")
+        .call(self.yAxis)
+        .attr("transform", `translate( ${self.margin.left},0)`);
 }
 
 //Update the chart (zooming)
@@ -161,7 +256,7 @@ ScatterChartScope.prototype.update = function(zoom, year){
 
     let workingData;
     //get new data 
-    if(self.zoomStatus = "states"){
+    if(self.zoomStatus === "states"){
         self.zoomStatus = "areas";
         //all areas in selected state in selected yeaer
         workingData = self.functions.getCityTotalsForStateByYear(zoom.State, year);
@@ -170,31 +265,136 @@ ScatterChartScope.prototype.update = function(zoom, year){
         self.y.domain([0, d3.max(workingData, function(d) { return d.TotalEmployees * 1000; })]);    
         self.yAxis.scale(self.y);
 
-        console.log(zoom.State)
-        console.log(year)
         let max = d3.max(workingData, function(d) { return d.TotalEmployees * 1000 / 
         self.functions.getStatePopulationForYear(zoom.State, year) * 100; });
         self.x.domain([0, max]);
-        console.log(max); 
+        self.xAxis.scale(self.x);
+        //fill area legend
+        let allAreas = [];
+        workingData.forEach((el)=>{
+            allAreas.push(el.Area);
+        })
+
+        d3.select(`#${self.sectionId} .scatterLegend`)
+            .selectAll('.legendBubble')
+            .data(allAreas)
+            .join('div')
+            .attr("class", 'legendBubble')
+            .attr("style", (d)=> `color: ${self.color(d)}`)
+            .text((d) => {
+                return d;
+            });
+
+        self.num = "each area in " + zoom.State;
+        
+    }
+    else if(self.zoomStatus === "areas"){
+        self.zoomStatus = "industries";
+        //all areas in selected state in selected yeaer
+        workingData = self.functions.getCitySpecificsByYear(zoom.State, year, zoom.Area);
+        console.log(workingData);
+        //update x and y axis scale
+        self.y.domain([0, d3.max(workingData, function(d) { return d.Employees * 1000; })]);    
+        self.yAxis.scale(self.y);
+
+        console.log(zoom.Area)
+        let max = d3.max(workingData, function(d) { return d.Employees * 1000 / 
+        self.functions.getStatePopulationForYear(zoom.State, year) * 100; });
+        self.x.domain([0, max]);
+        
+        self.xAxis.scale(self.x);
+        
+        //fill state legend
+        let allIndustries = self.functions.getAllIndustries();
+
+        d3.select(`#${self.sectionId} .scatterLegend`)
+            .selectAll('.legendBubble')
+            .data(allIndustries)
+            .join("div")
+            .attr("class", 'legendBubble')
+            .attr("style", (d)=> `color: ${self.color(d)}`)
+            .text((d) => {
+                return d;
+            });
+        
+        self.num = "each industry in " + zoom.Area;
+    }
+    else if(self.zoomStatus === "industries"){
+        self.zoomStatus = "states";
+        //all areas in selected state in selected yeaer
+        workingData = self.functions.getStateByYear(year);
+        //update x and y axis scale
+        self.y.domain([0, d3.max(workingData, function(d) { return d.TotalEmployees * 1000; })]);    
+        self.yAxis.scale(self.y);
+
+        let max = d3.max(workingData, function(d) { return d.TotalEmployees * 1000 / 
+        self.functions.getStatePopulationForYear(d.State, year) * 100; });
+        self.x.domain([0, max]);
         self.xAxis.scale(self.x);
 
+        //fill state legend
+        let allStates = self.functions.getAllStates();
+
+        d3.select(`#${self.sectionId} .scatterLegend`)
+            .selectAll('.legendBubble')
+            .data(allStates)
+            .join("div")
+            .attr("class", 'legendBubble')
+            .attr("style", (d)=> `color: ${self.color(d)}`)
+            .text((d) => {
+                return d;
+            });
+        self.num = "each state";
     }
 
-    
-
+    self.tip = d3.tip().attr('class', "d3-tip")
+        .direction('se')
+        .html(function(event, d) {
+        let state = d.State? `<p> State: ${d.State} </p>` : '';
+        let area = d.Area ? `<p> Area: ${d.Area} </p>` : ``;
+        let industry = d.Industry ? `<p> Industry: ${d.Industry} </p>` : ``;
+        let emp = d.Employees ? `<p> Employment: ${d.Employees * 1000} </p>` : `<p> Employment: ${d.TotalEmployees * 1000} </p>`;
+        let text = `<div> ${state} ${area} ${industry} ${emp} </div>`;
+        return text;
+        
+        });
 
     self.svg.selectAll(".dot")
         .data(workingData)
         .join("circle")
         .attr("class","dot")
-        .attr("cx", function (d) { return self.x(d.TotalEmployees*1000/self.functions.getStatePopulationForYear(zoom.State, year) * 100); } )
-        .attr("cy", function (d) { return self.y(d.TotalEmployees*1000); } )
-        .attr("r", 3)
-        .attr("fill",function(d){ return self.color(d.State)})
+        .attr("cx", function (d) { 
+            if(d.TotalEmployees){
+                return self.x(d.TotalEmployees*1000/self.functions.getStatePopulationForYear(d.State, year) * 100); 
+            } 
+            return self.x(d.Employees*1000/self.functions.getStatePopulationForYear(d.State, year) * 100); 
+        })
+        .attr("cy", function (d) { 
+            if(d.TotalEmployees){
+                return self.y(d.TotalEmployees*1000);
+            }
+            return self.y(d.Employees*1000); 
+        })
+        .attr("r", 4)
+        .attr("fill",function(d){ 
+            if(self.zoomStatus === 'states'){
+                return self.color(d.State);
+            }
+            if(self.zoomStatus === 'areas'){
+                return self.color(d.Area)
+            }
+            if(self.zoomStatus === 'industries'){
+                return self.color(d.Industry)
+            }
+        })
         .on("click",function(event,d){
-            self.update(d, $("#yearGroupButton option:selected").text());
-        });
+            self.update(d, +$("#yearGroupButton option:selected").text());
+        })
+        .on("mouseover", self.tip.show)
+        .on("mouseout", self.tip.hide);
    
+    self.svg.call(self.tip);
+    
     self.xAxisGroup = self.svg 
         .select(".x-axis")
         .call(self.xAxis)
@@ -206,6 +406,9 @@ ScatterChartScope.prototype.update = function(zoom, year){
         .attr("transform", `translate( ${self.margin.left},0)`);
 
 
+    self.svg
+        .select(".y-axis .axis-label")
+        .text("#employment in " + self.num)
 
     //update chart
 }

@@ -35,18 +35,25 @@ ScatterChartNoScope.prototype.initVis = function(){
         
         self.maxEmpLevel = 0; //to domain for y scale maximum
         self.xAxisTopDom = 0; //top domain for x scale
+        let tempMax = 0;
+        let tempMaxX = 0;
         self.workingData.forEach((el) => {
             let currentEmpLevel = self.functions.getStatePopulationForYear(el.State, year);
             if(currentEmpLevel === undefined){
                 return false;
             }
-            el.TotalEmployees = el.TotalEmployees * 1000;
-            self.maxEmpLevel = self.maxEmpLevel > el.TotalEmployees ? self.maxEmpLevel : el.TotalEmployees;
-            self.xAxisTopDom = self.xAxisTopDom > el.TotalEmployees/currentEmpLevel ? self.xAxisTopDom : el.TotalEmployees/currentEmpLevel ;
+            if(tempMax < el.TotalEmployees * 1000){
+                tempMax = el.TotalEmployees * 1000;
+            }
+            let currentX = el.TotalEmployees * 1000;
+            if(tempMaxX < currentX/currentEmpLevel){
+                tempMaxX = currentX/currentEmpLevel; //percentage
+            }
         })
 
-        console.log(self.xAxisTopDom);
-
+        self.maxEmpLevel = tempMax;
+        self.xAxisTopDom = tempMaxX * 100;
+        console.log(tempMaxX);
 
 
     }   
@@ -61,16 +68,21 @@ ScatterChartNoScope.prototype.initVis = function(){
         self.maxEmpLevel = 0;
         self.xAxisTopDom = 0; //top domain for x scale
         let tempMax = 0;
+        let tempMaxX = 0;
+
         self.workingData.forEach((el) => {
             let currentEmpLevel = self.functions.getStatePopulationForYear(el.State, year);
-            el.TotalEmployees = el.TotalEmployees * 1000;
-            if(tempMax < el.TotalEmployees){
-                tempMax = el.TotalEmployees;
+            if(tempMax < el.TotalEmployees * 1000){
+                tempMax = el.TotalEmployees * 1000;
             }
-            self.xAxisTopDom = self.xAxisTopDom > el.TotalEmployees/currentEmpLevel ? self.xAxisTopDom : el.TotalEmployees/currentEmpLevel ;
-
+            let currentX = el.TotalEmployees * 1000;
+            if(tempMaxX < currentX/currentEmpLevel){
+                tempMaxX = currentX/currentEmpLevel; //percentage
+            }
         })
         self.maxEmpLevel = tempMax;
+        self.xAxisTopDom = tempMaxX * 100;
+
 
     }
 
@@ -85,15 +97,19 @@ ScatterChartNoScope.prototype.initVis = function(){
         self.maxEmpLevel = 0;
         self.xAxisTopDom = 0; //top domain for x scale
         let tempMax = 0;
+        let tempMaxX = 0;
         self.workingData.forEach((el) => {
             let currentEmpLevel = self.functions.getStatePopulationForYear(el.State, year);
-            el.Employees = el.Employees * 1000;
-            if(tempMax < el.Employees){
-                tempMax = el.Employees;
+            if(tempMax < el.Employees * 1000){
+                tempMax = el.Employees * 1000 ;
             }
-            self.xAxisTopDom = self.xAxisTopDom > el.Employees/currentEmpLevel ? self.xAxisTopDom : el.Employees/currentEmpLevel ;
+            let currentX = el.Employees * 1000;
+            if(tempMaxX < currentX/currentEmpLevel){
+                tempMaxX = currentX/currentEmpLevel; //percentage
+            }
         })
         self.maxEmpLevel = tempMax;
+        self.xAxisTopDom = tempMaxX * 100;
     }
 
 
@@ -159,7 +175,7 @@ ScatterChartNoScope.prototype.initVis = function(){
     //     .style("opacity", 0);
 
     self.color = d3.scaleOrdinal()
-        .range(['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00','#ffff33','#a65628','#f781bf','#999999'])
+        .range(['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00','#e5e540','#a65628','#f781bf','#999999'])
 
 
 
@@ -357,12 +373,17 @@ ScatterChartNoScope.prototype.update = function(level, year){
     switch (level){
         case "States":
             self.stateLevel(year);
+            self.num = "each state"
+            // $(`.entry.selected`).toggleClass('selected');
             break;
         case "Areas":
             self.areaLevel(year);
+            self.num = "each area"
+            // $(`.entry.selected`).toggleClass('selected');
             break;
         case "Industries":
             self.industryLevel(year);
+            self.num = "each industry in all areas"
             break;
     }
     
@@ -372,7 +393,7 @@ ScatterChartNoScope.prototype.update = function(level, year){
     self.yScale.domain([0, self.maxEmpLevel]);
     self.yAxis.scale(self.yScale);
 
-    self.xScale.domain([0, self.xAxisTopDom * 100]); 
+    self.xScale.domain([0, self.xAxisTopDom]); 
     self.xAxis.scale(self.xScale);
 
 
@@ -387,7 +408,7 @@ ScatterChartNoScope.prototype.update = function(level, year){
            let state = d.State? `<p> State: ${d.State} </p>` : '';
            let area = d.Area ? `<p> Area: ${d.Area} </p>` : ``;
            let industry = d.Industry ? `<p> Industry: ${d.Industry} </p>` : ``;
-           let emp = d.Employees ? `<p> Employment: ${d.Employees} </p>` : `<p> Employment: ${d.TotalEmployees} </p>`;
+           let emp = d.Employees ? `<p> Employment: ${d.Employees * 1000} </p>` : `<p> Employment: ${d.TotalEmployees * 1000} </p>`;
            let text = `<div> ${state} ${area} ${industry} ${emp} </div>`;
            return text;
            
@@ -400,18 +421,18 @@ ScatterChartNoScope.prototype.update = function(level, year){
         .data(self.workingData)
         .enter()
         .append("circle")
-        .attr("r", 3)
+        .attr("r", 4)
         .attr("cx", (d) => {
             if(d.Employees){
-                return self.xScale(d.Employees/ self.functions.getStatePopulationForYear(d.State, year) * 100 );
+                return self.xScale(d.Employees * 1000 / self.functions.getStatePopulationForYear(d.State, year) * 100);
             }
-            return self.xScale(d.TotalEmployees/self.functions.getStatePopulationForYear(d.State, year) * 100);
+            return self.xScale(d.TotalEmployees * 1000 /self.functions.getStatePopulationForYear(d.State, year) * 100);
         })
         .attr("cy", (d) => {
             if(d.Employees){
-                return self.yScale(d.Employees);
+                return self.yScale(d.Employees*1000);
             }
-            return self.yScale(d.TotalEmployees);
+            return self.yScale(d.TotalEmployees*1000);
         })
         .attr("fill", (d) => {
             if (self.functions.getStatePopulationForYear(d.State, year) === undefined){
@@ -435,9 +456,7 @@ ScatterChartNoScope.prototype.update = function(level, year){
                 ret += " " + ind.split(" ").join("-");
             }
             return ret;
-        });
-    
-    self.svg.selectAll('circle:not(.background)')
+        })
         .on("mouseover", self.tip.show)
         .on("mouseout", self.tip.hide);
 
@@ -460,8 +479,7 @@ ScatterChartNoScope.prototype.update = function(level, year){
 
 
     //reclick anything selected
-    console.log($('.event.selected'));
-    $(`.event.selected`).click();
+    $(`.entry.selected`).trigger("click");
     $(`.legendBubble.selected`).trigger("click");
     
     
