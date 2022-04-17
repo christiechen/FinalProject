@@ -21,7 +21,7 @@ ScatterChartNoScope.prototype.initVis = function(){
 
     self.margin = { top: 60, right: 20, bottom: 40, left: 50 };
     self.svgWidth = 500; //get current width of container on page
-    self.svgHeight = 400;
+    self.svgHeight = 800;
     
     self.svg = d3.select(`#${self.sectionId}`)
             .append("svg")

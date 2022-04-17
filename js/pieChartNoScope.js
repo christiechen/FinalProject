@@ -169,7 +169,12 @@ PieChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
         .attr("fill", (data, i) => {
             let value = data.data;
             // console.log(data);
-            return self.color(value.State);
+            if(selectedOption === 'states')
+                return self.color(value.State);
+            if(selectedOption === 'areas')
+                return self.color(value.Area);
+            if(selectedOption === 'industries')
+                return self.color(value.Industry);
         })
         .attr("d", arc);
 
