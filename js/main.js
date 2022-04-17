@@ -31,7 +31,7 @@
 let correctAnswers = Array.from($('input.correct'));
 
 $('#finalSubmit').click(()=>{
-  let selectedAnswers = Array.from($('input:checked'));
+  let selectedAnswers = Array.from($('input:not(.selfreflect):checked'));
 
   let incorrect = [];
   for(let i = 0; i< selectedAnswers.length; ++i){
