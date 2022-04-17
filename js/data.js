@@ -14,6 +14,7 @@ $(function() {
                 popEstimates.get(2020).set(el.NAME, el.POPESTIMATE2020);
             })
             
+            console.log("POPESTIMATES");
             console.log(popEstimates);
 
             //get numbers to be numbers
@@ -35,10 +36,6 @@ $(function() {
 
             let origData = JSON.parse(JSON.stringify(data));
             console.log(origData);
-
-            data = data.filter((el)=> {
-                return (el.State !== 'District of Columbia')
-            })
 
             let industries = new Set();
 
@@ -63,10 +60,39 @@ $(function() {
                 
                 }
             })
-            
+
+            //keep only certain states
+            let keepVal = [
+                'California',
+                'Texas',
+                'New York',
+                'Florida',
+                'Illinois',
+                'Pennsylvania',
+                'Ohio',
+                'Georgia',
+                'North Carolina',
+                'Michigan',
+                'New Jersey',
+                'Virginia',
+                'Massachusetts',
+                'Washington',
+                'Indiana'
+                // 'Tennessee',
+                // 'Wisconsin',
+                // 'Minnesota',
+                // 'Missouri'
+            ]
+            let keepValSet = new Set(keepVal);
+
+            //remove data
+            data = data.filter((el)=> {
+                return keepValSet.has(el.State);
+            })
 
             //organize by state
             data.sort((a,b)=>(a.State - b.State));
+
 
             let dataByState = new Map();
             data.forEach((el)=>{
@@ -197,11 +223,11 @@ $(function() {
             
             //zooming into Alabama 
             //level 2: Alabama information – total employment in each major area (city
-            console.log(functions.getCityTotalsForStateByYear("Alabama", 2018));
+            // console.log(functions.getCityTotalsForStateByYear("Alabama", 2018));
 
             //zooming into a specific area for specific industries
             // level 3: Alabama major areas — employment for each industry
-            console.log(functions.getCitySpecificsByYear("Alabama", 2018, "Anniston-Oxford-Jacksonville"));
+            // console.log(functions.getCitySpecificsByYear("Alabama", 2018, "Anniston-Oxford-Jacksonville"));
 
 
             // FOR SCATTERPLOT:
