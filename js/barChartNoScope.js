@@ -5,7 +5,7 @@ function BarChartNoScope(id, functions) {
     self.functions = functions;
     self.selectedOption = "states"
     self.selectedYear = 2018
-    self.selectedState = "Alabama"
+    self.selectedState = "California";
     self.selectedArea = ""
     self.initVis();
 }
