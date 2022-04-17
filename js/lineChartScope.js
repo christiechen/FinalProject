@@ -74,13 +74,28 @@ LineChartScope.prototype.initVis = function(){
 
     self.zoomStatus = "states";
 
+    self.tip = d3.tip().attr('class', "d3-tip")
+        .direction('se')
+        .html(function (event, d) {
+            console.log(d);
+
+            let state = d[0] ? `<p> State: ${d[0]} </p>` : '';
+            let emp2018 = d[1][0].TotalEmployees ? `<p> Employment 2018: ${d[1][0].TotalEmployees} </p>` : '';
+            let emp2019 = d[1][1].TotalEmployees ? `<p> Employment 2019: ${d[1][1].TotalEmployees} </p>` : '';
+            let emp2020 = d[1][2].TotalEmployees ? `<p> Employment 2020: ${d[1][2].TotalEmployees} </p>` : '';
+
+            let text = `<div> ${state} ${emp2018} ${emp2019} ${emp2020} </div>`;
+
+            return text;
+        });
+
     self.svg.selectAll(".line")
         .data(self.sumState)
         .join("path")
         .attr("class","line")
         .attr("fill", "none")
         .attr("stroke", function(d){ return self.color(d[0]) })
-        .attr("stroke-width", 1.5)
+        .attr("stroke-width", 1.8)
         .attr("d", function(d){
             return d3.line()
                 .x(function(d) { return self.x(d.year)+50; })
@@ -90,7 +105,11 @@ LineChartScope.prototype.initVis = function(){
         .on("click",function(event,d){
             //console.log(d[0]);
             self.update(d[0]);
-        });
+        })
+        .on("mouseover", self.tip.show)
+        .on("mouseout", self.tip.hide);
+
+    self.svg.call(self.tip);
 }
 
 //Update the chart
@@ -129,13 +148,26 @@ LineChartScope.prototype.update = function(group) {
         self.y.domain([0, d3.max(self.areaData, function(d) { return d.TotalEmployees; })])
         self.svg.select("#yAxis").call(d3.axisLeft(self.y));
 
+        self.tip.html(function (event, d) {
+                console.log(d);
+
+                let area = d[0] ? `<p> Area: ${d[0]} </p>` : '';
+                let emp2018 = d[1][0].TotalEmployees ? `<p> Employment 2018: ${d[1][0].TotalEmployees} </p>` : '';
+                let emp2019 = d[1][1].TotalEmployees ? `<p> Employment 2019: ${d[1][1].TotalEmployees} </p>` : '';
+                let emp2020 = d[1][2].TotalEmployees ? `<p> Employment 2020: ${d[1][2].TotalEmployees} </p>` : '';
+
+                let text = `<div> ${area} ${emp2018} ${emp2019} ${emp2020} </div>`;
+
+                return text;
+            });
+
         self.svg.selectAll(".line")
             .data(self.sumArea)
             .join("path")
             .attr("class","line")
             .attr("fill", "none")
             .attr("stroke", function(d){ return self.color(d[0]) })
-            .attr("stroke-width", 1.5)
+            .attr("stroke-width", 1.8)
             .attr("d", function(d){
                 return d3.line()
                     .x(function(d) { return self.x(d.year)+50; })
@@ -143,11 +175,15 @@ LineChartScope.prototype.update = function(group) {
                     (d[1])
             })
             .on("click",function(event,d){
-                //console.log(d[0]);
+                console.log(d[0]);
                 self.update(d[0]);
-            });
+            })
+            .on("mouseover", self.tip.show)
+            .on("mouseout", self.tip.hide);
+
+
     }
-    else {
+    else if (self.zoomStatus==="areas"){
         self.zoomStatus = "industries";
 
         let industries2018 = self.functions.getCitySpecificsByYear(self.stateStatus, 2018, group);
@@ -179,19 +215,76 @@ LineChartScope.prototype.update = function(group) {
         self.y.domain([0, d3.max(self.industryData, function(d) { return d.Employees; })])
         self.svg.select("#yAxis").call(d3.axisLeft(self.y));
 
+        self.tip.html(function (event, d) {
+            console.log(d);
+
+            let industry = d[0] ? `<p> Industry: ${d[0]} </p>` : '';
+            let emp2018 = d[1][0].Employees ? `<p> Employment 2018: ${d[1][0].Employees} </p>` : '';
+            let emp2019 = d[1][1].Employees ? `<p> Employment 2019: ${d[1][1].Employees} </p>` : '';
+            let emp2020 = d[1][2].Employees ? `<p> Employment 2020: ${d[1][2].Employees} </p>` : '';
+
+            let text = `<div> ${industry} ${emp2018} ${emp2019} ${emp2020} </div>`;
+
+            return text;
+        });
+
         self.svg.selectAll(".line")
             .data(self.sumIndustry)
             .join("path")
             .attr("class","line")
             .attr("fill", "none")
             .attr("stroke", function(d){ return self.color(d[0]) })
-            .attr("stroke-width", 1.5)
+            .attr("stroke-width", 1.8)
             .attr("d", function(d){
                 return d3.line()
                     .x(function(d) { return self.x(d.year)+50; })
                     .y(function(d) { return self.y(d.Employees)+20; })
                     (d[1])
-            });
+            })
+            .on("click",function(event,d){
+                //console.log(d[0]);
+                self.update(d[0]);
+            })
+            .on("mouseover", self.tip.show)
+            .on("mouseout", self.tip.hide);
+    }
+    else {
+        self.zoomStatus = "states";
+        self.y.domain([0, d3.max(self.stateData, function(d) { return d.TotalEmployees; })])
+        self.svg.select("#yAxis").call(d3.axisLeft(self.y));
+
+        self.tip.html(function (event, d) {
+            console.log(d);
+
+            let state = d[0] ? `<p> State: ${d[0]} </p>` : '';
+            let emp2018 = d[1][0].TotalEmployees ? `<p> Employment 2018: ${d[1][0].TotalEmployees} </p>` : '';
+            let emp2019 = d[1][1].TotalEmployees ? `<p> Employment 2019: ${d[1][1].TotalEmployees} </p>` : '';
+            let emp2020 = d[1][2].TotalEmployees ? `<p> Employment 2020: ${d[1][2].TotalEmployees} </p>` : '';
+
+            let text = `<div> ${state} ${emp2018} ${emp2019} ${emp2020} </div>`;
+
+            return text;
+        });
+
+        self.svg.selectAll(".line")
+            .data(self.sumState)
+            .join("path")
+            .attr("class","line")
+            .attr("fill", "none")
+            .attr("stroke", function(d){ return self.color(d[0]) })
+            .attr("stroke-width", 1.8)
+            .attr("d", function(d){
+                return d3.line()
+                    .x(function(d) { return self.x(d.year)+50; })
+                    .y(function(d) { return self.y(d.TotalEmployees)+20; })
+                    (d[1])
+            })
+            .on("click",function(event,d){
+                //console.log(d[0]);
+                self.update(d[0]);
+            })
+            .on("mouseover", self.tip.show)
+            .on("mouseout", self.tip.hide);
     }
 
 }

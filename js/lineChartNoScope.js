@@ -71,27 +71,31 @@ LineChartNoScope.prototype.initVis = function(){
     self.industryData = [];
 
     self.functions.dataByIndustry.forEach(function(element,industry){
+        console.log(element);
         if (industry!=="Total"){
             element.forEach(function(el,year){
-                let sumTotalforIndustry = 0;
+                //console.log(el);
+                //let sumTotalforIndustry = 0;
                 el.forEach(function(e,state){
+                    console.log(e);
                     e.forEach(function(numEmployees,area){
-                        if (area==="Total"){
+                        if (area!=="Total"){
                             if (isNaN(numEmployees)) {
                                 numEmployees = 0;
                             }
-                            sumTotalforIndustry+=numEmployees;
+                            self.industryData.push({"Industry": industry, "Employees":numEmployees, "Year": year, "State":state,"Area":area});
+                            //sumTotalforIndustry+=numEmployees;
                         }
                     });
                 });
-                self.industryData.push({"Industry": industry, "Employees":sumTotalforIndustry, "Year": year})
+                //self.industryData.push({"Industry": industry, "Employees":sumTotalforIndustry, "Year": year})
             });
         }
     });
 
     //console.log(self.industryData);
 
-    self.sumIndustry = d3.group(self.industryData,(d)=>d.Industry);
+    self.sumIndustry = d3.group(self.industryData,(d)=>d.Industry,(d)=>d.Area);
     console.log(self.sumIndustry);
 
     let allGroup = ["states","areas","industries"]
@@ -128,12 +132,27 @@ LineChartNoScope.prototype.initVis = function(){
 
     // color palette
     self.color = d3.scaleOrdinal()
-        .range(['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00','#ffff33','#a65628','#f781bf','#999999'])
+        .range(['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00','#ffff33','#a65628','#f781bf','#999999']);
+
+    self.tip = d3.tip().attr('class', "d3-tip")
+        .direction('se')
+        .html(function(event, d) {
+
+            let state = d[0] ? `<p> State: ${d[0]} </p>` : '';
+            let emp2018 = d[1][0].TotalEmployees ? `<p> Employment 2018: ${d[1][0].TotalEmployees} </p>` : '';
+            let emp2019 = d[1][1].TotalEmployees ? `<p> Employment 2019: ${d[1][1].TotalEmployees} </p>` : '';
+            let emp2020 = d[1][2].TotalEmployees ? `<p> Employment 2020: ${d[1][2].TotalEmployees} </p>` : '';
+
+            let text = `<div> ${state} ${emp2018} ${emp2019} ${emp2020} </div>`;
+
+            return text;
+
+        });
 
     self.svg.selectAll(".line")
         .data(self.sumState)
         .join("path")
-        .attr("class","line")
+        .attr("class",function(d){return "line "+ d[0].split(" ").join("-")})
         .attr("fill", "none")
         .attr("stroke", function(d){ return self.color(d[0]) })
         .attr("stroke-width", 1.5)
@@ -142,7 +161,9 @@ LineChartNoScope.prototype.initVis = function(){
                 .x(function(d) { return self.x(d.year)+50; })
                 .y(function(d) { return self.y(d.TotalEmployees)+20; })
                 (d[1])
-        });
+        })
+        .on("mouseover", self.tip.show)
+        .on("mouseout", self.tip.hide);
 
     // When the button is changed, run the updateChart function
     d3.select("#selectButton").on("change", function(event,d) {
@@ -151,6 +172,77 @@ LineChartNoScope.prototype.initVis = function(){
         // run the updateChart function with this selected option
         self.update(selectedOption)
     });
+
+    self.svg.call(self.tip);
+
+    // get all states
+    let allStates = self.functions.getAllStates();
+
+    // legends
+    //fill state legend
+    d3.select(`#${self.sectionId} .lineLegend`)
+        .selectAll('.legendBubble')
+        .data(allStates)
+        .enter()
+        .append("div")
+        .attr("class", 'legendBubble')
+        .text((d) => {
+            return d;
+        });
+
+    //click on state legend
+    $(`#${self.sectionId} .lineLegend .legendBubble`).click(function(event){
+        let selected = this.innerText.split(" ").join("-");
+
+
+        // turn all circles full opacity, remove background class
+        let allLines = Array.from($(`#${self.sectionId} svg .line`));
+        //console.log(allLines);
+        allLines.forEach((el)=>{
+            let currentClass = ($(el).attr("class"));
+            //console.log(currentClass);
+            if(currentClass.indexOf(' background') !== -1){
+                currentClass = currentClass.substring(0, currentClass.indexOf(" background"));
+                //console.log(currentClass);
+            }
+            $(el).attr("class", currentClass);
+        })
+
+
+        // //if there is a industry selected in other legend
+        // let industry = '';
+        // if($(`.entry.selected`).length > 0){
+        //     industry = $(`.entry.selected`)[0].innerText.toString().replaceAll(',','').split(" ").join("-");
+        //     //turn other not-selected states low-opacity, add background class
+        //     let otherIndustryCircles = Array.from($(`#${self.sectionId} svg circle:not(.${industry})`));
+        //     otherIndustryCircles.forEach((el)=>{
+        //         let currentClass = ($(el).attr("class")) + ' background';
+        //         $(el).attr("class", currentClass);
+        //     })
+        //
+        // }
+        //
+        //if we're unselecting
+        if($(this).hasClass('selected')){
+            $(this).removeClass('selected');
+            return;
+        }
+
+        //switch current legend click to bold text
+        $(`#${self.sectionId} .lineLegend .legendBubble`).removeClass("selected");
+        $(this).addClass("selected");
+
+
+        // turn all other circles low opacity
+        let otherLines = Array.from($(`#${self.sectionId} svg .line:not(.${selected})`));
+        otherLines.forEach((el)=>{
+            //console.log(el);
+            let currentClass = ($(el).attr("class")) + ' background';
+            $(el).attr("class", currentClass);
+        });
+
+
+    })
 
 }
 
@@ -165,19 +257,36 @@ LineChartNoScope.prototype.update = function(selectedOption){
 
         self.svg.select("#yAxis").call(d3.axisLeft(self.y));
 
+        self.tip = d3.tip().attr('class', "d3-tip")
+            .direction('se')
+            .html(function(event, d) {
+
+                let state = d[0] ? `<p> State: ${d[0]} </p>` : '';
+                let emp2018 = d[1][0].TotalEmployees ? `<p> Employment 2018: ${d[1][0].TotalEmployees} </p>` : '';
+                let emp2019 = d[1][1].TotalEmployees ? `<p> Employment 2019: ${d[1][1].TotalEmployees} </p>` : '';
+                let emp2020 = d[1][2].TotalEmployees ? `<p> Employment 2020: ${d[1][2].TotalEmployees} </p>` : '';
+
+                let text = `<div> ${state} ${emp2018} ${emp2019} ${emp2020} </div>`;
+
+                return text;
+
+            });
+
         self.svg.selectAll(".line")
             .data(self.sumState)
             .join("path")
-            .attr("class","line")
+            .attr("class",function(d){return "line "+ d[0].split(" ").join("-");})
             .attr("fill", "none")
-            .attr("stroke", function(d){ return self.color(d[0]) })
+            .attr("stroke", function(d){ return self.color(d[0]);})
             .attr("stroke-width", 1.5)
             .attr("d", function(d){
                 return d3.line()
                     .x(function(d) { return self.x(d.year)+50; })
                     .y(function(d) { return self.y(d.TotalEmployees)+20; })
                     (d[1])
-            });
+            })
+            .on("mouseover", self.tip.show)
+            .on("mouseout", self.tip.hide);
     }
     else if (selectedOption==="areas"){
         self.y.domain([0, d3.max(self.areaData, function(d) { return d.Employees; })])
@@ -186,10 +295,25 @@ LineChartNoScope.prototype.update = function(selectedOption){
 
         self.svg.select("#yAxis").call(d3.axisLeft(self.y));
 
+        self.tip.html(function(event, d) {
+
+                console.log(d);
+
+                let area = d[0] ? `<p> Area: ${d[0]} </p>` : '';
+                let emp2018 = d[1][0].Employees ? `<p> Employment 2018: ${d[1][0].Employees} </p>` : '';
+                let emp2019 = d[1][1].Employees ? `<p> Employment 2019: ${d[1][1].Employees} </p>` : '';
+                let emp2020 = d[1][2].Employees ? `<p> Employment 2020: ${d[1][2].Employees} </p>` : '';
+
+                let text = `<div> ${area} ${emp2018} ${emp2019} ${emp2020} </div>`;
+
+                return text;
+
+            });
+
         self.svg.selectAll(".line")
             .data(self.sumArea)
             .join("path")
-            .attr("class","line")
+            .attr("class",function(d){return "line "+ d[1][0].State.split(" ").join("-")})
             .attr("fill", "none")
             .attr("stroke", function(d){ return self.color(d[0]) })
             .attr("stroke-width", 1.5)
@@ -198,12 +322,29 @@ LineChartNoScope.prototype.update = function(selectedOption){
                     .x(function(d) { return self.x(d.Year)+50; })
                     .y(function(d) { return self.y(d.Employees)+20; })
                     (d[1])
-            });
+            })
+            .on("mouseover", self.tip.show)
+            .on("mouseout", self.tip.hide);
     }
     else {
         self.y.domain([0, d3.max(self.industryData, function(d) { return d.Employees; })])
 
         self.svg.select("#yAxis").call(d3.axisLeft(self.y));
+
+        self.tip.html(function(event, d) {
+
+                console.log(d);
+
+                let industry = d[0] ? `<p> Industry: ${d[0]} </p>` : '';
+                let emp2018 = d[1][0].Employees ? `<p> Employment 2018: ${d[1][0].Employees} </p>` : '';
+                let emp2019 = d[1][1].Employees ? `<p> Employment 2019: ${d[1][1].Employees} </p>` : '';
+                let emp2020 = d[1][2].Employees ? `<p> Employment 2020: ${d[1][2].Employees} </p>` : '';
+
+                let text = `<div> ${industry} ${emp2018} ${emp2019} ${emp2020} </div>`;
+
+                return text;
+
+            });
 
         self.svg.selectAll(".line")
             .data(self.sumIndustry)
@@ -217,7 +358,9 @@ LineChartNoScope.prototype.update = function(selectedOption){
                     .x(function(d) { return self.x(d.Year)+50; })
                     .y(function(d) { return self.y(d.Employees)+20; })
                     (d[1])
-            });
+            })
+            .on("mouseover", self.tip.show)
+            .on("mouseout", self.tip.hide);
     }
 
 }

@@ -57,6 +57,9 @@
     r: 5;
 }
 
+#lineChartNoScopeSection .line.background{
+    opacity: 0.05;
+}
 
 select{
     display: block;
