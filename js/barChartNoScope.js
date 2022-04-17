@@ -24,8 +24,8 @@ BarChartNoScope.prototype.initVis = function () {
     var self = this;
 
     self.margin = { top: 30, right: 20, bottom: 60, left: 50 };
-    self.svgWidth = 500; //get current width of container on page
-    self.svgHeight = 400;
+    self.svgWidth = 700; //get current width of container on page
+    self.svgHeight = 600;
 
 
     self.svg = d3.select(`#${self.sectionId}`)
@@ -74,48 +74,29 @@ BarChartNoScope.prototype.initVis = function () {
 
 
 
-
-
-
-    d3.select("#barChartNoScopeButton").on("change", function () {
-        // recover the option that has been chosen
-        self.selectedOption = d3.select(this).property("value")
-        self.selectedYear = d3.select("#barChartNoScopeYearButton").property("value");
-        self.selectedState = d3.select("#barChartNoScopeStatesButton").property("value");
-        self.selectedArea = d3.select("#barChartNoScopeAreasButton").property("value");
-
-        // run the updateChart function with this selected option
-        self.update(self.selectedOption, self.selectedYear, self.selectedState, self.selectedArea)
-    });
-
-    d3.select("#barChartNoScopeYearButton").on("change", function () {
-        // recover the option that has been chosen
-        self.selectedYear = d3.select(this).property("value")
-        self.selectedOption = d3.select("#barChartNoScopeButton").property("value");
-        self.selectedState = d3.select("#barChartNoScopeStatesButton").property("value");
-        self.selectedArea = d3.select("#barChartNoScopeAreasButton").property("value");
-        self.update(self.selectedOption, self.selectedYear, self.selectedState, self.selectedArea)
-    })
-
     d3.select("#barChartNoScopeStatesButton").on("change", function () {
         // recover the option that has been chosen
-        self.selectedState = d3.select(this).property("value")
-        self.selectedOption = d3.select("#barChartNoScopeButton").property("value");
-        self.selectedYear = d3.select("#barChartNoScopeYearButton").property("value");
-        self.selectedArea = d3.select("#barChartNoScopeAreasButton").property("value");
 
+        var currAreas = self.functions.getAllAreasInState(d3.select(this).property("value"));
 
-        self.update(self.selectedOption, self.selectedYear, self.selectedState, self.selectedArea)
+        d3.select("#barChartNoScopeAreasButton")
+            .selectAll('option')
+            .data(currAreas)
+            .join("option")
+            .text(function (d) { return d; })
+            .attr("value", function (d) { return d; });
     })
-    d3.select("#barChartNoScopeAreasButton").on("change", function () {
+
+
+
+    d3.select(`#barChartNoScopeUpdateButton`).on("click", function (event, d) {
         // recover the option that has been chosen
-        self.selectedArea = d3.select(this).property("value")
         self.selectedYear = d3.select("#barChartNoScopeYearButton").property("value");
         self.selectedOption = d3.select("#barChartNoScopeButton").property("value");
         self.selectedState = d3.select("#barChartNoScopeStatesButton").property("value");
+        self.selectedArea = d3.select("#barChartNoScopeAreasButton").property("value");
         self.update(self.selectedOption, self.selectedYear, self.selectedState, self.selectedArea)
-    })
-
+    });
 
     self.update(self.selectedOption, self.selectedYear, self.selectedState, self.selectedArea)
 
@@ -152,8 +133,8 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
         .attr("value", function (d) { return d; });
 
     if (selectedOption == "areas") {
-        d3.select("#barChartNoScopeStatesButton").style("display", "block");
-        d3.select("#barChartNoScopeAreasButton").style("display", "none");
+        // d3.select("#barChartNoScopeStatesButton").style("display", "block");
+        // d3.select("#barChartNoScopeAreasButton").style("display", "none");
         var areaData = self.functions.getCityTotalsForStateByYear(selectedState, currYear)
         barData = areaData;
         barData.sort(function (a, b) {
@@ -181,8 +162,8 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
             .attr("class", "yAxis")
     }
     else if (selectedOption == "industries") {
-        d3.select("#barChartNoScopeStatesButton").style("display", "block");
-        d3.select("#barChartNoScopeAreasButton").style("display", "block");
+        // d3.select("#barChartNoScopeStatesButton").style("display", "block");
+        // d3.select("#barChartNoScopeAreasButton").style("display", "block");
         selectedArea = d3.select("#barChartNoScopeAreasButton").property("value");
         var indData = self.functions.getCitySpecificsByYear(selectedState, currYear, selectedArea)
         barData = indData;
@@ -196,22 +177,22 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
         y.domain([0, max])
 
         self.svg.select(".xAxis").call(d3.axisBottom(x))
-        .selectAll("text")
-        .attr("transform", "translate(-10,0)rotate(-45)")
-        .style("text-anchor", "end")
+            .selectAll("text")
+            .attr("transform", "translate(-10,0)rotate(-45)")
+            .style("text-anchor", "end")
         self.svg.select(".yAxis").call(d3.axisLeft(y))
 
         bars
             .data(barData)
             .join("rect")
-            .attr("x", function (d) { return self.margin.left +  x(d["Industry"]); })
+            .attr("x", function (d) { return self.margin.left + x(d["Industry"]); })
             .attr("y", function (d) { return y(d["Employees"]); })
             .attr("width", x.bandwidth())
             .attr("height", function (d) { return self.svgHeight - self.margin.bottom - y(d["Employees"]); })
             .attr("fill", "#69b3a2")
     } else if (selectedOption == "states") {
-        d3.select("#barChartNoScopeStatesButton").style("display", "none");
-        d3.select("#barChartNoScopeAreasButton").style("display", "none");
+        // d3.select("#barChartNoScopeStatesButton").style("display", "none");
+        // d3.select("#barChartNoScopeAreasButton").style("display", "none");
         var stateData = self.functions.getStateByYear(currYear);
         barData = stateData;
         barData.sort(function (a, b) {
@@ -224,9 +205,9 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
         y.domain([0, max])
 
         self.svg.select(".xAxis").call(d3.axisBottom(x))
-        .selectAll("text")
-        .attr("transform", "translate(-10,0)rotate(-45)")
-        .style("text-anchor", "end")
+            .selectAll("text")
+            .attr("transform", "translate(-10,0)rotate(-45)")
+            .style("text-anchor", "end")
         self.svg.select(".yAxis").call(d3.axisLeft(y))
 
         bars

@@ -25,8 +25,8 @@ PieChartNoScope.prototype.initVis = function () {
     var self = this;
 
     self.margin = { top: 60, right: 20, bottom: 60, left: 50 };
-    self.svgWidth = 500; //get current width of container on page
-    self.svgHeight = 400;
+    self.svgWidth = 700; //get current width of container on page
+    self.svgHeight = 600;
 
     self.radius = (Math.min(self.svgWidth, self.svgHeight) / 2) - 20;
 
@@ -37,7 +37,7 @@ PieChartNoScope.prototype.initVis = function () {
         .attr("height", self.svgHeight);
 
     self.color = d3.scaleOrdinal()
-        .range(['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00','#ffff33','#a65628','#f781bf','#999999'])
+        .range(['#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00', '#ffff33', '#a65628', '#f781bf', '#999999'])
 
 
     var allGroup = ["states", "areas", "industries"]
@@ -70,47 +70,33 @@ PieChartNoScope.prototype.initVis = function () {
         .attr("value", function (d) { return d; });
 
 
-    d3.select("#pieChartNoScopeButton").on("change", function () {
+    d3.select("#pieChartNoScopeStatesButton").on("change", function () {
         // recover the option that has been chosen
-        self.selectedOption = d3.select(this).property("value")
+
+        var currAreas = self.functions.getAllAreasInState(d3.select(this).property("value"));
+
+        d3.select("#pieChartNoScopeAreasButton")
+            .selectAll('option')
+            .data(currAreas)
+            .join("option")
+            .text(function (d) { return d; })
+            .attr("value", function (d) { return d; });
+
+    })
+
+
+
+    d3.select(`#pieChartNoScopeUpdateButton`).on("click", function (event, d) {
+        // recover the option that has been chosen
         self.selectedYear = d3.select("#pieChartNoScopeYearButton").property("value");
+        self.selectedOption = d3.select("#pieChartNoScopeButton").property("value");
         self.selectedState = d3.select("#pieChartNoScopeStatesButton").property("value");
         self.selectedArea = d3.select("#pieChartNoScopeAreasButton").property("value");
-
-        // run the updateChart function with this selected option
         self.update(self.selectedOption, self.selectedYear, self.selectedState, self.selectedArea)
     });
 
-    d3.select("#pieChartNoScopeYearButton").on("change", function () {
-        // recover the option that has been chosen
-        self.selectedYear = d3.select(this).property("value")
-        self.selectedOption = d3.select("#pieChartNoScopeButton").property("value");
-        self.selectedState = d3.select("#pieChartNoScopeStatesButton").property("value");
-        self.selectedArea = d3.select("#pieChartNoScopeAreasButton").property("value");
-        self.update(self.selectedOption, self.selectedYear, self.selectedState, self.selectedArea)
-    })
-
-    d3.select("#pieChartNoScopeStatesButton").on("change", function () {
-        // recover the option that has been chosen
-        self.selectedState = d3.select(this).property("value")
-        self.selectedOption = d3.select("#pieChartNoScopeButton").property("value");
-        self.selectedYear = d3.select("#pieChartNoScopeYearButton").property("value");
-        self.selectedArea = d3.select("#pieChartNoScopeAreasButton").property("value");
-
-
-        self.update(self.selectedOption, self.selectedYear, self.selectedState, self.selectedArea)
-    })
-    d3.select("#pieChartNoScopeAreasButton").on("change", function () {
-        // recover the option that has been chosen
-        self.selectedArea = d3.select(this).property("value")
-        self.selectedYear = d3.select("#pieChartNoScopeYearButton").property("value");
-        self.selectedOption = d3.select("#pieChartNoScopeButton").property("value");
-        self.selectedState = d3.select("#pieChartNoScopeStatesButton").property("value");
-        self.update(self.selectedOption, self.selectedYear, self.selectedState, self.selectedArea)
-    })
-
-
     self.update(self.selectedOption, self.selectedYear, self.selectedState, self.selectedArea)
+
 
 }
 
@@ -137,22 +123,24 @@ PieChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
         .text(function (d) { return d; })
         .attr("value", function (d) { return d; });
 
+
+
     if (selectedOption == "areas") {
-        d3.select("#pieChartNoScopeStatesButton").style("display", "block");
-        d3.select("#pieChartNoScopeAreasButton").style("display", "none");
+        // d3.select("#pieChartNoScopeStatesButton").style("display", "block");
+        // d3.select("#pieChartNoScopeAreasButton").style("display", "none");
         var areaData = self.functions.getCityTotalsForStateByYear(selectedState, currYear)
         currArcData = areaData;
     }
     else if (selectedOption == "industries") {
-        d3.select("#pieChartNoScopeStatesButton").style("display", "block");
-        d3.select("#pieChartNoScopeAreasButton").style("display", "block");
+        // d3.select("#pieChartNoScopeStatesButton").style("display", "block");
+        // d3.select("#pieChartNoScopeAreasButton").style("display", "block");
         pie = d3.pie().value(function (d) { return d["Employees"] })
         selectedArea = d3.select("#pieChartNoScopeAreasButton").property("value");
         var indData = self.functions.getCitySpecificsByYear(selectedState, currYear, selectedArea)
         currArcData = indData;
     } else if (selectedOption == "states") {
-        d3.select("#pieChartNoScopeStatesButton").style("display", "none");
-        d3.select("#pieChartNoScopeAreasButton").style("display", "none");
+        // d3.select("#pieChartNoScopeStatesButton").style("display", "none");
+        // d3.select("#pieChartNoScopeAreasButton").style("display", "none");
         var stateData = self.functions.getStateByYear(currYear);
         currArcData = stateData;
     }
@@ -168,7 +156,7 @@ PieChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
     // run the updateChart function with this selected option
 
     var g = self.svg.append("g")
-        .attr("transform", "translate(250,200)");
+        .attr("transform", `translate(${self.svgWidth / 2},${self.svgHeight / 2})`)
 
     var arcs = g.selectAll("arc")
         .data(pie(currArcData))
@@ -180,7 +168,7 @@ PieChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
     arcs.append("path")
         .attr("fill", (data, i) => {
             let value = data.data;
-            console.log(data);
+            // console.log(data);
             return self.color(value.State);
         })
         .attr("d", arc);
