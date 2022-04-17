@@ -201,7 +201,8 @@ ScatterChartNoScope.prototype.initVis = function(){
     // get all states
     let allStates = self.functions.getAllStates();
     
-    // legend
+    // legends
+    //fill state legend
     d3.select(`#${self.sectionId} .scatterLegend`)
         .selectAll('.legendBubble')
         .data(allStates)
@@ -212,11 +213,12 @@ ScatterChartNoScope.prototype.initVis = function(){
             return d;
         });
         
+    //click on state legend
     $(`#${self.sectionId} .scatterLegend .legendBubble`).click(function(event){
         let selected = this.innerText.split(" ").join("-");
         
 
-        // turn all circles full opacity
+        // turn all circles full opacity, remove background class
         let allCircles = Array.from($(`#${self.sectionId} svg circle`));
         allCircles.forEach((el)=>{
             let currentClass = ($(el).attr("class"));
@@ -228,11 +230,11 @@ ScatterChartNoScope.prototype.initVis = function(){
 
 
 
-        //if there is a industry selected
+        //if there is a industry selected in other legend
         let industry = '';
         if($(`.entry.selected`).length > 0){
             industry = $(`.entry.selected`)[0].innerText.toString().replaceAll(',','').split(" ").join("-");
-            //turn other not-california states low-opacity
+            //turn other not-selected states low-opacity, add background class
             let otherIndustryCircles = Array.from($(`#${self.sectionId} svg circle:not(.${industry})`));
             otherIndustryCircles.forEach((el)=>{
                 let currentClass = ($(el).attr("class")) + ' background'; 
@@ -246,6 +248,8 @@ ScatterChartNoScope.prototype.initVis = function(){
             $(this).removeClass('selected');
             return;
         }
+
+        //switch current legend click to bold text
         $(`#${self.sectionId} .scatterLegend .legendBubble`).removeClass("selected");
         $(this).addClass("selected");
 
@@ -257,10 +261,9 @@ ScatterChartNoScope.prototype.initVis = function(){
             $(el).attr("class", currentClass);
         })
 
-        //redraw other circles, potentially
-
 
     })
+
     //industry Legend
     d3.select(`#${self.sectionId} .industryLegend`)
         .selectAll('.industryLegend .entry')
@@ -271,6 +274,7 @@ ScatterChartNoScope.prototype.initVis = function(){
         .text((d)=>d)
         .attr("style", (d) => `color:${self.color(d)}`);
 
+    //click on industry legend
     $(`#${self.sectionId} .industryLegend .entry`).click(function(event){
         let selected = this.innerText.toString().replaceAll(',','').split(" ").join("-");
         
@@ -290,10 +294,11 @@ ScatterChartNoScope.prototype.initVis = function(){
 
         //if there is a state selected
         let state = '';
+
         if($(`.legendBubble.selected`).length > 0){
-            state = $(`.legendBubble.selected`)[0].innerText.split(" ").join('-');
-            console.log(state);
-            //turn other not-california states low-opacity
+            state = $(`.legendBubble.selected`)[0].innerText.split(" ").join('-'); //current selected state
+
+            //turn other not-selected states low-opacity
             let otherStateCircles = Array.from($(`#${self.sectionId} svg circle:not(.${state})`));
             otherStateCircles.forEach((el)=>{
                 let currentClass = ($(el).attr("class")) + ' background'; 
@@ -305,9 +310,10 @@ ScatterChartNoScope.prototype.initVis = function(){
          //if we're unselecting
         if($(this).hasClass('selected')){
             $(this).removeClass('selected');
-            // self.svg.select('.cover').remove();
             return;
         }
+        
+        //remove previously selected industry
         $(`#${self.sectionId} .industryLegend .entry`).removeClass("selected");
         $(this).addClass("selected");
         
@@ -321,8 +327,6 @@ ScatterChartNoScope.prototype.initVis = function(){
 
         //redraw other circles, potentially
         
-
-        console.log(selected);
 
     })
     
@@ -455,6 +459,10 @@ ScatterChartNoScope.prototype.update = function(level, year){
     
 
 
+    //reclick anything selected
+    console.log($('.event.selected'));
+    $(`.event.selected`).click();
+    $(`.legendBubble.selected`).trigger("click");
     
     
 }
