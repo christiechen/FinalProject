@@ -1,4 +1,8 @@
-  // beginning page — disabled hidden for now
+window.onbeforeunload = function(event)
+{
+    return confirm("Confirm refresh");
+};
+// beginning page — disabled hidden for now
 
   let startTime;
 // $("#intro .options button").click(function(){
