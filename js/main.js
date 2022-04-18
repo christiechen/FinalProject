@@ -1,7 +1,7 @@
-window.onbeforeunload = function(event)
-{
-    return confirm("Confirm refresh");
-};
+// window.onbeforeunload = function(event)
+// {
+//     return confirm("Confirm refresh");
+// };
 // beginning page — disabled hidden for now
 
   let startTime;
