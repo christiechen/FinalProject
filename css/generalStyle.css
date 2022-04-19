@@ -5,7 +5,8 @@ h1,
 h2,
 h3, 
 p,
-ol li{
+ol li,
+div{
     color: white;
 }
 button, 

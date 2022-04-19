@@ -21,7 +21,7 @@ ScatterChartNoScope.prototype.initVis = function(){
 
     self.margin = { top: 60, right: 20, bottom: 40, left: 50 };
     self.svgWidth = 700; //get current width of container on page
-    self.svgHeight = 770;
+    self.svgHeight = 750;
     
     self.svg = d3.select(`#${self.sectionId}`)
             .append("svg")
@@ -280,22 +280,27 @@ ScatterChartNoScope.prototype.initVis = function(){
 
         console.log(this.innerText);
         let selectedOption = d3.select("#scatterLevel").property("value");
+        if(selectedOption === "Areas"){
+            self.areaFill(this.innerText, null, false);
+        }
         if(selectedOption === "Industries"){
-            self.areaFill(this.innerText);
+            self.areaFill(this.innerText, "white", true);
+            self.industryFill();
         }
 
     })
 
     // //industry Legend
-    d3.select(`#${self.sectionId} .industryLegend`)
-        .selectAll('.industryLegend .entry')
-        .data(self.functions.getAllIndustries())
-        .enter()
-        .append('div')
-        .attr('class', 'entry')
-        .text((d)=>d)
-        .attr("style", (d) => `color:${self.color(d)}`);
-
+    self.industryFill = function() {
+        d3.select(`#${self.sectionId} .industryLegend`)
+            .selectAll('.industryLegend .entry')
+            .data(self.functions.getAllIndustries())
+            .enter()
+            .append('div')
+            .attr('class', 'entry')
+            .text((d)=>d)
+            .attr("style", (d) => `color:${self.color(d)}`);
+    }
     //click on industry legend
     // $(`#${self.sectionId} .industryLegend .entry`).click(function(event){
     //     let selected = this.innerText.toString().replaceAll(',','').split(" ").join("-");
@@ -356,12 +361,13 @@ ScatterChartNoScope.prototype.initVis = function(){
     // })
     
     //area Legend
+   
     self.areaClear = function() {
         d3.select(`#${self.sectionId} .areaLegend`)
             .selectAll('.entry')
             .remove();
     }
-    self.areaFill = function(state){
+    self.areaFill = function(state, color, clickable){
         self.areaClear();
         d3.select(`#${self.sectionId} .areaLegend`)
             .selectAll('.entry')
@@ -369,9 +375,14 @@ ScatterChartNoScope.prototype.initVis = function(){
             .enter()
             .append('div')
             .attr('class', 'entry')
-            .text((d)=>d);
+            .text((d)=>d)
+            .attr("style", (d) => color ? `color: ${color}` : `color:${self.color(d)}`);
             // .attr("style", (d) => `color:${self.color(d)}`);
          
+        if(!clickable){
+            $(`#${self.sectionId} .areaLegend`).removeClass("clickable");
+            return;
+        }
         //click on arealegend
         $(`#${self.sectionId} .areaLegend .entry`).click(function(event){
             let selected = this.innerText.toString().replaceAll(',','').split(" ").join("-");
@@ -452,8 +463,12 @@ ScatterChartNoScope.prototype.update = function(level, year){
         $(`#${self.sectionId} .areaLegend`).parent().css("display", "block");
         $(`#${self.sectionId} .industryLegend`).parent().css("display", "block");
     }
-    else{
+    else if (selectedOption === "States"){
         $(`#${self.sectionId} .areaLegend`).parent().css("display", "none");
+        $(`#${self.sectionId} .industryLegend`).parent().css("display", "none");
+    }
+    else if (selectedOption === "Areas"){
+        $(`#${self.sectionId} .areaLegend`).parent().css("display", "block");
         $(`#${self.sectionId} .industryLegend`).parent().css("display", "none");
     }
 
@@ -544,6 +559,9 @@ ScatterChartNoScope.prototype.update = function(level, year){
             }
             if(level === "Industries"){
                 return self.color(d.Industry);
+            }
+            if(level === "Areas"){
+                return self.color(d.Area)
             }
             return self.color(d.State);
         })

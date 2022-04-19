@@ -6,7 +6,7 @@ function PieChartNoScope(id, functions) {
     self.selectedOption = "states"
     self.selectedYear = 2018
     self.selectedState = "California"
-    self.selectedArea = ""
+    self.selectedArea = "Bakersfield"
 
     self.initVis();
 }
@@ -25,8 +25,8 @@ PieChartNoScope.prototype.initVis = function () {
     var self = this;
 
     self.margin = { top: 60, right: 20, bottom: 60, left: 50 };
-    self.svgWidth = 700; //get current width of container on page
-    self.svgHeight = 600;
+    self.svgWidth = 750; //get current width of container on page
+    self.svgHeight = 750;
 
     self.radius = (Math.min(self.svgWidth, self.svgHeight) / 2) - 20;
 
@@ -90,10 +90,168 @@ PieChartNoScope.prototype.initVis = function () {
         // recover the option that has been chosen
         self.selectedYear = d3.select("#pieChartNoScopeYearButton").property("value");
         self.selectedOption = d3.select("#pieChartNoScopeButton").property("value");
-        self.selectedState = d3.select("#pieChartNoScopeStatesButton").property("value");
-        self.selectedArea = d3.select("#pieChartNoScopeAreasButton").property("value");
+        // self.selectedState = d3.select("#pieChartNoScopeStatesButton").property("value");
+        // self.selectedArea = d3.select("#pieChartNoScopeAreasButton").property("value");
         self.update(self.selectedOption, self.selectedYear, self.selectedState, self.selectedArea)
     });
+
+    // legends
+    //fill state legend
+    d3.select(`#${self.sectionId} .pieLegend`)
+        .selectAll('.legendBubble')
+        .data(allStates)
+        .enter()
+        .append("div")
+        .attr("class", 'legendBubble')
+        .text((d) => {
+            return d;
+        });
+        
+    //click on state legend
+    $(`#${self.sectionId} .pieLegend .legendBubble`).click(function(event){
+        let selected = this.innerText.split(" ").join("-");
+        
+        // turn all path full opacity, remove background class
+        let allPaths = Array.from($(`#${self.sectionId} svg g g`));
+        allPaths.forEach((el)=>{
+            let currentClass = ($(el).attr("class"));
+            if(currentClass.indexOf(' background') !== -1){
+                currentClass = currentClass.substring(0, currentClass.indexOf(" background"));
+            }
+            $(el).attr("class", currentClass);
+        })
+
+
+        //if we're unselecting
+        if($(this).hasClass('selected')){
+            $(this).removeClass('selected');
+            //clear area 
+            self.areaClear();
+            return;
+        }
+
+        //switch current legend click to bold text
+        $(`#${self.sectionId} .pieLegend .legendBubble`).removeClass("selected");
+        $(this).addClass("selected");
+
+
+        // console.log(selected);
+        // turn all other circles low opacity
+        let otherPaths = Array.from($(`#${self.sectionId} svg g g:not(.${selected})`));
+        otherPaths.forEach((el)=>{
+            let currentClass = ($(el).attr("class")) + ' background'; 
+            $(el).attr("class", currentClass);
+        })
+
+        console.log(this.innerText);
+        if(self.selectedOption === "areas"){
+            self.areaFill(this.innerText, null, false);
+        }
+        if(self.selectedOption === "industries"){
+            self.areaFill(this.innerText, 'white', true);
+            self.industryFill();
+        }
+
+    })
+
+    // //industry Legend
+    self.industryFill = function(){
+        d3.select(`#${self.sectionId} .industryLegend`)
+        .selectAll('.industryLegend .entry')
+        .data(self.functions.getAllIndustries())
+        .enter()
+        .append('div')
+        .attr('class', 'entry')
+        .text((d)=>d)
+        .attr("style", (d) => `color:${self.color(d)}`);
+    }
+
+    
+    //area Legend
+    self.areaClear = function() {
+        d3.select(`#${self.sectionId} .areaLegend`)
+            .selectAll('.entry')
+            .remove();
+    }
+    self.areaFill = function(state, color, clickable){
+        self.areaClear();
+        d3.select(`#${self.sectionId} .areaLegend`)
+            .selectAll('.entry')
+            .data(self.functions.getAllAreasInState(state))
+            .enter()
+            .append('div')
+            .attr('class', 'entry')
+            .text((d)=>d)
+            .attr("style", (d) => color ? `color: ${color}` : `color:${self.color(d)}`);
+         
+        if(!clickable){
+            $(`#${self.sectionId} .areaLegend`).removeClass("clickable");
+            return;
+        }
+        //click on arealegend
+        if(!$(`#${self.sectionId} .areaLegend`).hasClass("clickable")){
+            $(`#${self.sectionId} .areaLegend`).addClass("clickable");
+        }
+        $(`#${self.sectionId} .areaLegend .entry`).click(function(event){
+            let selected = this.innerText.toString().replaceAll(',','').split(" ").join("-");
+            
+            if(self.selectedOption === "areas"){
+
+            }
+
+            // turn all circles full opacity
+            let allPaths = Array.from($(`#${self.sectionId} svg g g`));
+            
+            allPaths.forEach((el)=>{
+                let currentClass = ($(el).attr("class"));
+                if(currentClass.indexOf(' background') !== -1){
+                    currentClass = currentClass.substring(0, currentClass.indexOf(" background"));
+                }
+                $(el).attr("class", currentClass);
+            })
+
+        
+
+            //if there is a state selected
+            let state = '';
+            
+
+            if($(`.legendBubble.selected`).length > 0){
+                state = $(`.legendBubble.selected`)[0].innerText.split(" ").join('-'); //current selected state
+
+                //turn other not-selected states low-opacity
+                let otherStatePaths = Array.from($(`#${self.sectionId} svg g g:not(.${state})`));
+                otherStatePaths.forEach((el)=>{
+                    let currentClass = ($(el).attr("class")) + ' background'; 
+                    $(el).attr("class", currentClass);
+                })
+
+            }
+            
+
+
+            //if we're unselecting
+            if($(this).hasClass('selected')){
+                $(this).removeClass('selected');
+                
+                return;
+            }
+            
+            //remove previously selected area
+            $(`#${self.sectionId} .areaLegend .entry`).removeClass("selected");
+            $(this).addClass("selected");
+            console.log(selected);
+
+            // turn all other arcs low opacity
+            let otherCircles = Array.from($(`#${self.sectionId} svg g g:not(.${selected})`));
+            otherCircles.forEach((el)=>{
+                let currentClass = ($(el).attr("class")) + ' background'; 
+                $(el).attr("class", currentClass);
+            })
+            
+
+        })
+    }
 
     self.update(self.selectedOption, self.selectedYear, self.selectedState, self.selectedArea)
 
@@ -136,7 +294,11 @@ PieChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
 
     
 
-
+    //remove previous legend filtering
+    $(`#${self.sectionId} .pieLegend .selected`).removeClass('selected');
+        //clear area 
+    self.areaClear();
+     
 
 
     d3.select("#pieChartNoScopeAreasButton")
@@ -151,18 +313,25 @@ PieChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
     if (selectedOption == "areas") {
         d3.select("#pieChartNoScopeStatesButton").style("display", "block");
         d3.select("#pieChartNoScopeAreasButton").style("display", "none");
+        $(`#${self.sectionId} .industryLegend`).parent().css("display", "none");
+        $(`#${self.sectionId} .areaLegend`).parent().css("display", "block");
         currArcData = areaArcData
     }
     else if (selectedOption == "industries") {
         d3.select("#pieChartNoScopeStatesButton").style("display", "block");
         d3.select("#pieChartNoScopeAreasButton").style("display", "block");
         pie = d3.pie().value(function (d) { return d["Employees"] })
-        selectedArea = d3.select("#pieChartNoScopeAreasButton").property("value");
-        var indData = self.functions.getCitySpecificsByYear(selectedState, currYear, selectedArea)
+        // selectedArea = d3.select("#pieChartNoScopeAreasButton").property("value");
+        var indData = self.functions.getCitySpecificsByYear(selectedState, currYear, self.selectedArea)
         currArcData = indArcData
+        $(`#${self.sectionId} .industryLegend`).parent().css("display", "block");
+        $(`#${self.sectionId} .areaLegend`).parent().css("display", "block");
+
     } else if (selectedOption == "states") {
         d3.select("#pieChartNoScopeStatesButton").style("display", "none");
         d3.select("#pieChartNoScopeAreasButton").style("display", "none");
+        $(`#${self.sectionId} .industryLegend`).parent().css("display", "none");
+        $(`#${self.sectionId} .areaLegend`).parent().css("display", "none");
         var stateData = self.functions.getStateByYear(currYear);
         currArcData = stateArcData;
     }
@@ -177,13 +346,34 @@ PieChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
 
     // run the updateChart function with this selected option
 
+    self.svg.selectAll("g")
+        .remove();
+
     var g = self.svg.append("g")
         .attr("transform", `translate(${self.svgWidth / 2},${self.svgHeight / 2})`)
+
+    
 
     var arcs = g.selectAll("arc")
         .data(pie(currArcData))
         .enter()
-        .append("g");
+        .append("g")
+        .attr("class", (d)=> {
+            let state = d.data.State.split(" ").join("-");
+            let area = '';
+            let industry = '';
+            if(selectedOption === 'areas'){
+                area = d.data.Area
+                return state + ' ' + area;
+            }
+            if(selectedOption === 'industries'){
+                area = d.data.Area.replaceAll(',', '').split(" ").join('-');
+                industry = d.data.Industry.replaceAll(',', '').split(" ").join('-');
+                return state + " " + area +" " + industry;
+            }
+            return state;
+            
+        });
 
     // Appending path 
 
