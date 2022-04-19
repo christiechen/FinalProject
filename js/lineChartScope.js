@@ -56,8 +56,18 @@ LineChartScope.prototype.initVis = function(){
     self.svg
         .append("g")
         .attr("id", "xAxis")
+        .attr("class","x-axis axis")
         .attr("transform", `translate(50, ${self.svgHeight-30})`)
         .call(d3.axisBottom(self.x).ticks(2).tickFormat(d3.format("d")));
+
+    self.svg
+        .select(".x-axis")
+        .append("text")
+        .text("year")
+        .attr("x", self.svgWidth - self.margin.right-50)
+        .attr("y", 25)
+        .attr("class", "axis-label")
+        .attr("text-anchor", "end");
 
     self.y = d3
         .scaleLinear()
@@ -66,8 +76,19 @@ LineChartScope.prototype.initVis = function(){
 
     self.svg.append("g")
         .attr("id","yAxis")
+        .attr("class", "y-axis axis")
         .attr("transform",'translate(50,20)')
         .call(d3.axisLeft(self.y));
+
+    self.svg
+        .select(".y-axis")
+        .append("text")
+        .text("# employment")
+        .attr("x", 0)
+        .attr("y", -43)
+        .attr("class", "axis-label")
+        .attr("transform", "rotate(-90)")
+        .attr("text-anchor", "end");
 
     // color palette
     self.color = d3.scaleOrdinal()
