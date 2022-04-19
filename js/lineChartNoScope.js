@@ -173,9 +173,9 @@ LineChartNoScope.prototype.initVis = function(){
     // When the button is changed, run the updateChart function
     d3.select("#selectButton").on("change", function(event,d) {
         // recover the option that has been chosen
-        const selectedOption = d3.select(this).property("value")
+        self.selectedOption = d3.select(this).property("value");
         // run the updateChart function with this selected option
-        self.update(selectedOption)
+        self.update();
     });
 
     self.svg.call(self.tip);
@@ -203,6 +203,7 @@ LineChartNoScope.prototype.initVis = function(){
     $(`#${self.sectionId} .lineLegend .legendBubble`).click(function(event){
         self.stateStatus = this.innerText;
         self.updateAreaLegend(this);
+        self.colorLegendFill();
         if($(`.legendAreaBubble.selected`).length <= 0) {
             let selected = this.innerText.split(" ").join("-");
 
@@ -225,6 +226,7 @@ LineChartNoScope.prototype.initVis = function(){
                 d3.select(`#${self.sectionId} .lineAreaLegend`)
                     .selectAll('.legendAreaBubble')
                     .remove();
+                self.colorLegendFill();
                 return;
             }
 
@@ -244,21 +246,61 @@ LineChartNoScope.prototype.initVis = function(){
         }
     });
 
+    // color Legend
+    self.colorLegendFill = function() {
+        if (self.selectedOption==="areas"){
+            //console.log("selectedArea");
+            //console.log(self.stateStatus);
+            if (self.stateStatus==="All"){
+                d3.select(`#${self.sectionId} .colorLegend`)
+                    .selectAll('.colorLegend .entry')
+                    .remove();
+            }
+            else {
+                d3.select(`#${self.sectionId} .colorLegend`)
+                    .selectAll('.colorLegend .entry')
+                    .data(self.functions.getAllAreasInState(self.stateStatus))
+                    .join('div')
+                    .attr('class', 'entry')
+                    .text((d)=>d)
+                    .attr("style", (d) => `color:${self.color(d)}`);
+            }
+        }
+        else if (self.selectedOption==="industries"){
+            d3.select(`#${self.sectionId} .colorLegend`)
+                .selectAll('.colorLegend .entry')
+                .data(self.functions.getAllIndustries())
+                .enter()
+                .append('div')
+                .attr('class', 'entry')
+                .text((d)=>d)
+                .attr("style", (d) => `color:${self.color(d)}`);
+        }
+        else {
+            //console.log("selectedState");
+            d3.select(`#${self.sectionId} .colorLegend`)
+                .selectAll('.colorLegend .entry')
+                .remove();
+        }
+    }
+
 }
 
 //Update the chart
-LineChartNoScope.prototype.update = function(selectedOption){
+LineChartNoScope.prototype.update = function(){
     var self = this;
     //console.log(selectedOption);
     //self.svg.selectAll(".line").remove();
 
-    if (selectedOption==="states"){
+    if (self.selectedOption==="states"){
         self.y.domain([0, d3.max(self.stateData, function(d) { return d.TotalEmployees; })])
 
         self.svg.select("#yAxis").call(d3.axisLeft(self.y));
 
         $(`#${self.sectionId} .lineAreaLegend`).css("display", "none");
         $(`#${self.sectionId} .colorLegend`).css("display", "none");
+
+        self.colorLegendFill();
 
         self.svg.selectAll(".line")
             .data(self.sumState)
@@ -276,7 +318,7 @@ LineChartNoScope.prototype.update = function(selectedOption){
             .on("mouseover", self.tip.show)
             .on("mouseout", self.tip.hide);
     }
-    else if (selectedOption==="areas"){
+    else if (self.selectedOption==="areas"){
         self.y.domain([0, d3.max(self.areaData, function(d) { return d.Employees; })])
 
         //console.log(self.sumArea);
@@ -285,6 +327,7 @@ LineChartNoScope.prototype.update = function(selectedOption){
 
         $(`#${self.sectionId} .lineAreaLegend`).css("display", "none");
         $(`#${self.sectionId} .colorLegend`).css("display", "block");
+        self.colorLegendFill();
 
         //console.log(self.sumArea);
 
@@ -293,7 +336,7 @@ LineChartNoScope.prototype.update = function(selectedOption){
             .join("path")
             .attr("class",function(d){return "line "+ d[1][0].State.split(" ").join("-")+" "+d[0].split(" ").join("-")})
             .attr("fill", "none")
-            .attr("stroke", function(d){ return self.color(d[0]) })
+            .attr("stroke", function(d){ return self.color(d[1][0].Area) })
             .attr("stroke-width", 1.5)
             .attr("d", function(d){
                 return d3.line()
@@ -311,6 +354,7 @@ LineChartNoScope.prototype.update = function(selectedOption){
 
         $(`#${self.sectionId} .lineAreaLegend`).css("display", "block");
         $(`#${self.sectionId} .colorLegend`).css("display", "block");
+        self.colorLegendFill();
 
         //console.log(self.sumIndustry);
 
@@ -319,7 +363,7 @@ LineChartNoScope.prototype.update = function(selectedOption){
             .join("path")
             .attr("class",function(d){return "line "+ d[1][0].State.split(" ").join("-")+" "+d[1][0].State.split(" ").join("-")+"-"+d[1][0].Area.split(" ").join("-")+" "+d[1][0].Industry.split(" ").join("-")})
             .attr("fill", "none")
-            .attr("stroke", function(d){ return self.color(d[0]) })
+            .attr("stroke", function(d){ return self.color(d[1][0].Industry) })
             .attr("stroke-width", 1.5)
             .attr("d", function(d){
                 return d3.line()
@@ -353,6 +397,7 @@ LineChartNoScope.prototype.updateAreaLegend = function(stateThis){
             let selected = this.innerText.split(" ").join("-");
             //console.log(event);
             //console.log(selected);
+            self.colorLegendFill();
 
             // turn all lines full opacity, remove background class
             let allLines = Array.from($(`#${self.sectionId} svg .line`));
