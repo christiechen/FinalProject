@@ -89,7 +89,9 @@
 
 #lineChartScopeSection .line:hover{
     stroke-width: 4px;
-
+}
+#lineChartNoScopeSection .line{
+    stroke-width: 2px;
 }
 
 select{
