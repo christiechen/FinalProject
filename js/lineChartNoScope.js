@@ -196,6 +196,7 @@ LineChartNoScope.prototype.initVis = function(){
         });
 
     $(`#${self.sectionId} .lineAreaLegend`).css("display", "none");
+    $(`#${self.sectionId} .colorLegend`).css("display", "none");
     self.stateStatus = "All";
 
     //click on state legend
@@ -257,6 +258,7 @@ LineChartNoScope.prototype.update = function(selectedOption){
         self.svg.select("#yAxis").call(d3.axisLeft(self.y));
 
         $(`#${self.sectionId} .lineAreaLegend`).css("display", "none");
+        $(`#${self.sectionId} .colorLegend`).css("display", "none");
 
         self.svg.selectAll(".line")
             .data(self.sumState)
@@ -282,6 +284,7 @@ LineChartNoScope.prototype.update = function(selectedOption){
         self.svg.select("#yAxis").call(d3.axisLeft(self.y));
 
         $(`#${self.sectionId} .lineAreaLegend`).css("display", "none");
+        $(`#${self.sectionId} .colorLegend`).css("display", "block");
 
         //console.log(self.sumArea);
 
@@ -307,6 +310,7 @@ LineChartNoScope.prototype.update = function(selectedOption){
         self.svg.select("#yAxis").call(d3.axisLeft(self.y));
 
         $(`#${self.sectionId} .lineAreaLegend`).css("display", "block");
+        $(`#${self.sectionId} .colorLegend`).css("display", "block");
 
         //console.log(self.sumIndustry);
 
