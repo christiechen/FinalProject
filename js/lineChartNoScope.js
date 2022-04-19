@@ -200,7 +200,6 @@ LineChartNoScope.prototype.initVis = function(){
 
     //click on state legend
     $(`#${self.sectionId} .lineLegend .legendBubble`).click(function(event){
-        //console.log(this.innerText);
         self.stateStatus = this.innerText;
         self.updateAreaLegend(this);
         if($(`.legendAreaBubble.selected`).length <= 0) {
@@ -222,7 +221,9 @@ LineChartNoScope.prototype.initVis = function(){
             if ($(this).hasClass('selected')) {
                 $(this).removeClass('selected');
                 self.stateStatus = "All";
-                self.updateAreaLegend(this);
+                d3.select(`#${self.sectionId} .lineAreaLegend`)
+                    .selectAll('.legendAreaBubble')
+                    .remove();
                 return;
             }
 
@@ -233,6 +234,7 @@ LineChartNoScope.prototype.initVis = function(){
 
             // turn all other circles low opacity
             let otherLines = Array.from($(`#${self.sectionId} svg .line:not(.${selected})`));
+            //console.log(otherLines);
             otherLines.forEach((el) => {
                 //console.log(el);
                 let currentClass = ($(el).attr("class")) + ' background';
@@ -330,6 +332,7 @@ LineChartNoScope.prototype.update = function(selectedOption){
 //Update the second legend
 LineChartNoScope.prototype.updateAreaLegend = function(stateThis){
     var self = this;
+    console.log("twice?");
     if (self.stateStatus !== "All") {
         //fill area legend
         d3.select(`#${self.sectionId} .lineAreaLegend`)
@@ -341,23 +344,17 @@ LineChartNoScope.prototype.updateAreaLegend = function(stateThis){
                 return d;
             });
     }
-    else {
-        d3.select(`#${self.sectionId} .lineAreaLegend`)
-            .selectAll('.legendAreaBubble')
-            .remove();
-    }
 
     //click on area legend
     $(`#${self.sectionId} .lineAreaLegend .legendAreaBubble`).click(function(event){
         let selected = this.innerText.split(" ").join("-");
-        console.log(this.innerText);
+        console.log(selected);
 
         // turn all lines full opacity, remove background class
         let allLines = Array.from($(`#${self.sectionId} svg .line`));
         //console.log(allLines);
         allLines.forEach((el) => {
             let currentClass = ($(el).attr("class"));
-            //console.log(currentClass);
             if (currentClass.indexOf(' background') !== -1) {
                 currentClass = currentClass.substring(0, currentClass.indexOf(" background"));
                 //console.log(currentClass);
@@ -365,11 +362,13 @@ LineChartNoScope.prototype.updateAreaLegend = function(stateThis){
             $(el).attr("class", currentClass);
         });
 
+        console.log(this);
+
         //if we're unselecting
         if ($(this).hasClass('selected')) {
             //console.log(stateThis);
             $(this).removeClass('selected');
-            // turn all other circles low opacity
+            // turn all other lines low opacity
             let otherStateLines = Array.from($(`#${self.sectionId} svg .line:not(.${stateThis.innerText.split(" ").join("-")})`));
             //console.log(otherStateLines);
             otherStateLines.forEach((el) => {
@@ -385,7 +384,7 @@ LineChartNoScope.prototype.updateAreaLegend = function(stateThis){
         $(this).addClass("selected");
 
         // turn all other lines low opacity
-        let otherLines = Array.from($(`#${self.sectionId} svg .line:not(.${selected})`));
+        let otherLines = Array.from($(`#${self.sectionId} svg .line:not(.${stateThis.innerText.split(" ").join("-")+"-"+selected})`));
         otherLines.forEach((el) => {
             //console.log(el);
             let currentClass = ($(el).attr("class")) + ' background';
