@@ -116,6 +116,29 @@ PieChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
 
     var currAreas = self.functions.getAllAreasInState(selectedState);
 
+    var areaArcData = []
+    var stateArcData = []
+    var indArcData = []
+
+    var stateData = self.functions.getStateByYear(currYear);
+    stateData.forEach(function (f) {
+        stateArcData.push(f)
+        var tempAreas = self.functions.getCityTotalsForStateByYear(f["State"], currYear)
+        tempAreas.forEach(function (g) {
+            areaArcData.push(g)
+            var tempInds = self.functions.getCitySpecificsByYear(f["State"], currYear, g["Area"])
+            tempInds.forEach(function(h){
+                indArcData.push(h)
+            })
+        })
+
+    })
+
+    
+
+
+
+
     d3.select("#pieChartNoScopeAreasButton")
         .selectAll('option')
         .data(currAreas)
@@ -128,8 +151,7 @@ PieChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
     if (selectedOption == "areas") {
         d3.select("#pieChartNoScopeStatesButton").style("display", "block");
         d3.select("#pieChartNoScopeAreasButton").style("display", "none");
-        var areaData = self.functions.getCityTotalsForStateByYear(selectedState, currYear)
-        currArcData = areaData;
+        currArcData = areaArcData
     }
     else if (selectedOption == "industries") {
         d3.select("#pieChartNoScopeStatesButton").style("display", "block");
@@ -137,12 +159,12 @@ PieChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
         pie = d3.pie().value(function (d) { return d["Employees"] })
         selectedArea = d3.select("#pieChartNoScopeAreasButton").property("value");
         var indData = self.functions.getCitySpecificsByYear(selectedState, currYear, selectedArea)
-        currArcData = indData;
+        currArcData = indArcData
     } else if (selectedOption == "states") {
         d3.select("#pieChartNoScopeStatesButton").style("display", "none");
         d3.select("#pieChartNoScopeAreasButton").style("display", "none");
         var stateData = self.functions.getStateByYear(currYear);
-        currArcData = stateData;
+        currArcData = stateArcData;
     }
 
     // sort the arc data by state so that the hover is more useful
@@ -169,11 +191,11 @@ PieChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
         .attr("fill", (data, i) => {
             let value = data.data;
             // console.log(data);
-            if(selectedOption === 'states')
+            if (selectedOption === 'states')
                 return self.color(value.State);
-            if(selectedOption === 'areas')
+            if (selectedOption === 'areas')
                 return self.color(value.Area);
-            if(selectedOption === 'industries')
+            if (selectedOption === 'industries')
                 return self.color(value.Industry);
         })
         .attr("d", arc);

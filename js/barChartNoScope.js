@@ -114,6 +114,24 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
 
     var currAreas = self.functions.getAllAreasInState(selectedState);
 
+    var areaBars = []
+    var stateBars = []
+    var indBars = []
+
+    var stateData = self.functions.getStateByYear(currYear);
+    stateData.forEach(function (f) {
+        stateBars.push(f)
+        var tempAreas = self.functions.getCityTotalsForStateByYear(f["State"], currYear)
+        tempAreas.forEach(function (g) {
+            areaBars.push(g)
+            var tempInds = self.functions.getCitySpecificsByYear(f["State"], currYear, g["Area"])
+            tempInds.forEach(function(h){
+                indBars.push(h)
+            })
+        })
+
+    })
+
 
     var x = d3.scaleBand()
         .range([0, self.svgWidth - self.margin.left - self.margin.right])
@@ -135,8 +153,8 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
     if (selectedOption == "areas") {
         d3.select("#barChartNoScopeStatesButton").style("display", "block");
      d3.select("#barChartNoScopeAreasButton").style("display", "none");
-        var areaData = self.functions.getCityTotalsForStateByYear(selectedState, currYear)
-        barData = areaData;
+        // var areaData = self.functions.getCityTotalsForStateByYear(selectedState, currYear)
+        barData = areaBars;
         barData.sort(function (a, b) {
             return a["TotalEmployees"] - b["TotalEmployees"]
         })
@@ -165,8 +183,8 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
         d3.select("#barChartNoScopeStatesButton").style("display", "block");
         d3.select("#barChartNoScopeAreasButton").style("display", "block");
         selectedArea = d3.select("#barChartNoScopeAreasButton").property("value");
-        var indData = self.functions.getCitySpecificsByYear(selectedState, currYear, selectedArea)
-        barData = indData;
+        // var indData = self.functions.getCitySpecificsByYear(selectedState, currYear, selectedArea)
+        barData = indBars;
         barData.sort(function (a, b) {
             return a["Employees"] - b["Employees"]
         })
@@ -193,8 +211,8 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
     } else if (selectedOption == "states") {
         d3.select("#barChartNoScopeStatesButton").style("display", "none");
         d3.select("#barChartNoScopeAreasButton").style("display", "none");
-        var stateData = self.functions.getStateByYear(currYear);
-        barData = stateData;
+        // var stateData = self.functions.getStateByYear(currYear);
+        barData = stateBars;
         barData.sort(function (a, b) {
             return a["TotalEmployees"] - b["TotalEmployees"]
         })
