@@ -133,8 +133,8 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
         .attr("value", function (d) { return d; });
 
     if (selectedOption == "areas") {
-        // d3.select("#barChartNoScopeStatesButton").style("display", "block");
-        // d3.select("#barChartNoScopeAreasButton").style("display", "none");
+        d3.select("#barChartNoScopeStatesButton").style("display", "block");
+     d3.select("#barChartNoScopeAreasButton").style("display", "none");
         var areaData = self.functions.getCityTotalsForStateByYear(selectedState, currYear)
         barData = areaData;
         barData.sort(function (a, b) {
@@ -162,8 +162,8 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
             .attr("class", "yAxis")
     }
     else if (selectedOption == "industries") {
-        // d3.select("#barChartNoScopeStatesButton").style("display", "block");
-        // d3.select("#barChartNoScopeAreasButton").style("display", "block");
+        d3.select("#barChartNoScopeStatesButton").style("display", "block");
+        d3.select("#barChartNoScopeAreasButton").style("display", "block");
         selectedArea = d3.select("#barChartNoScopeAreasButton").property("value");
         var indData = self.functions.getCitySpecificsByYear(selectedState, currYear, selectedArea)
         barData = indData;
@@ -191,8 +191,8 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
             .attr("height", function (d) { return self.svgHeight - self.margin.bottom - y(d["Employees"]); })
             .attr("fill", "#69b3a2")
     } else if (selectedOption == "states") {
-        // d3.select("#barChartNoScopeStatesButton").style("display", "none");
-        // d3.select("#barChartNoScopeAreasButton").style("display", "none");
+        d3.select("#barChartNoScopeStatesButton").style("display", "none");
+        d3.select("#barChartNoScopeAreasButton").style("display", "none");
         var stateData = self.functions.getStateByYear(currYear);
         barData = stateData;
         barData.sort(function (a, b) {
