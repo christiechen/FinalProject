@@ -97,7 +97,7 @@ LineChartNoScope.prototype.initVis = function(){
     //console.log(self.industryData);
 
     self.sumIndustry = d3.group(self.industryData,(d)=>d.Class);
-    console.log(self.sumIndustry);
+    //console.log(self.sumIndustry);
 
     let allGroup = ["states","areas","industries"]
 
@@ -195,7 +195,7 @@ LineChartNoScope.prototype.initVis = function(){
             return d;
         });
 
-    $(`#${self.sectionId} .lineAreaLegend`).attr("style", "display:none");
+    $(`#${self.sectionId} .lineAreaLegend`).css("display", "none");
     self.stateStatus = "All";
 
     //click on state legend
@@ -256,7 +256,7 @@ LineChartNoScope.prototype.update = function(selectedOption){
 
         self.svg.select("#yAxis").call(d3.axisLeft(self.y));
 
-        $(`#${self.sectionId} .lineAreaLegend`).attr("style", "display:none");
+        $(`#${self.sectionId} .lineAreaLegend`).css("display", "none");
 
         self.svg.selectAll(".line")
             .data(self.sumState)
@@ -281,9 +281,9 @@ LineChartNoScope.prototype.update = function(selectedOption){
 
         self.svg.select("#yAxis").call(d3.axisLeft(self.y));
 
-        $(`#${self.sectionId} .lineAreaLegend`).attr("style", "display:none");
+        $(`#${self.sectionId} .lineAreaLegend`).css("display", "none");
 
-        console.log(self.sumArea);
+        //console.log(self.sumArea);
 
         self.svg.selectAll(".line")
             .data(self.sumArea)
@@ -306,9 +306,9 @@ LineChartNoScope.prototype.update = function(selectedOption){
 
         self.svg.select("#yAxis").call(d3.axisLeft(self.y));
 
-        $(`#${self.sectionId} .lineAreaLegend`).attr("style", "display:block");
+        $(`#${self.sectionId} .lineAreaLegend`).css("display", "block");
 
-        console.log(self.sumIndustry);
+        //console.log(self.sumIndustry);
 
         self.svg.selectAll(".line")
             .data(self.sumIndustry)
@@ -332,7 +332,6 @@ LineChartNoScope.prototype.update = function(selectedOption){
 //Update the second legend
 LineChartNoScope.prototype.updateAreaLegend = function(stateThis){
     var self = this;
-    console.log("twice?");
     if (self.stateStatus !== "All") {
         //fill area legend
         d3.select(`#${self.sectionId} .lineAreaLegend`)
@@ -343,54 +342,56 @@ LineChartNoScope.prototype.updateAreaLegend = function(stateThis){
             .text((d) => {
                 return d;
             });
-    }
 
-    //click on area legend
-    $(`#${self.sectionId} .lineAreaLegend .legendAreaBubble`).click(function(event){
-        let selected = this.innerText.split(" ").join("-");
-        console.log(selected);
+        //click on area legend
+        $(`#${self.sectionId} .lineAreaLegend .legendAreaBubble`).click(function (event) {
+            event.stopImmediatePropagation();
+            let selected = this.innerText.split(" ").join("-");
+            //console.log(event);
+            //console.log(selected);
 
-        // turn all lines full opacity, remove background class
-        let allLines = Array.from($(`#${self.sectionId} svg .line`));
-        //console.log(allLines);
-        allLines.forEach((el) => {
-            let currentClass = ($(el).attr("class"));
-            if (currentClass.indexOf(' background') !== -1) {
-                currentClass = currentClass.substring(0, currentClass.indexOf(" background"));
-                //console.log(currentClass);
+            // turn all lines full opacity, remove background class
+            let allLines = Array.from($(`#${self.sectionId} svg .line`));
+            //console.log(allLines);
+            allLines.forEach((el) => {
+                let currentClass = ($(el).attr("class"));
+                if (currentClass.indexOf(' background') !== -1) {
+                    currentClass = currentClass.substring(0, currentClass.indexOf(" background"));
+                    //console.log(currentClass);
+                }
+                $(el).attr("class", currentClass);
+            });
+
+            //console.log(this);
+
+            //if we're unselecting
+            if ($(this).hasClass('selected')) {
+                //console.log(stateThis);
+                $(this).removeClass('selected');
+                // turn all other lines low opacity
+                let otherStateLines = Array.from($(`#${self.sectionId} svg .line:not(.${self.stateStatus.split(" ").join("-")})`));
+                //console.log(otherStateLines);
+                otherStateLines.forEach((el) => {
+                    //console.log(el);
+                    let currentClass = ($(el).attr("class")) + ' background';
+                    $(el).attr("class", currentClass);
+                });
+                return;
             }
-            $(el).attr("class", currentClass);
-        });
 
-        console.log(this);
+            //switch current legend click to bold text
+            $(`#${self.sectionId} .lineAreaLegend .legendAreaBubble`).removeClass("selected");
+            $(this).addClass("selected");
 
-        //if we're unselecting
-        if ($(this).hasClass('selected')) {
-            //console.log(stateThis);
-            $(this).removeClass('selected');
             // turn all other lines low opacity
-            let otherStateLines = Array.from($(`#${self.sectionId} svg .line:not(.${stateThis.innerText.split(" ").join("-")})`));
-            //console.log(otherStateLines);
-            otherStateLines.forEach((el) => {
+            let otherLines = Array.from($(`#${self.sectionId} svg .line:not(.${self.stateStatus.split(" ").join("-") + "-" + selected})`));
+            otherLines.forEach((el) => {
                 //console.log(el);
                 let currentClass = ($(el).attr("class")) + ' background';
                 $(el).attr("class", currentClass);
             });
-            return;
-        }
-
-        //switch current legend click to bold text
-        $(`#${self.sectionId} .lineAreaLegend .legendAreaBubble`).removeClass("selected");
-        $(this).addClass("selected");
-
-        // turn all other lines low opacity
-        let otherLines = Array.from($(`#${self.sectionId} svg .line:not(.${stateThis.innerText.split(" ").join("-")+"-"+selected})`));
-        otherLines.forEach((el) => {
-            //console.log(el);
-            let currentClass = ($(el).attr("class")) + ' background';
-            $(el).attr("class", currentClass);
         });
-    });
+    }
 }
 
 
