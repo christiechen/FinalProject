@@ -78,13 +78,13 @@ LineChartNoScope.prototype.initVis = function(){
                 //console.log(el);
                 //let sumTotalforIndustry = 0;
                 el.forEach(function(e,state){
-                    console.log(e);
+                    //console.log(e);
                     e.forEach(function(numEmployees,area){
                         if (area!=="Total"){
                             if (isNaN(numEmployees)) {
                                 numEmployees = 0;
                             }
-                            self.industryData.push({"Industry": industry, "Employees":numEmployees, "Year": year, "State":state,"Area":area});
+                            self.industryData.push({"Industry": industry, "Employees":numEmployees, "Year": year, "State":state,"Area":area, "Class":area+industry});
                             //sumTotalforIndustry+=numEmployees;
                         }
                     });
@@ -96,7 +96,7 @@ LineChartNoScope.prototype.initVis = function(){
 
     //console.log(self.industryData);
 
-    self.sumIndustry = d3.group(self.industryData,(d)=>d.Industry,(d)=>d.Area);
+    self.sumIndustry = d3.group(self.industryData,(d)=>d.Class);
     console.log(self.sumIndustry);
 
     let allGroup = ["states","areas","industries"]
@@ -191,8 +191,11 @@ LineChartNoScope.prototype.initVis = function(){
             return d;
         });
 
+    $(`#${self.sectionId} .lineAreaLegend`).attr("style", "display:none");
+
     //click on state legend
     $(`#${self.sectionId} .lineLegend .legendBubble`).click(function(event){
+        //console.log(this.innerText);
         let selected = this.innerText.split(" ").join("-");
 
 
@@ -207,22 +210,8 @@ LineChartNoScope.prototype.initVis = function(){
                 //console.log(currentClass);
             }
             $(el).attr("class", currentClass);
-        })
+        });
 
-
-        // //if there is a industry selected in other legend
-        // let industry = '';
-        // if($(`.entry.selected`).length > 0){
-        //     industry = $(`.entry.selected`)[0].innerText.toString().replaceAll(',','').split(" ").join("-");
-        //     //turn other not-selected states low-opacity, add background class
-        //     let otherIndustryCircles = Array.from($(`#${self.sectionId} svg circle:not(.${industry})`));
-        //     otherIndustryCircles.forEach((el)=>{
-        //         let currentClass = ($(el).attr("class")) + ' background';
-        //         $(el).attr("class", currentClass);
-        //     })
-        //
-        // }
-        //
         //if we're unselecting
         if($(this).hasClass('selected')){
             $(this).removeClass('selected');
@@ -243,7 +232,7 @@ LineChartNoScope.prototype.initVis = function(){
         });
 
 
-    })
+    });
 
 }
 
@@ -272,6 +261,47 @@ LineChartNoScope.prototype.update = function(selectedOption){
                 return text;
 
             });
+
+        //click on state legend
+        $(`#${self.sectionId} .lineLegend .legendBubble`).click(function(event){
+            //console.log(this.innerText);
+            let selected = this.innerText.split(" ").join("-");
+
+
+            // turn all circles full opacity, remove background class
+            let allLines = Array.from($(`#${self.sectionId} svg .line`));
+            //console.log(allLines);
+            allLines.forEach((el)=>{
+                let currentClass = ($(el).attr("class"));
+                //console.log(currentClass);
+                if(currentClass.indexOf(' background') !== -1){
+                    currentClass = currentClass.substring(0, currentClass.indexOf(" background"));
+                    //console.log(currentClass);
+                }
+                $(el).attr("class", currentClass);
+            });
+
+            //if we're unselecting
+            if($(this).hasClass('selected')){
+                $(this).removeClass('selected');
+                return;
+            }
+
+            //switch current legend click to bold text
+            $(`#${self.sectionId} .lineLegend .legendBubble`).removeClass("selected");
+            $(this).addClass("selected");
+
+
+            // turn all other circles low opacity
+            let otherLines = Array.from($(`#${self.sectionId} svg .line:not(.${selected})`));
+            otherLines.forEach((el)=>{
+                //console.log(el);
+                let currentClass = ($(el).attr("class")) + ' background';
+                $(el).attr("class", currentClass);
+            });
+
+
+        });
 
         self.svg.selectAll(".line")
             .data(self.sumState)
@@ -336,7 +366,7 @@ LineChartNoScope.prototype.update = function(selectedOption){
 
                 console.log(d);
 
-                let industry = d[0] ? `<p> Industry: ${d[0]} </p>` : '';
+                let industry = d[1][0].Industry ? `<p> Industry: ${d[1][0].Industry} </p>` : '';
                 let emp2018 = d[1][0].Employees ? `<p> Employment 2018: ${d[1][0].Employees} </p>` : '';
                 let emp2019 = d[1][1].Employees ? `<p> Employment 2019: ${d[1][1].Employees} </p>` : '';
                 let emp2020 = d[1][2].Employees ? `<p> Employment 2020: ${d[1][2].Employees} </p>` : '';
