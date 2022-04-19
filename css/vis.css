@@ -87,10 +87,10 @@
     /* stroke: grey; */
 }
 
-/* #lineChartNoScopeSection .line:not(.background){
-    stroke-width: 2px;
+#lineChartScopeSection .line:hover{
+    stroke-width: 4px;
 
-} */
+}
 
 select{
     display: block;
