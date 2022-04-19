@@ -80,12 +80,14 @@ LineChartScope.prototype.initVis = function(){
         .html(function (event, d) {
             //console.log(d);
 
-            let state = d[0] ? `<p> State: ${d[0]} </p>` : '';
-            let emp2018 = d[1][0].TotalEmployees ? `<p> Employment 2018: ${d[1][0].TotalEmployees} </p>` : '';
-            let emp2019 = d[1][1].TotalEmployees ? `<p> Employment 2019: ${d[1][1].TotalEmployees} </p>` : '';
-            let emp2020 = d[1][2].TotalEmployees ? `<p> Employment 2020: ${d[1][2].TotalEmployees} </p>` : '';
+            let state = d[1][0].State ? `<p> State: ${d[1][0].State} </p>` : '';
+            let area = d[1][0].Area ? `<p> Area: ${d[1][0].Area} </p>` : '';
+            let industry = d[1][0].Industry ? `<p> Industry: ${d[1][0].Industry} </p>` : '';
+            let emp2018 = d[1][0].TotalEmployees ? `<p> Employment 2018: ${d[1][0].TotalEmployees} </p>` : `<p> Employment 2018: ${d[1][0].Employees} </p>`;
+            let emp2019 = d[1][1].TotalEmployees ? `<p> Employment 2019: ${d[1][1].TotalEmployees} </p>` : `<p> Employment 2019: ${d[1][1].Employees} </p>`;
+            let emp2020 = d[1][2].TotalEmployees ? `<p> Employment 2020: ${d[1][2].TotalEmployees} </p>` : `<p> Employment 2020: ${d[1][2].Employees} </p>`;
 
-            let text = `<div> ${state} ${emp2018} ${emp2019} ${emp2020} </div>`;
+            let text = `<div> ${state} ${area} ${industry} ${emp2018} ${emp2019} ${emp2020} </div>`;
 
             return text;
         });
@@ -163,19 +165,6 @@ LineChartScope.prototype.update = function(group) {
         self.y.domain([0, d3.max(self.areaData, function(d) { return d.TotalEmployees; })])
         self.svg.select("#yAxis").call(d3.axisLeft(self.y));
 
-        self.tip.html(function (event, d) {
-                //console.log(d);
-
-                let area = d[0] ? `<p> Area: ${d[0]} </p>` : '';
-                let emp2018 = d[1][0].TotalEmployees ? `<p> Employment 2018: ${d[1][0].TotalEmployees} </p>` : '';
-                let emp2019 = d[1][1].TotalEmployees ? `<p> Employment 2019: ${d[1][1].TotalEmployees} </p>` : '';
-                let emp2020 = d[1][2].TotalEmployees ? `<p> Employment 2020: ${d[1][2].TotalEmployees} </p>` : '';
-
-                let text = `<div> ${area} ${emp2018} ${emp2019} ${emp2020} </div>`;
-
-                return text;
-            });
-
         self.svg.selectAll(".line")
             .data(self.sumArea)
             .join("path")
@@ -241,19 +230,6 @@ LineChartScope.prototype.update = function(group) {
         self.y.domain([0, d3.max(self.industryData, function(d) { return d.Employees; })])
         self.svg.select("#yAxis").call(d3.axisLeft(self.y));
 
-        self.tip.html(function (event, d) {
-            //console.log(d);
-
-            let industry = d[0] ? `<p> Industry: ${d[0]} </p>` : '';
-            let emp2018 = d[1][0].Employees ? `<p> Employment 2018: ${d[1][0].Employees} </p>` : '';
-            let emp2019 = d[1][1].Employees ? `<p> Employment 2019: ${d[1][1].Employees} </p>` : '';
-            let emp2020 = d[1][2].Employees ? `<p> Employment 2020: ${d[1][2].Employees} </p>` : '';
-
-            let text = `<div> ${industry} ${emp2018} ${emp2019} ${emp2020} </div>`;
-
-            return text;
-        });
-
         self.svg.selectAll(".line")
             .data(self.sumIndustry)
             .join("path")
@@ -290,19 +266,6 @@ LineChartScope.prototype.update = function(group) {
         self.zoomStatus = "states";
         self.y.domain([0, d3.max(self.stateData, function(d) { return d.TotalEmployees; })])
         self.svg.select("#yAxis").call(d3.axisLeft(self.y));
-
-        self.tip.html(function (event, d) {
-            console.log(d);
-
-            let state = d[0] ? `<p> State: ${d[0]} </p>` : '';
-            let emp2018 = d[1][0].TotalEmployees ? `<p> Employment 2018: ${d[1][0].TotalEmployees} </p>` : '';
-            let emp2019 = d[1][1].TotalEmployees ? `<p> Employment 2019: ${d[1][1].TotalEmployees} </p>` : '';
-            let emp2020 = d[1][2].TotalEmployees ? `<p> Employment 2020: ${d[1][2].TotalEmployees} </p>` : '';
-
-            let text = `<div> ${state} ${emp2018} ${emp2019} ${emp2020} </div>`;
-
-            return text;
-        });
 
         self.svg.selectAll(".line")
             .data(self.sumState)
