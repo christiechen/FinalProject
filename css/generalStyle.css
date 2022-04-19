@@ -14,11 +14,11 @@ select{
     color: black;
 }
 section.body-section > section{
-    border:1px solid black;
+    /* border:1px solid black; */
 }
 
 svg{
-    border: 1px solid red;
+    /* border: 1px solid red; */
 }
 
 section.entire-body{
