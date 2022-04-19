@@ -242,14 +242,14 @@ $(function() {
 
 
 
-            let barChartScope = new BarChartScope("barChartScopeSection", functions);
-            let barChartNoScope = new BarChartNoScope("barChartNoScopeSection", functions);
-            let scatterChartScope = new ScatterChartScope("scatterChartScopeSection", functions);
-            let scatterChartNoScope = new ScatterChartNoScope("scatterChartNoScopeSection", functions);
-            let pieChartScope = new PieChartScope("pieChartScopeSection", functions);
-            let pieChartNoScope = new PieChartNoScope("pieChartNoScopeSection", functions);
-            let lineChartScope = new LineChartScope("lineChartScopeSection", functions);
-            let lineChartNoScope = new LineChartNoScope("lineChartNoScopeSection", functions);
+            let barChartScope = new BarChartScope("barChartScopeSection #BCSS", functions);
+            let barChartNoScope = new BarChartNoScope("barChartNoScopeSection #BCNSS", functions);
+            let scatterChartScope = new ScatterChartScope("scatterChartScopeSection #SCSS", functions);
+            let scatterChartNoScope = new ScatterChartNoScope("scatterChartNoScopeSection #SCNSS", functions);
+            let pieChartScope = new PieChartScope("pieChartScopeSection #PCSS", functions);
+            let pieChartNoScope = new PieChartNoScope("pieChartNoScopeSection #PCNSS", functions);
+            let lineChartScope = new LineChartScope("lineChartScopeSection #LCSS", functions);
+            let lineChartNoScope = new LineChartNoScope("lineChartNoScopeSection #LCNSS", functions);
 
 
             // GET ALL STATES AND AREAS FOR LEGENDS
