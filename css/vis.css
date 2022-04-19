@@ -1,5 +1,11 @@
 .axis-label{
-    fill: black;
+    fill: white;
+}
+.axis text, .xAxis text, .yAxis text, #xAxis text, #yAxis text{
+    fill: white;
+}
+.axis path, .xAxis path, .yAxis path, #xAxis path, #yAxis path{
+    stroke: white;
 }
 .svgLegend{
     height: 100px;
@@ -38,6 +44,9 @@
     margin: 2px;
 }
 
+.industryLegend{
+    height: fit-content;
+}
 
 /* SCATTER */
 #scatterChartNoScopeSection .axis-label{
@@ -48,28 +57,59 @@
     position: relative;
 }
 #scatterChartNoScopeSection circle:hover{
-    stroke: black;
+    stroke: white;
     stroke-width: 1px;
     r: 3.5;
 }
 #scatterChartNoScopeSection circle.background{
-    opacity: 0.05;
+    opacity: 0.1;
 }
 
 #scatterChartScopeSection circle:hover{
-    stroke: black;
+    stroke: white;
     stroke-width: 1px;
     r: 5;
 }
 
+/* LINE */
+
 #lineChartNoScopeSection .line.background{
-    opacity: 0.05;
+    opacity: 0.04;
+    /* stroke: grey; */
 }
+
+/* #lineChartNoScopeSection .line:not(.background){
+    stroke-width: 2px;
+
+} */
 
 select{
     display: block;
+    height: fit-content;
 }
 
 .selectGroup select {
     display: inline-block;
+}
+
+
+/* PIE */
+#pieChartNoScopeSection .axis-label{
+    /* font-size: 10px; */
+}
+
+#pieChartNoScopeSection g{
+    position: relative;
+}
+#pieChartNoScopeSection path:hover{
+    stroke: black;
+    stroke-width: 1px;
+    /* r: 3.5; */
+}
+#pieChartNoScopeSection g.background{
+    opacity: 0.15;
+}
+
+.d3-tip *{
+    color: black;
 }

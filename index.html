@@ -17,7 +17,9 @@
     <h1> Final Project </h1>
     <div id="intro">
         <div class="options">
-            Choose a visualization
+            <p>
+                Choose a visualization
+            </p>
             <button value="barChartScopeSection"> Bar Chart Scope </button>
             <button value="barChartNoScopeSection"> Bar Chart No Scope </button>
             <button value="scatterChartScopeSection"> Scatter Chart Scope </button>
@@ -84,15 +86,15 @@
 
                     <div class = 'multipleLegendDiv'>
                         <div>
-                            States
+                            <p>States</p>
                             <div class="svgLegend clickable scatterLegend">  </div> 
                         </div>
                         <div>
-                            Areas
+                            <p>Areas</p>
                             <div class="svgLegend clickable areaLegend"> </div> 
                         </div>
                         <div>
-                            Industries
+                            <p>Industries</p>
                             <div class="svgLegend industryLegend"> </div> 
                         </div>
                     </div>
@@ -112,11 +114,27 @@
                 <div class="selectGroup">
                     <select id="pieChartNoScopeButton"></select>
                     <select id="pieChartNoScopeYearButton"></select>
-                    <select id="pieChartNoScopeStatesButton" display = "none"></select>
-                    <select id="pieChartNoScopeAreasButton" display = "none"></select>
+                    <!-- <select id="pieChartNoScopeStatesButton" display = "none"></select> -->
+                    <!-- <select id="pieChartNoScopeAreasButton" display = "none"></select> -->
                     <button id = "pieChartNoScopeUpdateButton">Update Chart</button>
                 </div>
                 <div class='svg-div' id="PCNSS">
+
+                    <div class = 'multipleLegendDiv'>
+                        <div>
+                            <p>States </p>
+                            <div class="svgLegend clickable pieLegend">  </div> 
+                        </div>
+                        <div>
+                           <p> Areas </p>
+                            <div class="svgLegend clickable areaLegend"> </div> 
+                        </div>
+                        <div>
+                            <p>Industries </p>
+                            <div class="svgLegend industryLegend"> </div> 
+                        </div>
+                    </div>
+                </div>
 
             </section>
 
@@ -198,7 +216,7 @@
             </ol>
             <button id='finalSubmit' class='submit'> Submit </button>
 
-            <h2> Self-Reflection </h2>
+            <h2> Further Questions </h2>
             <ol>
                 <li>
                     first question here
