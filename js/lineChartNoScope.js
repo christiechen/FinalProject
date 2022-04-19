@@ -192,46 +192,50 @@ LineChartNoScope.prototype.initVis = function(){
         });
 
     $(`#${self.sectionId} .lineAreaLegend`).attr("style", "display:none");
+    self.stateStatus = "All";
 
     //click on state legend
     $(`#${self.sectionId} .lineLegend .legendBubble`).click(function(event){
         //console.log(this.innerText);
-        let selected = this.innerText.split(" ").join("-");
+        self.stateStatus = this.innerText;
+        self.updateAreaLegend(this);
+        if($(`.legendAreaBubble.selected`).length <= 0) {
+            let selected = this.innerText.split(" ").join("-");
 
 
-        // turn all circles full opacity, remove background class
-        let allLines = Array.from($(`#${self.sectionId} svg .line`));
-        //console.log(allLines);
-        allLines.forEach((el)=>{
-            let currentClass = ($(el).attr("class"));
-            //console.log(currentClass);
-            if(currentClass.indexOf(' background') !== -1){
-                currentClass = currentClass.substring(0, currentClass.indexOf(" background"));
+            // turn all circles full opacity, remove background class
+            let allLines = Array.from($(`#${self.sectionId} svg .line`));
+            allLines.forEach((el) => {
+                let currentClass = ($(el).attr("class"));
                 //console.log(currentClass);
+                if (currentClass.indexOf(' background') !== -1) {
+                    currentClass = currentClass.substring(0, currentClass.indexOf(" background"));
+                    //console.log(currentClass);
+                }
+                $(el).attr("class", currentClass);
+            });
+
+            //if we're unselecting
+            if ($(this).hasClass('selected')) {
+                $(this).removeClass('selected');
+                self.stateStatus = "All";
+                self.updateAreaLegend(this);
+                return;
             }
-            $(el).attr("class", currentClass);
-        });
 
-        //if we're unselecting
-        if($(this).hasClass('selected')){
-            $(this).removeClass('selected');
-            return;
+            //switch current legend click to bold text
+            $(`#${self.sectionId} .lineLegend .legendBubble`).removeClass("selected");
+            $(this).addClass("selected");
+
+
+            // turn all other circles low opacity
+            let otherLines = Array.from($(`#${self.sectionId} svg .line:not(.${selected})`));
+            otherLines.forEach((el) => {
+                //console.log(el);
+                let currentClass = ($(el).attr("class")) + ' background';
+                $(el).attr("class", currentClass);
+            });
         }
-
-        //switch current legend click to bold text
-        $(`#${self.sectionId} .lineLegend .legendBubble`).removeClass("selected");
-        $(this).addClass("selected");
-
-
-        // turn all other circles low opacity
-        let otherLines = Array.from($(`#${self.sectionId} svg .line:not(.${selected})`));
-        otherLines.forEach((el)=>{
-            //console.log(el);
-            let currentClass = ($(el).attr("class")) + ' background';
-            $(el).attr("class", currentClass);
-        });
-
-
     });
 
 }
@@ -262,46 +266,7 @@ LineChartNoScope.prototype.update = function(selectedOption){
 
             });
 
-        //click on state legend
-        $(`#${self.sectionId} .lineLegend .legendBubble`).click(function(event){
-            //console.log(this.innerText);
-            let selected = this.innerText.split(" ").join("-");
-
-
-            // turn all circles full opacity, remove background class
-            let allLines = Array.from($(`#${self.sectionId} svg .line`));
-            //console.log(allLines);
-            allLines.forEach((el)=>{
-                let currentClass = ($(el).attr("class"));
-                //console.log(currentClass);
-                if(currentClass.indexOf(' background') !== -1){
-                    currentClass = currentClass.substring(0, currentClass.indexOf(" background"));
-                    //console.log(currentClass);
-                }
-                $(el).attr("class", currentClass);
-            });
-
-            //if we're unselecting
-            if($(this).hasClass('selected')){
-                $(this).removeClass('selected');
-                return;
-            }
-
-            //switch current legend click to bold text
-            $(`#${self.sectionId} .lineLegend .legendBubble`).removeClass("selected");
-            $(this).addClass("selected");
-
-
-            // turn all other circles low opacity
-            let otherLines = Array.from($(`#${self.sectionId} svg .line:not(.${selected})`));
-            otherLines.forEach((el)=>{
-                //console.log(el);
-                let currentClass = ($(el).attr("class")) + ' background';
-                $(el).attr("class", currentClass);
-            });
-
-
-        });
+        $(`#${self.sectionId} .lineAreaLegend`).attr("style", "display:none");
 
         self.svg.selectAll(".line")
             .data(self.sumState)
@@ -341,6 +306,8 @@ LineChartNoScope.prototype.update = function(selectedOption){
 
             });
 
+        $(`#${self.sectionId} .lineAreaLegend`).attr("style", "display:none");
+
         self.svg.selectAll(".line")
             .data(self.sumArea)
             .join("path")
@@ -377,10 +344,12 @@ LineChartNoScope.prototype.update = function(selectedOption){
 
             });
 
+        $(`#${self.sectionId} .lineAreaLegend`).attr("style", "display:block");
+
         self.svg.selectAll(".line")
             .data(self.sumIndustry)
             .join("path")
-            .attr("class","line")
+            .attr("class",function(d){console.log(d); return "line "+ d[1][0].State.split(" ").join("-")+" "+d[1][0].Area.split(" ").join("-")+" "+d[1][0].Industry.split(" ").join("-")})
             .attr("fill", "none")
             .attr("stroke", function(d){ return self.color(d[0]) })
             .attr("stroke-width", 1.5)
@@ -396,6 +365,72 @@ LineChartNoScope.prototype.update = function(selectedOption){
 
 }
 
+//Update the second legend
+LineChartNoScope.prototype.updateAreaLegend = function(stateThis){
+    var self = this;
+    if (self.stateStatus !== "All") {
+        //fill area legend
+        d3.select(`#${self.sectionId} .lineAreaLegend`)
+            .selectAll('.legendAreaBubble')
+            .data(self.functions.getAllAreasInState(self.stateStatus))
+            .join("div")
+            .attr("class", 'legendAreaBubble')
+            .text((d) => {
+                return d;
+            });
+    }
+    else {
+        d3.select(`#${self.sectionId} .lineAreaLegend`)
+            .selectAll('.legendAreaBubble')
+            .remove();
+    }
+
+    //click on area legend
+    $(`#${self.sectionId} .lineAreaLegend .legendAreaBubble`).click(function(event){
+        let selected = this.innerText.split(" ").join("-");
+        console.log(this.innerText);
+
+        // turn all lines full opacity, remove background class
+        let allLines = Array.from($(`#${self.sectionId} svg .line`));
+        //console.log(allLines);
+        allLines.forEach((el) => {
+            let currentClass = ($(el).attr("class"));
+            //console.log(currentClass);
+            if (currentClass.indexOf(' background') !== -1) {
+                currentClass = currentClass.substring(0, currentClass.indexOf(" background"));
+                //console.log(currentClass);
+            }
+            $(el).attr("class", currentClass);
+        });
+
+        //if we're unselecting
+        if ($(this).hasClass('selected')) {
+            //console.log(stateThis);
+            $(this).removeClass('selected');
+            // turn all other circles low opacity
+            let otherStateLines = Array.from($(`#${self.sectionId} svg .line:not(.${stateThis.innerText.split(" ").join("-")})`));
+            //console.log(otherStateLines);
+            otherStateLines.forEach((el) => {
+                //console.log(el);
+                let currentClass = ($(el).attr("class")) + ' background';
+                $(el).attr("class", currentClass);
+            });
+            return;
+        }
+
+        //switch current legend click to bold text
+        $(`#${self.sectionId} .lineAreaLegend .legendAreaBubble`).removeClass("selected");
+        $(this).addClass("selected");
+
+        // turn all other lines low opacity
+        let otherLines = Array.from($(`#${self.sectionId} svg .line:not(.${selected})`));
+        otherLines.forEach((el) => {
+            //console.log(el);
+            let currentClass = ($(el).attr("class")) + ' background';
+            $(el).attr("class", currentClass);
+        });
+    });
+}
 
 
 
