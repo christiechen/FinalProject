@@ -34,10 +34,13 @@
 
 
     <section class="entire-body">
-        <section class="body-section">
+        <section id='svgs'class="body-section">
             <section id="barChartScopeSection">
                 <h2> bar chart scope </h2>
-                <select id="barChartScopeYearButton"></select>
+                <div class='svg-div' id="BCSS">
+                    <select id="barChartScopeYearButton"></select>
+                    
+                </div>
             </section>
 
             <section id="barChartNoScopeSection">
@@ -45,9 +48,11 @@
                 <div class="selectGroup">
                     <select id="barChartNoScopeButton"></select>
                     <select id="barChartNoScopeYearButton"></select>
-                    <select id="barChartNoScopeStatesButton"></select>
-                    <select id="barChartNoScopeAreasButton"></select>
+                    <select id="barChartNoScopeStatesButton" display = "none"></select>
+                    <select id="barChartNoScopeAreasButton" display = "none"></select>
                     <button id = "barChartNoScopeUpdateButton">Update Chart</button>
+                </div>
+                <div class='svg-div' id="BCNSS">
                 </div>
 
             </section>
@@ -57,9 +62,12 @@
                 <h2> scatter chart scope </h2>
                 <select id="yearGroupButton"></select>
                 <h5 class="loc"> </h5>
-                <div class = 'multipleLegendDiv'>
-                    <div class="svgLegend scatterLegend"> </div> 
-                    <!-- <div class="svgLegend industryLegend"> </div>  -->
+                <div class='svg-div' id="SCSS">
+
+                    <div class = 'multipleLegendDiv'>
+                        <div class="svgLegend scatterLegend"> </div> 
+                        <!-- <div class="svgLegend industryLegend"> </div>  -->
+                    </div>
                 </div>
             </section>
 
@@ -72,9 +80,22 @@
                     <button id="scatterFilter"> Update Chart </button>
                 </div>
                 <h5 class="loc"> </h5>
-                <div class = 'multipleLegendDiv'>
-                    <div class="svgLegend clickable scatterLegend"> </div> 
-                    <div class="svgLegend clickable industryLegend"> </div> 
+                <div class='svg-div' id="SCNSS">
+
+                    <div class = 'multipleLegendDiv'>
+                        <div>
+                            States
+                            <div class="svgLegend clickable scatterLegend">  </div> 
+                        </div>
+                        <div>
+                            Areas
+                            <div class="svgLegend clickable areaLegend"> </div> 
+                        </div>
+                        <div>
+                            Industries
+                            <div class="svgLegend industryLegend"> </div> 
+                        </div>
+                    </div>
                 </div>
                 
             </section>
@@ -82,6 +103,8 @@
             <section id="pieChartScopeSection">
                 <h2> pie chart scope </h2>
                 <select id="pieChartScopeYearButton"></select>
+                <div class='svg-div' id="PCSS">
+
             </section>
 
             <section id="pieChartNoScopeSection">
@@ -89,23 +112,29 @@
                 <div class="selectGroup">
                     <select id="pieChartNoScopeButton"></select>
                     <select id="pieChartNoScopeYearButton"></select>
-                    <select id="pieChartNoScopeStatesButton"></select>
-                    <select id="pieChartNoScopeAreasButton"></select>
+                    <select id="pieChartNoScopeStatesButton" display = "none"></select>
+                    <select id="pieChartNoScopeAreasButton" display = "none"></select>
                     <button id = "pieChartNoScopeUpdateButton">Update Chart</button>
                 </div>
+                <div class='svg-div' id="PCNSS">
+
             </section>
 
 
             <section id="lineChartScopeSection">
                 <h2> line chart scope </h2>
+                <div class='svg-div' id="LCSS">
+
             </section>
 
             <section id="lineChartNoScopeSection">
                 <h2> line chart no scope </h2>
                 <select id="selectButton"></select>
-                <div class = 'multipleLegendDiv'>
-                    <div class="svgLegend clickable lineLegend"> </div>
-                    <div class="svgLegend clickable lineAreaLegend"> </div>
+                <div class='svg-div' id="LCNSS">
+                    <div class = 'multipleLegendDiv'>
+                        <div class="svgLegend clickable lineLegend"> </div>
+                        <div class="svgLegend clickable lineAreaLegend"> </div>
+                    </div>
                 </div>
             </section>
         </section>

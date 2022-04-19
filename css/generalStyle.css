@@ -11,6 +11,9 @@ section.entire-body{
     column-gap: 90px;
 }
 
+#svgs .svg-div{
+    display: flex;
+}
 
 /* full page functionality, hide body until click, deactivated for ease of development*/
 

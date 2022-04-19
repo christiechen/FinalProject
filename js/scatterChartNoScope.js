@@ -20,8 +20,8 @@ ScatterChartNoScope.prototype.initVis = function(){
     var self = this;
 
     self.margin = { top: 60, right: 20, bottom: 40, left: 50 };
-    self.svgWidth = 500; //get current width of container on page
-    self.svgHeight = 800;
+    self.svgWidth = 700; //get current width of container on page
+    self.svgHeight = 770;
     
     self.svg = d3.select(`#${self.sectionId}`)
             .append("svg")
@@ -113,7 +113,6 @@ ScatterChartNoScope.prototype.initVis = function(){
     }
 
 
-    // ======== LEGEND ========
 
 
 
@@ -247,21 +246,23 @@ ScatterChartNoScope.prototype.initVis = function(){
 
 
         //if there is a industry selected in other legend
-        let industry = '';
-        if($(`.entry.selected`).length > 0){
-            industry = $(`.entry.selected`)[0].innerText.toString().replaceAll(',','').split(" ").join("-");
-            //turn other not-selected states low-opacity, add background class
-            let otherIndustryCircles = Array.from($(`#${self.sectionId} svg circle:not(.${industry})`));
-            otherIndustryCircles.forEach((el)=>{
-                let currentClass = ($(el).attr("class")) + ' background'; 
-                $(el).attr("class", currentClass);
-            })
+        // let industry = '';
+        // if($(`.entry.selected`).length > 0){
+        //     industry = $(`.entry.selected`)[0].innerText.toString().replaceAll(',','').split(" ").join("-");
+        //     //turn other not-selected states low-opacity, add background class
+        //     let otherIndustryCircles = Array.from($(`#${self.sectionId} svg circle:not(.${industry})`));
+        //     otherIndustryCircles.forEach((el)=>{
+        //         let currentClass = ($(el).attr("class")) + ' background'; 
+        //         $(el).attr("class", currentClass);
+        //     })
 
-        }
+        // }
 
         //if we're unselecting
         if($(this).hasClass('selected')){
             $(this).removeClass('selected');
+            //clear area 
+            self.areaClear();
             return;
         }
 
@@ -277,10 +278,15 @@ ScatterChartNoScope.prototype.initVis = function(){
             $(el).attr("class", currentClass);
         })
 
+        console.log(this.innerText);
+        let selectedOption = d3.select("#scatterLevel").property("value");
+        if(selectedOption === "Industries"){
+            self.areaFill(this.innerText);
+        }
 
     })
 
-    //industry Legend
+    // //industry Legend
     d3.select(`#${self.sectionId} .industryLegend`)
         .selectAll('.industryLegend .entry')
         .data(self.functions.getAllIndustries())
@@ -291,60 +297,142 @@ ScatterChartNoScope.prototype.initVis = function(){
         .attr("style", (d) => `color:${self.color(d)}`);
 
     //click on industry legend
-    $(`#${self.sectionId} .industryLegend .entry`).click(function(event){
-        let selected = this.innerText.toString().replaceAll(',','').split(" ").join("-");
+    // $(`#${self.sectionId} .industryLegend .entry`).click(function(event){
+    //     let selected = this.innerText.toString().replaceAll(',','').split(" ").join("-");
         
 
-        // turn all circles full opacity
-        let allCircles = Array.from($(`#${self.sectionId} svg circle`));
+    //     // turn all circles full opacity
+    //     let allCircles = Array.from($(`#${self.sectionId} svg circle`));
         
-        allCircles.forEach((el)=>{
-            let currentClass = ($(el).attr("class"));
-            if(currentClass.indexOf(' background') !== -1){
-                currentClass = currentClass.substring(0, currentClass.indexOf(" background"));
-            }
-            $(el).attr("class", currentClass);
-        })
+    //     allCircles.forEach((el)=>{
+    //         let currentClass = ($(el).attr("class"));
+    //         if(currentClass.indexOf(' background') !== -1){
+    //             currentClass = currentClass.substring(0, currentClass.indexOf(" background"));
+    //         }
+    //         $(el).attr("class", currentClass);
+    //     })
 
        
 
-        //if there is a state selected
-        let state = '';
+    //     //if there is a state selected
+    //     let state = '';
 
-        if($(`.legendBubble.selected`).length > 0){
-            state = $(`.legendBubble.selected`)[0].innerText.split(" ").join('-'); //current selected state
+    //     if($(`.legendBubble.selected`).length > 0){
+    //         state = $(`.legendBubble.selected`)[0].innerText.split(" ").join('-'); //current selected state
 
-            //turn other not-selected states low-opacity
-            let otherStateCircles = Array.from($(`#${self.sectionId} svg circle:not(.${state})`));
-            otherStateCircles.forEach((el)=>{
+    //         //turn other not-selected states low-opacity
+    //         let otherStateCircles = Array.from($(`#${self.sectionId} svg circle:not(.${state})`));
+    //         otherStateCircles.forEach((el)=>{
+    //             let currentClass = ($(el).attr("class")) + ' background'; 
+    //             $(el).attr("class", currentClass);
+    //         })
+
+    //     }
+        
+    //     //potentially remove currently the redrawn circles 
+
+
+    //      //if we're unselecting
+    //     if($(this).hasClass('selected')){
+    //         $(this).removeClass('selected');
+            
+    //         return;
+    //     }
+        
+    //     //remove previously selected industry
+    //     $(`#${self.sectionId} .industryLegend .entry`).removeClass("selected");
+    //     $(this).addClass("selected");
+        
+    //     // turn all other circles low opacity
+    //     let otherCircles = Array.from($(`#${self.sectionId} svg circle:not(.${selected})`));
+    //     otherCircles.forEach((el)=>{
+    //         let currentClass = ($(el).attr("class")) + ' background'; 
+    //         $(el).attr("class", currentClass);
+    //     })
+
+    //     //redraw new circles potentially
+        
+
+    // })
+    
+    //area Legend
+    self.areaClear = function() {
+        d3.select(`#${self.sectionId} .areaLegend`)
+            .selectAll('.entry')
+            .remove();
+    }
+    self.areaFill = function(state){
+        self.areaClear();
+        d3.select(`#${self.sectionId} .areaLegend`)
+            .selectAll('.entry')
+            .data(self.functions.getAllAreasInState(state))
+            .enter()
+            .append('div')
+            .attr('class', 'entry')
+            .text((d)=>d);
+            // .attr("style", (d) => `color:${self.color(d)}`);
+         
+        //click on arealegend
+        $(`#${self.sectionId} .areaLegend .entry`).click(function(event){
+            let selected = this.innerText.toString().replaceAll(',','').split(" ").join("-");
+            
+
+            // turn all circles full opacity
+            let allCircles = Array.from($(`#${self.sectionId} svg circle`));
+            
+            allCircles.forEach((el)=>{
+                let currentClass = ($(el).attr("class"));
+                if(currentClass.indexOf(' background') !== -1){
+                    currentClass = currentClass.substring(0, currentClass.indexOf(" background"));
+                }
+                $(el).attr("class", currentClass);
+            })
+
+        
+
+            //if there is a state selected
+            let state = '';
+
+            if($(`.legendBubble.selected`).length > 0){
+                state = $(`.legendBubble.selected`)[0].innerText.split(" ").join('-'); //current selected state
+
+                //turn other not-selected states low-opacity
+                let otherStateCircles = Array.from($(`#${self.sectionId} svg circle:not(.${state})`));
+                otherStateCircles.forEach((el)=>{
+                    let currentClass = ($(el).attr("class")) + ' background'; 
+                    $(el).attr("class", currentClass);
+                })
+
+            }
+            
+            //potentially remove currently the redrawn circles 
+
+
+            //if we're unselecting
+            if($(this).hasClass('selected')){
+                $(this).removeClass('selected');
+                
+                return;
+            }
+            
+            //remove previously selected industry
+            $(`#${self.sectionId} .areaLegend .entry`).removeClass("selected");
+            $(this).addClass("selected");
+            
+            // turn all other circles low opacity
+            let otherCircles = Array.from($(`#${self.sectionId} svg circle:not(.${selected})`));
+            otherCircles.forEach((el)=>{
                 let currentClass = ($(el).attr("class")) + ' background'; 
                 $(el).attr("class", currentClass);
             })
 
-        }
-        
-         //if we're unselecting
-        if($(this).hasClass('selected')){
-            $(this).removeClass('selected');
-            return;
-        }
-        
-        //remove previously selected industry
-        $(`#${self.sectionId} .industryLegend .entry`).removeClass("selected");
-        $(this).addClass("selected");
-        
-        // turn all other circles low opacity
-        let otherCircles = Array.from($(`#${self.sectionId} svg circle:not(.${selected})`));
-        otherCircles.forEach((el)=>{
-            let currentClass = ($(el).attr("class")) + ' background'; 
-            $(el).attr("class", currentClass);
+            //redraw new circles potentially
+            
+
         })
+    }
 
-
-        //redraw other circles, potentially
-        
-
-    })
+   
     
     self.update("States", 2018)
     // self.update("Areas", 2018)
@@ -358,6 +446,16 @@ ScatterChartNoScope.prototype.initVis = function(){
 ScatterChartNoScope.prototype.update = function(level, year){
     var self = this;
     console.log("update");
+    let selectedOption = d3.select("#scatterLevel").property("value");
+
+    if(selectedOption === "Industries"){
+        $(`#${self.sectionId} .areaLegend`).parent().css("display", "block");
+        $(`#${self.sectionId} .industryLegend`).parent().css("display", "block");
+    }
+    else{
+        $(`#${self.sectionId} .areaLegend`).parent().css("display", "none");
+        $(`#${self.sectionId} .industryLegend`).parent().css("display", "none");
+    }
 
     $(`#${self.sectionId} .loc`).text("Total Employment Per " + level + " in " + year);
 
@@ -453,7 +551,8 @@ ScatterChartNoScope.prototype.update = function(level, year){
             let ret = d.State.split(" ").join("-")
             if(level === "Industries"){
                 let ind = d.Industry.replaceAll(',', '');
-                ret += " " + ind.split(" ").join("-");
+                let area = d.Area.replaceAll(',', '');
+                ret += " " + ind.split(" ").join("-")+ " " + area.split(" ").join("-");
             }
             return ret;
         })
