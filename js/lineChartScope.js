@@ -78,7 +78,7 @@ LineChartScope.prototype.initVis = function(){
     self.tip = d3.tip().attr('class', "d3-tip")
         .direction('se')
         .html(function (event, d) {
-            console.log(d);
+            //console.log(d);
 
             let state = d[0] ? `<p> State: ${d[0]} </p>` : '';
             let emp2018 = d[1][0].TotalEmployees ? `<p> Employment 2018: ${d[1][0].TotalEmployees} </p>` : '';
@@ -111,12 +111,26 @@ LineChartScope.prototype.initVis = function(){
         .on("mouseout", self.tip.hide);
 
     self.svg.call(self.tip);
+
+    let allStates = self.functions.getAllStates();
+
+    d3.select(`#${self.sectionId} .lineScopeColorLegend`)
+        .selectAll('.legendBubble')
+        .data(allStates)
+        .enter()
+        .append("div")
+        .attr("class", 'legendBubble')
+        .attr("style", (d)=> `color: ${self.color(d)}`)
+        .text((d) => {
+            return d;
+        });
+
 }
 
 //Update the chart
 LineChartScope.prototype.update = function(group) {
     var self = this;
-    console.log(group);
+    //console.log(group);
 
     if (self.zoomStatus==="states"){
         self.zoomStatus = "areas";
@@ -150,7 +164,7 @@ LineChartScope.prototype.update = function(group) {
         self.svg.select("#yAxis").call(d3.axisLeft(self.y));
 
         self.tip.html(function (event, d) {
-                console.log(d);
+                //console.log(d);
 
                 let area = d[0] ? `<p> Area: ${d[0]} </p>` : '';
                 let emp2018 = d[1][0].TotalEmployees ? `<p> Employment 2018: ${d[1][0].TotalEmployees} </p>` : '';
@@ -176,12 +190,23 @@ LineChartScope.prototype.update = function(group) {
                     (d[1])
             })
             .on("click",function(event,d){
-                console.log(d[0]);
+                //console.log(d[0]);
                 self.update(d[0]);
             })
             .on("mouseover", self.tip.show)
             .on("mouseout", self.tip.hide);
 
+        let allAreas = self.functions.getAllAreasInState(self.stateStatus);
+
+        d3.select(`#${self.sectionId} .lineScopeColorLegend`)
+            .selectAll('.legendBubble')
+            .data(allAreas)
+            .join("div")
+            .attr("class", 'legendBubble')
+            .attr("style", (d)=> `color: ${self.color(d)}`)
+            .text((d) => {
+                return d;
+            });
 
     }
     else if (self.zoomStatus==="areas"){
@@ -217,7 +242,7 @@ LineChartScope.prototype.update = function(group) {
         self.svg.select("#yAxis").call(d3.axisLeft(self.y));
 
         self.tip.html(function (event, d) {
-            console.log(d);
+            //console.log(d);
 
             let industry = d[0] ? `<p> Industry: ${d[0]} </p>` : '';
             let emp2018 = d[1][0].Employees ? `<p> Employment 2018: ${d[1][0].Employees} </p>` : '';
@@ -248,6 +273,18 @@ LineChartScope.prototype.update = function(group) {
             })
             .on("mouseover", self.tip.show)
             .on("mouseout", self.tip.hide);
+
+        let allIndustries = self.functions.getAllIndustries();
+
+        d3.select(`#${self.sectionId} .lineScopeColorLegend`)
+            .selectAll('.legendBubble')
+            .data(allIndustries)
+            .join("div")
+            .attr("class", 'legendBubble')
+            .attr("style", (d)=> `color: ${self.color(d)}`)
+            .text((d) => {
+                return d;
+            });
     }
     else {
         self.zoomStatus = "states";
@@ -286,6 +323,18 @@ LineChartScope.prototype.update = function(group) {
             })
             .on("mouseover", self.tip.show)
             .on("mouseout", self.tip.hide);
+
+        let allStates = self.functions.getAllStates();
+
+        d3.select(`#${self.sectionId} .lineScopeColorLegend`)
+            .selectAll('.legendBubble')
+            .data(allStates)
+            .join("div")
+            .attr("class", 'legendBubble')
+            .attr("style", (d)=> `color: ${self.color(d)}`)
+            .text((d) => {
+                return d;
+            });
     }
 
 }
