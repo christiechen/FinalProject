@@ -59,20 +59,20 @@ LineChartNoScope.prototype.initVis = function(){
         for (var key in element) {
             let el = element[key];
             for (var year in el){
-                self.areaData.push({"State":state, "Area":key, "Employees":+el[year][0].Employees, "Year":+year})
+                self.areaData.push({"State":state, "Area":key, "Employees":+el[year][0].Employees, "Year":+year, "Class":state+"-"+key})
             }
         }
     });
 
     //self.sumArea = d3.group(tempAreaArr, (d)=>d.State, (d)=>d.Area);
-    self.sumArea = d3.group(self.areaData, (d)=>d.Area);
+    self.sumArea = d3.group(self.areaData, (d)=>d.Class);
 
-    console.log(self.sumArea);
+    //console.log(self.sumArea);
 
     self.industryData = [];
 
     self.functions.dataByIndustry.forEach(function(element,industry){
-        console.log(element);
+        //console.log(element);
         if (industry!=="Total"){
             element.forEach(function(el,year){
                 //console.log(el);
@@ -84,7 +84,7 @@ LineChartNoScope.prototype.initVis = function(){
                             if (isNaN(numEmployees)) {
                                 numEmployees = 0;
                             }
-                            self.industryData.push({"Industry": industry, "Employees":numEmployees, "Year": year, "State":state,"Area":area, "Class":area+industry});
+                            self.industryData.push({"Industry": industry, "Employees":numEmployees, "Year": year, "State":state,"Area":area, "Class":state+"-"+area+"-"+industry});
                             //sumTotalforIndustry+=numEmployees;
                         }
                     });
@@ -139,12 +139,16 @@ LineChartNoScope.prototype.initVis = function(){
         .direction('se')
         .html(function(event, d) {
 
-            let state = d[0] ? `<p> State: ${d[0]} </p>` : '';
-            let emp2018 = d[1][0].TotalEmployees ? `<p> Employment 2018: ${d[1][0].TotalEmployees} </p>` : '';
-            let emp2019 = d[1][1].TotalEmployees ? `<p> Employment 2019: ${d[1][1].TotalEmployees} </p>` : '';
-            let emp2020 = d[1][2].TotalEmployees ? `<p> Employment 2020: ${d[1][2].TotalEmployees} </p>` : '';
+            //console.log(d);
 
-            let text = `<div> ${state} ${emp2018} ${emp2019} ${emp2020} </div>`;
+            let state = d[1][0].State ? `<p> State: ${d[1][0].State} </p>` : '';
+            let area = d[1][0].Area ? `<p> Area: ${d[1][0].Area} </p>` : '';
+            let industry = d[1][0].Industry ? `<p> Industry: ${d[1][0].Industry} </p>` : '';
+            let emp2018 = d[1][0].TotalEmployees ? `<p> Employment 2018: ${d[1][0].TotalEmployees} </p>` : `<p> Employment 2018: ${d[1][0].Employees} </p>`;
+            let emp2019 = d[1][1].TotalEmployees ? `<p> Employment 2019: ${d[1][1].TotalEmployees} </p>` : `<p> Employment 2019: ${d[1][1].Employees} </p>`;
+            let emp2020 = d[1][2].TotalEmployees ? `<p> Employment 2020: ${d[1][2].TotalEmployees} </p>` : `<p> Employment 2020: ${d[1][2].Employees} </p>`;
+
+            let text = `<div> ${state} ${area} ${industry} ${emp2018} ${emp2019} ${emp2020} </div>`;
 
             return text;
 
@@ -196,12 +200,10 @@ LineChartNoScope.prototype.initVis = function(){
 
     //click on state legend
     $(`#${self.sectionId} .lineLegend .legendBubble`).click(function(event){
-        //console.log(this.innerText);
         self.stateStatus = this.innerText;
         self.updateAreaLegend(this);
         if($(`.legendAreaBubble.selected`).length <= 0) {
             let selected = this.innerText.split(" ").join("-");
-
 
             // turn all circles full opacity, remove background class
             let allLines = Array.from($(`#${self.sectionId} svg .line`));
@@ -219,7 +221,9 @@ LineChartNoScope.prototype.initVis = function(){
             if ($(this).hasClass('selected')) {
                 $(this).removeClass('selected');
                 self.stateStatus = "All";
-                self.updateAreaLegend(this);
+                d3.select(`#${self.sectionId} .lineAreaLegend`)
+                    .selectAll('.legendAreaBubble')
+                    .remove();
                 return;
             }
 
@@ -230,6 +234,7 @@ LineChartNoScope.prototype.initVis = function(){
 
             // turn all other circles low opacity
             let otherLines = Array.from($(`#${self.sectionId} svg .line:not(.${selected})`));
+            //console.log(otherLines);
             otherLines.forEach((el) => {
                 //console.log(el);
                 let currentClass = ($(el).attr("class")) + ' background';
@@ -250,21 +255,6 @@ LineChartNoScope.prototype.update = function(selectedOption){
         self.y.domain([0, d3.max(self.stateData, function(d) { return d.TotalEmployees; })])
 
         self.svg.select("#yAxis").call(d3.axisLeft(self.y));
-
-        self.tip = d3.tip().attr('class', "d3-tip")
-            .direction('se')
-            .html(function(event, d) {
-
-                let state = d[0] ? `<p> State: ${d[0]} </p>` : '';
-                let emp2018 = d[1][0].TotalEmployees ? `<p> Employment 2018: ${d[1][0].TotalEmployees} </p>` : '';
-                let emp2019 = d[1][1].TotalEmployees ? `<p> Employment 2019: ${d[1][1].TotalEmployees} </p>` : '';
-                let emp2020 = d[1][2].TotalEmployees ? `<p> Employment 2020: ${d[1][2].TotalEmployees} </p>` : '';
-
-                let text = `<div> ${state} ${emp2018} ${emp2019} ${emp2020} </div>`;
-
-                return text;
-
-            });
 
         $(`#${self.sectionId} .lineAreaLegend`).attr("style", "display:none");
 
@@ -291,27 +281,14 @@ LineChartNoScope.prototype.update = function(selectedOption){
 
         self.svg.select("#yAxis").call(d3.axisLeft(self.y));
 
-        self.tip.html(function(event, d) {
-
-                console.log(d);
-
-                let area = d[0] ? `<p> Area: ${d[0]} </p>` : '';
-                let emp2018 = d[1][0].Employees ? `<p> Employment 2018: ${d[1][0].Employees} </p>` : '';
-                let emp2019 = d[1][1].Employees ? `<p> Employment 2019: ${d[1][1].Employees} </p>` : '';
-                let emp2020 = d[1][2].Employees ? `<p> Employment 2020: ${d[1][2].Employees} </p>` : '';
-
-                let text = `<div> ${area} ${emp2018} ${emp2019} ${emp2020} </div>`;
-
-                return text;
-
-            });
-
         $(`#${self.sectionId} .lineAreaLegend`).attr("style", "display:none");
+
+        console.log(self.sumArea);
 
         self.svg.selectAll(".line")
             .data(self.sumArea)
             .join("path")
-            .attr("class",function(d){return "line "+ d[1][0].State.split(" ").join("-")})
+            .attr("class",function(d){return "line "+ d[1][0].State.split(" ").join("-")+" "+d[0].split(" ").join("-")})
             .attr("fill", "none")
             .attr("stroke", function(d){ return self.color(d[0]) })
             .attr("stroke-width", 1.5)
@@ -329,27 +306,14 @@ LineChartNoScope.prototype.update = function(selectedOption){
 
         self.svg.select("#yAxis").call(d3.axisLeft(self.y));
 
-        self.tip.html(function(event, d) {
-
-                console.log(d);
-
-                let industry = d[1][0].Industry ? `<p> Industry: ${d[1][0].Industry} </p>` : '';
-                let emp2018 = d[1][0].Employees ? `<p> Employment 2018: ${d[1][0].Employees} </p>` : '';
-                let emp2019 = d[1][1].Employees ? `<p> Employment 2019: ${d[1][1].Employees} </p>` : '';
-                let emp2020 = d[1][2].Employees ? `<p> Employment 2020: ${d[1][2].Employees} </p>` : '';
-
-                let text = `<div> ${industry} ${emp2018} ${emp2019} ${emp2020} </div>`;
-
-                return text;
-
-            });
-
         $(`#${self.sectionId} .lineAreaLegend`).attr("style", "display:block");
+
+        console.log(self.sumIndustry);
 
         self.svg.selectAll(".line")
             .data(self.sumIndustry)
             .join("path")
-            .attr("class",function(d){console.log(d); return "line "+ d[1][0].State.split(" ").join("-")+" "+d[1][0].Area.split(" ").join("-")+" "+d[1][0].Industry.split(" ").join("-")})
+            .attr("class",function(d){return "line "+ d[1][0].State.split(" ").join("-")+" "+d[1][0].State.split(" ").join("-")+"-"+d[1][0].Area.split(" ").join("-")+" "+d[1][0].Industry.split(" ").join("-")})
             .attr("fill", "none")
             .attr("stroke", function(d){ return self.color(d[0]) })
             .attr("stroke-width", 1.5)
@@ -368,6 +332,7 @@ LineChartNoScope.prototype.update = function(selectedOption){
 //Update the second legend
 LineChartNoScope.prototype.updateAreaLegend = function(stateThis){
     var self = this;
+    console.log("twice?");
     if (self.stateStatus !== "All") {
         //fill area legend
         d3.select(`#${self.sectionId} .lineAreaLegend`)
@@ -379,23 +344,17 @@ LineChartNoScope.prototype.updateAreaLegend = function(stateThis){
                 return d;
             });
     }
-    else {
-        d3.select(`#${self.sectionId} .lineAreaLegend`)
-            .selectAll('.legendAreaBubble')
-            .remove();
-    }
 
     //click on area legend
     $(`#${self.sectionId} .lineAreaLegend .legendAreaBubble`).click(function(event){
         let selected = this.innerText.split(" ").join("-");
-        console.log(this.innerText);
+        console.log(selected);
 
         // turn all lines full opacity, remove background class
         let allLines = Array.from($(`#${self.sectionId} svg .line`));
         //console.log(allLines);
         allLines.forEach((el) => {
             let currentClass = ($(el).attr("class"));
-            //console.log(currentClass);
             if (currentClass.indexOf(' background') !== -1) {
                 currentClass = currentClass.substring(0, currentClass.indexOf(" background"));
                 //console.log(currentClass);
@@ -403,11 +362,13 @@ LineChartNoScope.prototype.updateAreaLegend = function(stateThis){
             $(el).attr("class", currentClass);
         });
 
+        console.log(this);
+
         //if we're unselecting
         if ($(this).hasClass('selected')) {
             //console.log(stateThis);
             $(this).removeClass('selected');
-            // turn all other circles low opacity
+            // turn all other lines low opacity
             let otherStateLines = Array.from($(`#${self.sectionId} svg .line:not(.${stateThis.innerText.split(" ").join("-")})`));
             //console.log(otherStateLines);
             otherStateLines.forEach((el) => {
@@ -423,7 +384,7 @@ LineChartNoScope.prototype.updateAreaLegend = function(stateThis){
         $(this).addClass("selected");
 
         // turn all other lines low opacity
-        let otherLines = Array.from($(`#${self.sectionId} svg .line:not(.${selected})`));
+        let otherLines = Array.from($(`#${self.sectionId} svg .line:not(.${stateThis.innerText.split(" ").join("-")+"-"+selected})`));
         otherLines.forEach((el) => {
             //console.log(el);
             let currentClass = ($(el).attr("class")) + ' background';
