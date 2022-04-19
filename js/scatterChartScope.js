@@ -19,8 +19,8 @@ ScatterChartScope.prototype.initVis = function(){
     var self = this;
 
     self.margin = { top: 60, right: 20, bottom: 40, left: 50 };
-    self.svgWidth = 500; //get current width of container on page
-    self.svgHeight = 400;
+    self.svgWidth = 600; //get current width of container on page
+    self.svgHeight = 600;
     
     self.svg = d3.select(`#${self.sectionId}`)
             .append("svg")
@@ -255,7 +255,7 @@ ScatterChartScope.prototype.update = function(zoom, year){
     console.log(year);
 
     let workingData;
-    //get new data 
+    //get new data  
     if(self.zoomStatus === "states"){
         self.zoomStatus = "areas";
         //all areas in selected state in selected yeaer

@@ -37,7 +37,7 @@
 
     <section class="entire-body">
         <section id='svgs'class="body-section">
-            <section id="barChartScopeSection">
+            <section id="barChartScopeSection" class="scope">
                 <h2> bar chart scope </h2>
                 <div class='svg-div' id="BCSS">
                     <select id="barChartScopeYearButton"></select>
@@ -54,13 +54,12 @@
                     <select id="barChartNoScopeAreasButton" display = "none"></select>
                     <button id = "barChartNoScopeUpdateButton">Update Chart</button>
                 </div>
-                <div class='svg-div' id="BCNSS">
-                </div>
+                <div class='svg-div' id="BCNSS"></div>
 
             </section>
 
 
-            <section id="scatterChartScopeSection">
+            <section id="scatterChartScopeSection" class="scope">
                 <h2> scatter chart scope </h2>
                 <select id="yearGroupButton"></select>
                 <h5 class="loc"> </h5>
@@ -102,10 +101,14 @@
                 
             </section>
 
-            <section id="pieChartScopeSection">
+            <section id="pieChartScopeSection" class="scope">
                 <h2> pie chart scope </h2>
                 <select id="pieChartScopeYearButton"></select>
                 <div class='svg-div' id="PCSS">
+                    <div class = 'multipleLegendDiv'>
+
+                        <div class="svgLegend pieLegend"> </div> 
+                </div>
 
             </section>
 
@@ -139,10 +142,9 @@
             </section>
 
 
-            <section id="lineChartScopeSection">
+            <section id="lineChartScopeSection" class="scope">
                 <h2> line chart scope </h2>
-                <div class='svg-div' id="LCSS">
-
+                <div class='svg-div' id="LCSS"> </div>
             </section>
 
             <section id="lineChartNoScopeSection">

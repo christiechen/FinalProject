@@ -116,6 +116,19 @@ PieChartScope.prototype.initVis = function () {
     })
     self.svg.selectAll(".arcs").exit().remove();
 
+    //fill state legend
+    let allStates = self.functions.getAllStates();
+
+    d3.select(`#${self.sectionId} .pieLegend`)
+        .selectAll('.legendBubble')
+        .data(allStates)
+        .enter()
+        .append("div")
+        .attr("class", 'legendBubble')
+        .attr("style", (d)=> `color: ${self.color(d)}`)
+        .text((d) => {
+            return d;
+        });
 
     // self.update(self.scopeLevel, self.currObj, self.currYear)
 }
@@ -155,16 +168,61 @@ PieChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
         pie = d3.pie().value(function (d) { return d["Employees"] })
         var indData = self.functions.getCitySpecificsByYear(selectedState, currYear, selectedArea)
         currArcData = indData;
+
+        let allIndustries = self.functions.getAllIndustries();
+
+        d3.select(`#${self.sectionId} .pieLegend`)
+            .selectAll('.legendBubble')
+            .data(allIndustries)
+            .join("div")
+            .attr("class", 'legendBubble')
+            .attr("style", (d)=> `color: ${self.color(d)}`)
+            .text((d) => {
+                return d;
+            });
+        
     }
     else if (scopeLevel == "industries") {
         self.scopeLevel = "states"
         var stateData = self.functions.getStateByYear(currYear);
         currArcData = stateData;
+
+         //fill state legend
+         let allStates = self.functions.getAllStates();
+
+         d3.select(`#${self.sectionId} .pieLegend`)
+             .selectAll('.legendBubble')
+             .data(allStates)
+             .join("div")
+             .attr("class", 'legendBubble')
+             .attr("style", (d)=> `color: ${self.color(d)}`)
+             .text((d) => {
+                 return d;
+             });
+
+
     } else if (scopeLevel == "states") {
         self.scopeLevel = "areas"
 
         var areaData = self.functions.getCityTotalsForStateByYear(selectedState, currYear)
         currArcData = areaData;
+
+        let allAreas = [];
+        areaData.forEach((el)=>{
+            allAreas.push(el.Area);
+        })
+
+        //remove all
+
+        d3.select(`#${self.sectionId} .pieLegend`)
+            .selectAll('.legendBubble')
+            .data(allAreas)
+            .join('div')
+            .attr("class", 'legendBubble')
+            .attr("style", (d)=> `color: ${self.color(d)}`)
+            .text((d) => {
+                return d;
+            });
     }
 
     g.selectAll(".arcs")

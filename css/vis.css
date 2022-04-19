@@ -52,6 +52,11 @@
     max-height: 100px;
 }
 
+
+.scope .svgLegend {
+    height: fit-content;
+    max-height: 500px;
+}
 /* SCATTER */
 #scatterChartNoScopeSection .axis-label{
     font-size: 10px;
