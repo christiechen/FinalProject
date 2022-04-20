@@ -100,6 +100,20 @@ BarChartNoScope.prototype.initVis = function () {
 
     // legends
 
+    var allInds = self.functions.getAllIndustries();
+    var indButtonInput = ["All Industries"];
+    indButtonInput.concat(allInds);
+    console.log(allInds)
+    console.log(indButtonInput)
+
+    d3.select("#barChartNoScopeIndustriesButton")
+    .selectAll('option')
+    .data(allInds)
+    .enter()
+    .append('option')
+    .text(function (d) { return d; })
+    .attr("value", function (d) { return d; });
+
 
     var allStates = self.functions.getAllStates();
 
@@ -324,6 +338,8 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
     if (selectedOption == "areas") {
         // d3.select("#barChartNoScopeStatesButton").style("display", "block");
         // d3.select("#barChartNoScopeAreasButton").style("display", "none");
+        d3.select("#barChartNoScopeIndustriesButton").style("display", "none");
+
         $(`#barChartNoScopeSection .industryLegend`).parent().css("display", "none");
         $(`#barChartNoScopeSection .areaLegend`).parent().css("display", "block");
         // var areaData = self.functions.getCityTotalsForStateByYear(selectedState, currYear)
@@ -365,13 +381,21 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
             .attr("class", (d) => "rects " + d.State.split(" ").join("-") + " " + d.Area.replaceAll(',', '').split(" ").join("-"));
     }
     else if (selectedOption == "industries") {
-        // d3.select("#barChartNoScopeStatesButton").style("display", "block");
+        d3.select("#barChartNoScopeIndustriesButton").style("display", "block");
         // d3.select("#barChartNoScopeAreasButton").style("display", "block");
         $(`#barChartNoScopeSection .industryLegend`).parent().css("display", "block");
         $(`#barChartNoScopeSection .areaLegend`).parent().css("display", "block");
         selectedArea = d3.select("#barChartNoScopeAreasButton").property("value");
         // var indData = self.functions.getCitySpecificsByYear(selectedState, currYear, selectedArea)
-        barData = indBars;
+
+        var currInd = d3.select("#barChartNoScopeIndustriesButton").property("value");
+        if (currInd == "Total"){
+            barData = indBars;
+        }else{
+            barData = self.functions.getIndustryForYear(currInd, currYear)
+        }
+
+        // barData = indBars;
         barData = barData.filter(d => { return !isNaN(d["Employees"]) })
 
         barData.sort(function (a, b) {
@@ -389,7 +413,7 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
         self.svg.select(".xAxis").call(d3.axisBottom(x))
             .selectAll("text")
             .text(function (d, i) {
-                return barData[i]["Industry"]
+                return barData[i]["Area"]
             })
             .attr("transform", "translate(-10,10)rotate(-90)")
             .style("text-anchor", "end")
@@ -409,6 +433,8 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
     } else if (selectedOption == "states") {
         // d3.select("#barChartNoScopeStatesButton").style("display", "none");
         // d3.select("#barChartNoScopeAreasButton").style("display", "none");
+        d3.select("#barChartNoScopeIndustriesButton").style("display", "none");
+
         $(`#barChartNoScopeSection .industryLegend`).parent().css("display", "none");
         $(`#barChartNoScopeSection .areaLegend`).parent().css("display", "none");
         // var stateData = self.functions.getStateByYear(currYear);
