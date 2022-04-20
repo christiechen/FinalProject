@@ -340,7 +340,7 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
         self.svg.select(".xAxis").call(d3.axisBottom(x))
             .selectAll("text")
             .text(function (d, i) {
-                return barData[i]["State"]
+                return barData[i]["Area"]
             })
             .attr("transform", "translate(-10,20)rotate(-90)")
             .style("text-anchor", "end")
@@ -387,7 +387,7 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
         self.svg.select(".xAxis").call(d3.axisBottom(x))
             .selectAll("text")
             .text(function (d, i) {
-                return barData[i]["State"]
+                return barData[i]["Industry"]
             })
             .attr("transform", "translate(-10,20)rotate(-90)")
             .style("text-anchor", "end")

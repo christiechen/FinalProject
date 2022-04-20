@@ -124,13 +124,15 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
     if (scopeLevel == "industries") {
         var indData = self.functions.getCitySpecificsByYear(selectedState, currYear, selectedArea)
         barData = indData;
+        barData = barData.filter(d => { return !isNaN(d["Employees"]) })
+
         barData.sort(function (a, b) {
             return a["Employees"] - b["Employees"]
         })
-        barData = barData.filter(d => { return !isNaN(d["Employees"]) })
 
         var max = barData[barData.length - 1]["Employees"]
-        x.domain(barData.map(function (d) { return d["Industry"]; }))
+        var currRange = d3.range(0, barData.length)
+        x.domain(currRange)
         y.domain([0, max])
 
         let allIndustries = self.functions.getAllIndustries();
@@ -148,7 +150,7 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
             .data(barData)
             .join("rect")
             .attr("class", "rects")
-            .attr("x", function (d) { return self.margin.left + x(d["Industry"]); })
+            .attr("x", function (d, i) { return self.margin.left + x(i); })
             .attr("y", function (d) { return y(d["Employees"]); })
             .attr("width", x.bandwidth())
             .attr("height", function (d) { return self.svgHeight - self.margin.bottom - y(d["Employees"]); })
@@ -161,6 +163,9 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
             });
         self.svg.select(".xAxis").call(d3.axisBottom(x))
             .selectAll("text")
+            .text(function (d, i) {
+                return barData[i]["Industry"]
+            })
             .attr("transform", "translate(-10,20)rotate(-90)")
             .style("text-anchor", "end")
         self.svg.select(".yAxis").call(d3.axisLeft(y))
@@ -170,13 +175,15 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
     else if (scopeLevel == "states") {
         var stateData = self.functions.getStateByYear(currYear);
         barData = stateData;
+        barData = barData.filter(d => { return !isNaN(d["TotalEmployees"]) })
+
         barData.sort(function (a, b) {
             return a["TotalEmployees"] - b["TotalEmployees"]
         })
-        barData = barData.filter(d => { return !isNaN(d["TotalEmployees"]) })
 
         var max = barData[barData.length - 1]["TotalEmployees"]
-        x.domain(barData.map(function (d) { return d["State"]; }))
+        var currRange = d3.range(0, barData.length)
+        x.domain(currRange)
         y.domain([0, max])
 
         let allStates = self.functions.getAllStates();
@@ -193,7 +200,7 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
             .data(barData)
             .join("rect")
             .attr("class", "rects")
-            .attr("x", function (d) { return self.margin.left + x(d["State"]); })
+            .attr("x", function (d, i) { return self.margin.left + x(i); })
             .attr("y", function (d) { return y(d["TotalEmployees"]); })
             .attr("width", x.bandwidth())
             .attr("height", function (d) { return self.svgHeight - self.margin.bottom - y(d["TotalEmployees"]); })
@@ -206,6 +213,9 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
             });
         self.svg.select(".xAxis").call(d3.axisBottom(x))
             .selectAll("text")
+            .text(function (d, i) {
+                return barData[i]["State"]
+            })
             .attr("transform", "translate(-10,20)rotate(-90)")
             .style("text-anchor", "end")
         self.svg.select(".yAxis").call(d3.axisLeft(y))
@@ -216,12 +226,15 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
 
         var areaData = self.functions.getCityTotalsForStateByYear(selectedState, currYear)
         barData = areaData;
+        barData = barData.filter(d => { return !isNaN(d["TotalEmployees"]) })
+
         barData.sort(function (a, b) {
             return a["TotalEmployees"] - b["TotalEmployees"]
         })
         barData = barData.filter(d => { return !isNaN(d["TotalEmployees"]) })
         var max = barData[barData.length - 1]["TotalEmployees"]
-        x.domain(barData.map(function (d) { return d["Area"]; }))
+        var currRange = d3.range(0, barData.length)
+        x.domain(currRange)
         y.domain([0, max])
 
         let allAreas = [];
@@ -243,7 +256,7 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
             .data(barData)
             .join("rect")
             .attr("class", "rects")
-            .attr("x", function (d) { return self.margin.left + x(d["Area"]); })
+            .attr("x", function (d, i) { return self.margin.left + x(i); })
             .attr("y", function (d) { return y(d["TotalEmployees"]); })
             .attr("width", x.bandwidth())
             .attr("height", function (d) { return self.svgHeight - self.margin.bottom - y(d["TotalEmployees"]); })
@@ -256,6 +269,9 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
             });
         self.svg.select(".xAxis").call(d3.axisBottom(x))
             .selectAll("text")
+            .text(function (d, i) {
+                return barData[i]["Area"]
+            })
             .attr("transform", "translate(-10,20)rotate(-90)")
             .style("text-anchor", "end")
         self.svg.select(".yAxis").call(d3.axisLeft(y))
