@@ -30,6 +30,10 @@
     flex-direction: column;
     /* justify-content: space-around; */
 }
+.multipleLegendDiv.row{
+    flex-direction: row;
+    /* justify-content: space-around; */
+}
 .multipleLegendDiv > div{
     width: 180px;
 }

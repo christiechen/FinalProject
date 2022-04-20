@@ -24,7 +24,7 @@ BarChartNoScope.prototype.initVis = function () {
     var self = this;
 
     self.margin = { top: 30, right: 20, bottom: 60, left: 50 };
-    self.svgWidth = 1000; //get current width of container on page
+    self.svgWidth = 1200; //get current width of container on page
     self.svgHeight = 600;
 
 
@@ -344,6 +344,7 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
             })
             .attr("transform", "translate(-10,20)rotate(-90)")
             .style("text-anchor", "end")
+            .style("font-size", "8px")
         self.svg.select(".yAxis").call(d3.axisLeft(y))
             .selectAll("text")
             .style("font-size", "8px")
