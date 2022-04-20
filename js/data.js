@@ -72,12 +72,12 @@ $(function() {
                 'Ohio',
                 'Georgia',
                 'North Carolina',
-                'Michigan',
-                'New Jersey',
-                'Virginia',
-                'Massachusetts',
-                'Washington',
-                'Indiana'
+                'Michigan'
+                // 'New Jersey',
+                // 'Virginia',
+                // 'Massachusetts',
+                // 'Washington',
+                // 'Indiana'
                 // 'Tennessee',
                 // 'Wisconsin',
                 // 'Minnesota',
