@@ -107,6 +107,12 @@
     stroke: white;
     stroke-width: 1.5px;
 }
+
+#barChartNoScopeSection rect.background{
+    opacity: 0.2;
+}
+
+
 select{
     display: block;
     height: fit-content;

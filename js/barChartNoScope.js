@@ -23,7 +23,7 @@ function BarChartNoScope(id, functions) {
 BarChartNoScope.prototype.initVis = function () {
     var self = this;
 
-    self.margin = { top: 5, right: 20, bottom: 60, left: 50 };
+    self.margin = { top: 5, right: 20, bottom: 100, left: 50 };
     self.svgWidth = 1200; //get current width of container on page
     self.svgHeight = 600;
 
@@ -104,7 +104,8 @@ BarChartNoScope.prototype.initVis = function () {
     var allStates = self.functions.getAllStates();
 
     //fill state legend
-    d3.select(`#${self.sectionId} .barLegend`)
+    console.log(allStates);
+    d3.select(`#barChartNoScopeSection .barLegend`)
         .selectAll('.legendBubble')
         .data(allStates)
         .enter()
@@ -113,13 +114,14 @@ BarChartNoScope.prototype.initVis = function () {
         .text((d) => {
             return d;
         });
+    console.log("HERE");
 
     //click on state legend
-    $(`#${self.sectionId} .barLegend .legendBubble`).click(function (event) {
+    $(`#barChartNoScopeSection .barLegend .legendBubble`).click(function (event) {
         let selected = this.innerText.split(" ").join("-");
 
         // turn all path full opacity, remove background class
-        let allPaths = Array.from($(`#${self.sectionId} svg g g`));
+        let allPaths = Array.from($(`#${self.sectionId} svg rect`));
         allPaths.forEach((el) => {
             let currentClass = ($(el).attr("class"));
             if (currentClass.indexOf(' background') !== -1) {
@@ -138,13 +140,13 @@ BarChartNoScope.prototype.initVis = function () {
         }
 
         //switch current legend click to bold text
-        $(`#${self.sectionId} .barLegend .legendBubble`).removeClass("selected");
+        $(`#barChartNoScopeSection .barLegend .legendBubble`).removeClass("selected");
         $(this).addClass("selected");
 
 
         // console.log(selected);
         // turn all other circles low opacity
-        let otherPaths = Array.from($(`#${self.sectionId} svg g g:not(.${selected})`));
+        let otherPaths = Array.from($(`#${self.sectionId} svg rect:not(.${selected})`));
         otherPaths.forEach((el) => {
             let currentClass = ($(el).attr("class")) + ' background';
             $(el).attr("class", currentClass);
@@ -163,7 +165,7 @@ BarChartNoScope.prototype.initVis = function () {
 
     // //industry Legend
     self.industryFill = function () {
-        d3.select(`#${self.sectionId} .industryLegend`)
+        d3.select(`#barChartNoScopeSection .industryLegend`)
             .selectAll('.industryLegend .entry')
             .data(self.functions.getAllIndustries())
             .enter()
@@ -175,13 +177,13 @@ BarChartNoScope.prototype.initVis = function () {
 
     //area Legend
     self.areaClear = function () {
-        d3.select(`#${self.sectionId} .areaLegend`)
+        d3.select(`#barChartNoScopeSection .areaLegend`)
             .selectAll('.entry')
             .remove();
     }
     self.areaFill = function (state, color, clickable) {
         self.areaClear();
-        d3.select(`#${self.sectionId} .areaLegend`)
+        d3.select(`#barChartNoScopeSection .areaLegend`)
             .selectAll('.entry')
             .data(self.functions.getAllAreasInState(state))
             .enter()
@@ -190,14 +192,14 @@ BarChartNoScope.prototype.initVis = function () {
             .text((d) => d)
 
         if (!clickable) {
-            $(`#${self.sectionId} .areaLegend`).removeClass("clickable");
+            $(`#barChartNoScopeSection .areaLegend`).removeClass("clickable");
             return;
         }
         //click on arealegend
-        if (!$(`#${self.sectionId} .areaLegend`).hasClass("clickable")) {
-            $(`#${self.sectionId} .areaLegend`).addClass("clickable");
+        if (!$(`#barChartNoScopeSection .areaLegend`).hasClass("clickable")) {
+            $(`#barChartNoScopeSection .areaLegend`).addClass("clickable");
         }
-        $(`#${self.sectionId} .areaLegend .entry`).click(function (event) {
+        $(`#barChartNoScopeSection .areaLegend .entry`).click(function (event) {
             let selected = this.innerText.toString().replaceAll(',', '').split(" ").join("-");
 
             if (self.selectedOption === "areas") {
@@ -205,7 +207,7 @@ BarChartNoScope.prototype.initVis = function () {
             }
 
             // turn all circles full opacity
-            let allPaths = Array.from($(`#${self.sectionId} svg g g`));
+            let allPaths = Array.from($(`#${self.sectionId} svg rect`));
 
             allPaths.forEach((el) => {
                 let currentClass = ($(el).attr("class"));
@@ -225,7 +227,7 @@ BarChartNoScope.prototype.initVis = function () {
                 state = $(`.legendBubble.selected`)[0].innerText.split(" ").join('-'); //current selected state
 
                 //turn other not-selected states low-opacity
-                let otherStatePaths = Array.from($(`#${self.sectionId} svg g g:not(.${state})`));
+                let otherStatePaths = Array.from($(`#${self.sectionId} svg rect:not(.${state})`));
                 otherStatePaths.forEach((el) => {
                     let currentClass = ($(el).attr("class")) + ' background';
                     $(el).attr("class", currentClass);
@@ -243,12 +245,12 @@ BarChartNoScope.prototype.initVis = function () {
             }
 
             //remove previously selected area
-            $(`#${self.sectionId} .areaLegend .entry`).removeClass("selected");
+            $(`#barChartNoScopeSection .areaLegend .entry`).removeClass("selected");
             $(this).addClass("selected");
             console.log(selected);
 
             // turn all other arcs low opacity
-            let otherRects = Array.from($(`#${self.sectionId} svg g g:not(.${selected})`));
+            let otherRects = Array.from($(`#${self.sectionId} svg rect:not(.${selected})`));
             otherRects.forEach((el) => {
                 let currentClass = ($(el).attr("class")) + ' background';
                 $(el).attr("class", currentClass);
@@ -297,7 +299,7 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
     })
 
     //remove previous legend filtering
-    $(`#${self.sectionId} .barLegend .selected`).removeClass('selected');
+    $(`#barChartNoScopeSection .barLegend .selected`).removeClass('selected');
     //clear area 
     self.areaClear();
 
@@ -322,8 +324,8 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
     if (selectedOption == "areas") {
         // d3.select("#barChartNoScopeStatesButton").style("display", "block");
         // d3.select("#barChartNoScopeAreasButton").style("display", "none");
-        $(`#${self.sectionId} .industryLegend`).parent().css("display", "none");
-        $(`#${self.sectionId} .areaLegend`).parent().css("display", "block");
+        $(`#barChartNoScopeSection .industryLegend`).parent().css("display", "none");
+        $(`#barChartNoScopeSection .areaLegend`).parent().css("display", "block");
         // var areaData = self.functions.getCityTotalsForStateByYear(selectedState, currYear)
         barData = areaBars;
         barData = barData.filter(d => { return !isNaN(d["TotalEmployees"]) })
@@ -342,7 +344,7 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
             .text(function (d, i) {
                 return barData[i]["Area"]
             })
-            .attr("transform", "translate(-10,20)rotate(-90)")
+            .attr("transform", "translate(-10,10)rotate(-90)")
             .style("text-anchor", "end")
             .style("font-size", "8px")
         self.svg.select(".yAxis").call(d3.axisLeft(y))
@@ -360,13 +362,13 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
             .attr("width", x.bandwidth())
             .attr("height", function (d) { return self.svgHeight - self.margin.bottom - y(d["TotalEmployees"]); })
             .attr("fill", "#69b3a2")
-            .attr("class", "rects");
+            .attr("class", (d) => "rects " + d.State.split(" ").join("-") + " " + d.Area.replaceAll(',', '').split(" ").join("-"));
     }
     else if (selectedOption == "industries") {
         // d3.select("#barChartNoScopeStatesButton").style("display", "block");
         // d3.select("#barChartNoScopeAreasButton").style("display", "block");
-        $(`#${self.sectionId} .industryLegend`).parent().css("display", "block");
-        $(`#${self.sectionId} .areaLegend`).parent().css("display", "block");
+        $(`#barChartNoScopeSection .industryLegend`).parent().css("display", "block");
+        $(`#barChartNoScopeSection .areaLegend`).parent().css("display", "block");
         selectedArea = d3.select("#barChartNoScopeAreasButton").property("value");
         // var indData = self.functions.getCitySpecificsByYear(selectedState, currYear, selectedArea)
         barData = indBars;
@@ -389,7 +391,7 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
             .text(function (d, i) {
                 return barData[i]["Industry"]
             })
-            .attr("transform", "translate(-10,20)rotate(-90)")
+            .attr("transform", "translate(-10,10)rotate(-90)")
             .style("text-anchor", "end")
         self.svg.select(".yAxis").call(d3.axisLeft(y))
             .selectAll("text")
@@ -403,12 +405,12 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
             .attr("width", x.bandwidth())
             .attr("height", function (d) { return self.svgHeight - self.margin.bottom - y(d["Employees"]); })
             .attr("fill", "#69b3a2")
-            .attr("class", "rects")
+            .attr("class", (d) => "rects " + d.State.split(" ").join("-") + " " + d.Area.replaceAll(',', '').split(" ").join("-") + " " +  d.Industry.replaceAll(',', '').split(" ").join("-"))
     } else if (selectedOption == "states") {
         // d3.select("#barChartNoScopeStatesButton").style("display", "none");
         // d3.select("#barChartNoScopeAreasButton").style("display", "none");
-        $(`#${self.sectionId} .industryLegend`).parent().css("display", "none");
-        $(`#${self.sectionId} .areaLegend`).parent().css("display", "none");
+        $(`#barChartNoScopeSection .industryLegend`).parent().css("display", "none");
+        $(`#barChartNoScopeSection .areaLegend`).parent().css("display", "none");
         // var stateData = self.functions.getStateByYear(currYear);
         barData = stateBars;
         barData = barData.filter(d => { return !isNaN(d["TotalEmployees"]) })
@@ -427,7 +429,7 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
             .text(function (d, i) {
                 return barData[i]["State"]
             })
-            .attr("transform", "translate(-10,20)rotate(-90)")
+            .attr("transform", "translate(-10,10)rotate(-90)")
             .style("text-anchor", "end")
         self.svg.select(".yAxis").call(d3.axisLeft(y))
             .selectAll("text")
@@ -441,7 +443,7 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
             .attr("width", x.bandwidth())
             .attr("height", function (d) { return self.svgHeight - self.margin.bottom - y(d["TotalEmployees"]); })
             .attr("fill", "#69b3a2")
-            .attr("class", "rects")
+            .attr("class", (d) => "rects " + d.State.split(" ").join("-"))
     }
 
 

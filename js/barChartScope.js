@@ -16,7 +16,7 @@ function BarChartScope(id, functions) {
 BarChartScope.prototype.initVis = function () {
     var self = this;
 
-    self.margin = { top: 30, right: 20, bottom: 60, left: 50 };
+    self.margin = { top: 30, right: 20, bottom: 80, left: 50 };
     self.svgWidth = 700; //get current width of container on page
     self.svgHeight = 600;
 
@@ -61,17 +61,17 @@ BarChartScope.prototype.initVis = function () {
         .attr("transform", `translate(50, ${self.svgHeight - self.margin.bottom})`)
 
     //fill state legend
-    let allStates = self.functions.getAllStates();
+    // let allStates = self.functions.getAllStates();
 
-    d3.select(`#${self.sectionId} .pieLegend`)
-        .selectAll('.legendBubble')
-        .data(allStates)
-        .enter()
-        .append("div")
-        .attr("class", 'legendBubble')
-        .text((d) => {
-            return d;
-        });
+    // d3.select(`#${self.sectionId} .pieLegend`)
+    //     .selectAll('.legendBubble')
+    //     .data(allStates)
+    //     .enter()
+    //     .append("div")
+    //     .attr("class", 'legendBubble')
+    //     .text((d) => {
+    //         return d;
+    //     });
 
 
     self.update(self.scopeLevel, self.currObj, self.currYear)
@@ -135,17 +135,17 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
         x.domain(currRange)
         y.domain([0, max])
 
-        let allIndustries = self.functions.getAllIndustries();
+        // let allIndustries = self.functions.getAllIndustries();
 
 
-        d3.select(`#${self.sectionId} .barLegend`)
-            .selectAll('.legendBubble')
-            .data(allIndustries)
-            .join("div")
-            .attr("class", 'legendBubble')
-            .text((d) => {
-                return d;
-            });
+        // d3.select(`#${self.sectionId} .barLegend`)
+        //     .selectAll('.legendBubble')
+        //     .data(allIndustries)
+        //     .join("div")
+        //     .attr("class", 'legendBubble')
+        //     .text((d) => {
+        //         return d;
+        //     });
         bars
             .data(barData)
             .join("rect")
@@ -186,16 +186,16 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
         x.domain(currRange)
         y.domain([0, max])
 
-        let allStates = self.functions.getAllStates();
+        // let allStates = self.functions.getAllStates();
 
-        d3.select(`#${self.sectionId} .barLegend`)
-            .selectAll('.legendBubble')
-            .data(allStates)
-            .join("div")
-            .attr("class", 'legendBubble')
-            .text((d) => {
-                return d;
-            });
+        // d3.select(`#${self.sectionId} .barLegend`)
+        //     .selectAll('.legendBubble')
+        //     .data(allStates)
+        //     .join("div")
+        //     .attr("class", 'legendBubble')
+        //     .text((d) => {
+        //         return d;
+        //     });
         bars
             .data(barData)
             .join("rect")
@@ -244,14 +244,14 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
 
         //remove all
 
-        d3.select(`#${self.sectionId} .barLegend`)
-            .selectAll('.legendBubble')
-            .data(allAreas)
-            .join('div')
-            .attr("class", 'legendBubble')
-            .text((d) => {
-                return d;
-            });
+        // d3.select(`#${self.sectionId} .barLegend`)
+        //     .selectAll('.legendBubble')
+        //     .data(allAreas)
+        //     .join('div')
+        //     .attr("class", 'legendBubble')
+        //     .text((d) => {
+        //         return d;
+        //     });
         bars
             .data(barData)
             .join("rect")
