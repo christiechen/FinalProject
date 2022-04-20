@@ -106,16 +106,16 @@ PieChartNoScope.prototype.initVis = function () {
         .text((d) => {
             return d;
         });
-        
+
     //click on state legend
-    $(`#${self.sectionId} .pieLegend .legendBubble`).click(function(event){
+    $(`#${self.sectionId} .pieLegend .legendBubble`).click(function (event) {
         let selected = this.innerText.split(" ").join("-");
-        
+
         // turn all path full opacity, remove background class
         let allPaths = Array.from($(`#${self.sectionId} svg g g`));
-        allPaths.forEach((el)=>{
+        allPaths.forEach((el) => {
             let currentClass = ($(el).attr("class"));
-            if(currentClass.indexOf(' background') !== -1){
+            if (currentClass.indexOf(' background') !== -1) {
                 currentClass = currentClass.substring(0, currentClass.indexOf(" background"));
             }
             $(el).attr("class", currentClass);
@@ -123,7 +123,7 @@ PieChartNoScope.prototype.initVis = function () {
 
 
         //if we're unselecting
-        if($(this).hasClass('selected')){
+        if ($(this).hasClass('selected')) {
             $(this).removeClass('selected');
             //clear area 
             self.areaClear();
@@ -138,16 +138,16 @@ PieChartNoScope.prototype.initVis = function () {
         // console.log(selected);
         // turn all other circles low opacity
         let otherPaths = Array.from($(`#${self.sectionId} svg g g:not(.${selected})`));
-        otherPaths.forEach((el)=>{
-            let currentClass = ($(el).attr("class")) + ' background'; 
+        otherPaths.forEach((el) => {
+            let currentClass = ($(el).attr("class")) + ' background';
             $(el).attr("class", currentClass);
         })
 
         console.log(this.innerText);
-        if(self.selectedOption === "areas"){
+        if (self.selectedOption === "areas") {
             self.areaFill(this.innerText, null, false);
         }
-        if(self.selectedOption === "industries"){
+        if (self.selectedOption === "industries") {
             self.areaFill(this.innerText, 'white', true);
             self.industryFill();
         }
@@ -155,25 +155,25 @@ PieChartNoScope.prototype.initVis = function () {
     })
 
     // //industry Legend
-    self.industryFill = function(){
+    self.industryFill = function () {
         d3.select(`#${self.sectionId} .industryLegend`)
-        .selectAll('.industryLegend .entry')
-        .data(self.functions.getAllIndustries())
-        .enter()
-        .append('div')
-        .attr('class', 'entry')
-        .text((d)=>d)
-        .attr("style", (d) => `color:${self.color(d)}`);
+            .selectAll('.industryLegend .entry')
+            .data(self.functions.getAllIndustries())
+            .enter()
+            .append('div')
+            .attr('class', 'entry')
+            .text((d) => d)
+            .attr("style", (d) => `color:${self.color(d)}`);
     }
 
-    
+
     //area Legend
-    self.areaClear = function() {
+    self.areaClear = function () {
         d3.select(`#${self.sectionId} .areaLegend`)
             .selectAll('.entry')
             .remove();
     }
-    self.areaFill = function(state, color, clickable){
+    self.areaFill = function (state, color, clickable) {
         self.areaClear();
         d3.select(`#${self.sectionId} .areaLegend`)
             .selectAll('.entry')
@@ -181,62 +181,62 @@ PieChartNoScope.prototype.initVis = function () {
             .enter()
             .append('div')
             .attr('class', 'entry')
-            .text((d)=>d)
+            .text((d) => d)
             .attr("style", (d) => color ? `color: ${color}` : `color:${self.color(d)}`);
-         
-        if(!clickable){
+
+        if (!clickable) {
             $(`#${self.sectionId} .areaLegend`).removeClass("clickable");
             return;
         }
         //click on arealegend
-        if(!$(`#${self.sectionId} .areaLegend`).hasClass("clickable")){
+        if (!$(`#${self.sectionId} .areaLegend`).hasClass("clickable")) {
             $(`#${self.sectionId} .areaLegend`).addClass("clickable");
         }
-        $(`#${self.sectionId} .areaLegend .entry`).click(function(event){
-            let selected = this.innerText.toString().replaceAll(',','').split(" ").join("-");
-            
-            if(self.selectedOption === "areas"){
+        $(`#${self.sectionId} .areaLegend .entry`).click(function (event) {
+            let selected = this.innerText.toString().replaceAll(',', '').split(" ").join("-");
+
+            if (self.selectedOption === "areas") {
 
             }
 
             // turn all circles full opacity
             let allPaths = Array.from($(`#${self.sectionId} svg g g`));
-            
-            allPaths.forEach((el)=>{
+
+            allPaths.forEach((el) => {
                 let currentClass = ($(el).attr("class"));
-                if(currentClass.indexOf(' background') !== -1){
+                if (currentClass.indexOf(' background') !== -1) {
                     currentClass = currentClass.substring(0, currentClass.indexOf(" background"));
                 }
                 $(el).attr("class", currentClass);
             })
 
-        
+
 
             //if there is a state selected
             let state = '';
-            
 
-            if($(`.legendBubble.selected`).length > 0){
+
+            if ($(`.legendBubble.selected`).length > 0) {
                 state = $(`.legendBubble.selected`)[0].innerText.split(" ").join('-'); //current selected state
 
                 //turn other not-selected states low-opacity
                 let otherStatePaths = Array.from($(`#${self.sectionId} svg g g:not(.${state})`));
-                otherStatePaths.forEach((el)=>{
-                    let currentClass = ($(el).attr("class")) + ' background'; 
+                otherStatePaths.forEach((el) => {
+                    let currentClass = ($(el).attr("class")) + ' background';
                     $(el).attr("class", currentClass);
                 })
 
             }
-            
+
 
 
             //if we're unselecting
-            if($(this).hasClass('selected')){
+            if ($(this).hasClass('selected')) {
                 $(this).removeClass('selected');
-                
+
                 return;
             }
-            
+
             //remove previously selected area
             $(`#${self.sectionId} .areaLegend .entry`).removeClass("selected");
             $(this).addClass("selected");
@@ -244,11 +244,11 @@ PieChartNoScope.prototype.initVis = function () {
 
             // turn all other arcs low opacity
             let otherCircles = Array.from($(`#${self.sectionId} svg g g:not(.${selected})`));
-            otherCircles.forEach((el)=>{
-                let currentClass = ($(el).attr("class")) + ' background'; 
+            otherCircles.forEach((el) => {
+                let currentClass = ($(el).attr("class")) + ' background';
                 $(el).attr("class", currentClass);
             })
-            
+
 
         })
     }
@@ -285,20 +285,20 @@ PieChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
         tempAreas.forEach(function (g) {
             areaArcData.push(g)
             var tempInds = self.functions.getCitySpecificsByYear(f["State"], currYear, g["Area"])
-            tempInds.forEach(function(h){
+            tempInds.forEach(function (h) {
                 indArcData.push(h)
             })
         })
 
     })
 
-    
+
 
     //remove previous legend filtering
     $(`#${self.sectionId} .pieLegend .selected`).removeClass('selected');
-        //clear area 
+    //clear area 
     self.areaClear();
-     
+
 
 
     d3.select("#pieChartNoScopeAreasButton")
@@ -352,27 +352,27 @@ PieChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
     var g = self.svg.append("g")
         .attr("transform", `translate(${self.svgWidth / 2},${self.svgHeight / 2})`)
 
-    
+
 
     var arcs = g.selectAll("arc")
         .data(pie(currArcData))
         .enter()
         .append("g")
-        .attr("class", (d)=> {
+        .attr("class", (d) => {
             let state = d.data.State.split(" ").join("-");
             let area = '';
             let industry = '';
-            if(selectedOption === 'areas'){
+            if (selectedOption === 'areas') {
                 area = d.data.Area
                 return state + ' ' + area;
             }
-            if(selectedOption === 'industries'){
+            if (selectedOption === 'industries') {
                 area = d.data.Area.replaceAll(',', '').split(" ").join('-');
                 industry = d.data.Industry.replaceAll(',', '').split(" ").join('-');
-                return state + " " + area +" " + industry;
+                return state + " " + area + " " + industry;
             }
             return state;
-            
+
         });
 
     // Appending path 

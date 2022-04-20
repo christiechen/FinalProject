@@ -60,6 +60,19 @@ BarChartScope.prototype.initVis = function () {
         .attr("class", "xAxis")
         .attr("transform", `translate(50, ${self.svgHeight - self.margin.bottom})`)
 
+    //fill state legend
+    let allStates = self.functions.getAllStates();
+
+    d3.select(`#${self.sectionId} .pieLegend`)
+        .selectAll('.legendBubble')
+        .data(allStates)
+        .enter()
+        .append("div")
+        .attr("class", 'legendBubble')
+        .text((d) => {
+            return d;
+        });
+
 
     self.update(self.scopeLevel, self.currObj, self.currYear)
 
@@ -100,7 +113,7 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
     }
 
     var x = d3.scaleBand()
-        .range([0, self.svgWidth-self.margin.right-self.margin.left])
+        .range([0, self.svgWidth - self.margin.right - self.margin.left])
         .padding(0.2);
 
     var y = d3.scaleLinear()
@@ -120,7 +133,17 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
         x.domain(barData.map(function (d) { return d["Industry"]; }))
         y.domain([0, max])
 
+        let allIndustries = self.functions.getAllIndustries();
 
+
+        d3.select(`#${self.sectionId} .barLegend`)
+            .selectAll('.legendBubble')
+            .data(allIndustries)
+            .join("div")
+            .attr("class", 'legendBubble')
+            .text((d) => {
+                return d;
+            });
         bars
             .data(barData)
             .join("rect")
@@ -128,7 +151,7 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
             .attr("x", function (d) { return self.margin.left + x(d["Industry"]); })
             .attr("y", function (d) { return y(d["Employees"]); })
             .attr("width", x.bandwidth())
-            .attr("height", function (d) { return self.svgHeight - self.margin.bottom- y(d["Employees"]); })
+            .attr("height", function (d) { return self.svgHeight - self.margin.bottom - y(d["Employees"]); })
             .attr("fill", "#69b3a2")
             .on("mouseover", self.tip.show)
             .on("mouseout", self.tip.hide)
@@ -141,6 +164,8 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
             .attr("transform", "translate(-10,0)rotate(-45)")
             .style("text-anchor", "end")
         self.svg.select(".yAxis").call(d3.axisLeft(y))
+            .selectAll("text")
+            .style("font-size", "8px")
     }
     else if (scopeLevel == "states") {
         var stateData = self.functions.getStateByYear(currYear);
@@ -154,6 +179,16 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
         x.domain(barData.map(function (d) { return d["State"]; }))
         y.domain([0, max])
 
+        let allStates = self.functions.getAllStates();
+
+        d3.select(`#${self.sectionId} .barLegend`)
+            .selectAll('.legendBubble')
+            .data(allStates)
+            .join("div")
+            .attr("class", 'legendBubble')
+            .text((d) => {
+                return d;
+            });
         bars
             .data(barData)
             .join("rect")
@@ -174,7 +209,11 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
             .attr("transform", "translate(-10,0)rotate(-45)")
             .style("text-anchor", "end")
         self.svg.select(".yAxis").call(d3.axisLeft(y))
+            .selectAll("text")
+            .style("font-size", "8px")
     } else if (scopeLevel == "areas") {
+
+
         var areaData = self.functions.getCityTotalsForStateByYear(selectedState, currYear)
         barData = areaData;
         barData.sort(function (a, b) {
@@ -185,7 +224,21 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
         x.domain(barData.map(function (d) { return d["Area"]; }))
         y.domain([0, max])
 
+        let allAreas = [];
+        areaData.forEach((el) => {
+            allAreas.push(el.Area);
+        })
 
+        //remove all
+
+        d3.select(`#${self.sectionId} .barLegend`)
+            .selectAll('.legendBubble')
+            .data(allAreas)
+            .join('div')
+            .attr("class", 'legendBubble')
+            .text((d) => {
+                return d;
+            });
         bars
             .data(barData)
             .join("rect")
@@ -206,8 +259,21 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
             .attr("transform", "translate(-10,0)rotate(-45)")
             .style("text-anchor", "end")
         self.svg.select(".yAxis").call(d3.axisLeft(y))
+            .selectAll("text")
+            .style("font-size", "8px")
     }
 
+
+
+    self.svg.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", (2))
+        .attr("x", (0 - (self.svgHeight / 2)))
+        .attr("dy", "1em")
+        .style("text-anchor", "middle")
+        .style("fill", "white")
+        .text("Total Employees (thousands)")
+        .style("font-size", "12px");
 
 
 
