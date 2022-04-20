@@ -59,13 +59,17 @@
 
 
     <section class="entire-body">
-        <section id='svgs'class="body-section">
+        <section id='svgs' class="body-section">
             <section id="barChartScopeSection" class="scope">
                 <h2> bar chart scope </h2>
                 <p> Please click on each bar to view more information (there are three total levels).</p>
                 <div class='svg-div' id="BCSS">
                     <select id="barChartScopeYearButton"></select>
-                    
+                    <div class='multipleLegendDiv'>
+
+                        <div class="svgLegend barLegend"> </div>
+                    </div>
+
                 </div>
             </section>
 
@@ -75,11 +79,26 @@
                 <div class="selectGroup">
                     <select id="barChartNoScopeButton"></select>
                     <select id="barChartNoScopeYearButton"></select>
-                    <select id="barChartNoScopeStatesButton" display = "none"></select>
-                    <select id="barChartNoScopeAreasButton" display = "none"></select>
-                    <button id = "barChartNoScopeUpdateButton">Update Chart</button>
+                    <select id="barChartNoScopeStatesButton" display="none"></select>
+                    <select id="barChartNoScopeAreasButton" display="none"></select>
+                    <button id="barChartNoScopeUpdateButton">Update Chart</button>
                 </div>
-                <div class='svg-div' id="BCNSS"></div>
+                <div class='svg-div' id="BCNSS">
+                    <div class='multipleLegendDiv'>
+                        <div>
+                            <p>States </p>
+                            <div class="svgLegend clickable barLegend"> </div>
+                        </div>
+                        <div>
+                            <p> Areas </p>
+                            <div class="svgLegend clickable areaLegend"> </div>
+                        </div>
+                        <div>
+                            <p>Industries </p>
+                            <div class="svgLegend industryLegend"> </div>
+                        </div>
+                    </div>
+                </div>
 
             </section>
 
@@ -92,14 +111,14 @@
                 <h5 class="loc"> </h5>
                 <div class='svg-div' id="SCSS">
 
-                    <div class = 'multipleLegendDiv'>
-                        <div class="svgLegend scatterLegend"> </div> 
+                    <div class='multipleLegendDiv'>
+                        <div class="svgLegend scatterLegend"> </div>
                         <!-- <div class="svgLegend industryLegend"> </div>  -->
                     </div>
                 </div>
             </section>
 
-            
+
             <section id="scatterChartNoScopeSection">
                 <h2> scatter chart no scope </h2>
                 <p> Please use the select menu and the clickable legends to navigate the data. </p>
@@ -112,22 +131,22 @@
                 <h5 class="loc"> </h5>
                 <div class='svg-div' id="SCNSS">
 
-                    <div class = 'multipleLegendDiv'>
+                    <div class='multipleLegendDiv'>
                         <div>
                             <p>States</p>
-                            <div class="svgLegend clickable scatterLegend">  </div> 
+                            <div class="svgLegend clickable scatterLegend"> </div>
                         </div>
                         <div>
                             <p>Areas</p>
-                            <div class="svgLegend clickable areaLegend"> </div> 
+                            <div class="svgLegend clickable areaLegend"> </div>
                         </div>
                         <div>
                             <p>Industries</p>
-                            <div class="svgLegend industryLegend"> </div> 
+                            <div class="svgLegend industryLegend"> </div>
                         </div>
                     </div>
                 </div>
-                
+
             </section>
 
             <section id="pieChartScopeSection" class="scope">
@@ -136,10 +155,10 @@
 
                 <select id="pieChartScopeYearButton"></select>
                 <div class='svg-div' id="PCSS">
-                    <div class = 'multipleLegendDiv'>
+                    <div class='multipleLegendDiv'>
 
-                        <div class="svgLegend pieLegend"> </div> 
-                </div>
+                        <div class="svgLegend pieLegend"> </div>
+                    </div>
 
             </section>
 
@@ -152,22 +171,22 @@
                     <select id="pieChartNoScopeYearButton"></select>
                     <!-- <select id="pieChartNoScopeStatesButton" display = "none"></select> -->
                     <!-- <select id="pieChartNoScopeAreasButton" display = "none"></select> -->
-                    <button id = "pieChartNoScopeUpdateButton">Update Chart</button>
+                    <button id="pieChartNoScopeUpdateButton">Update Chart</button>
                 </div>
                 <div class='svg-div' id="PCNSS">
 
-                    <div class = 'multipleLegendDiv'>
+                    <div class='multipleLegendDiv'>
                         <div>
                             <p>States </p>
-                            <div class="svgLegend clickable pieLegend">  </div> 
+                            <div class="svgLegend clickable pieLegend"> </div>
                         </div>
                         <div>
-                           <p> Areas </p>
-                            <div class="svgLegend clickable areaLegend"> </div> 
+                            <p> Areas </p>
+                            <div class="svgLegend clickable areaLegend"> </div>
                         </div>
                         <div>
                             <p>Industries </p>
-                            <div class="svgLegend industryLegend"> </div> 
+                            <div class="svgLegend industryLegend"> </div>
                         </div>
                     </div>
                 </div>
@@ -180,7 +199,7 @@
                 <p> Please click on each line to view more information (there are three total levels).</p>
 
                 <div class='svg-div' id="LCSS">
-                    <div class = 'multipleLegendDiv'>
+                    <div class='multipleLegendDiv'>
                         <div class="svgLegend lineScopeColorLegend"> </div>
                     </div>
                 </div>
@@ -193,7 +212,7 @@
 
                 <select id="selectButton"></select>
                 <div class='svg-div' id="LCNSS">
-                    <div class = 'multipleLegendDiv'>
+                    <div class='multipleLegendDiv'>
                         <div class="svgLegend clickable lineLegend"> </div>
                         <div class="svgLegend clickable lineAreaLegend"> </div>
                         <div class="svgLegend colorLegend"></div>
@@ -262,6 +281,7 @@
                 <button id='finalSubmit' class='submit'> Submit </button>
             </div>
 
+<<<<<<< Updated upstream
             <div id="questions-hide">
                 <h2> Further Questions </h2>
                     
@@ -311,6 +331,10 @@
                 </form>
             </div>
             
+=======
+            </ol>
+
+>>>>>>> Stashed changes
         </section>
 
     </section>
