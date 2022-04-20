@@ -23,7 +23,7 @@ function BarChartNoScope(id, functions) {
 BarChartNoScope.prototype.initVis = function () {
     var self = this;
 
-    self.margin = { top: 30, right: 20, bottom: 60, left: 50 };
+    self.margin = { top: 5, right: 20, bottom: 60, left: 50 };
     self.svgWidth = 1200; //get current width of container on page
     self.svgHeight = 600;
 
@@ -352,7 +352,7 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
 
         console.log(barData)
 
-        bars
+        bars    
             .data(barData)
             .join("rect")
             .attr("x", function (d, i) { return self.margin.left + x(i); })
@@ -360,7 +360,7 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
             .attr("width", x.bandwidth())
             .attr("height", function (d) { return self.svgHeight - self.margin.bottom - y(d["TotalEmployees"]); })
             .attr("fill", "#69b3a2")
-            .attr("class", "yAxis")
+            .attr("class", "rects");
     }
     else if (selectedOption == "industries") {
         // d3.select("#barChartNoScopeStatesButton").style("display", "block");
@@ -403,6 +403,7 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
             .attr("width", x.bandwidth())
             .attr("height", function (d) { return self.svgHeight - self.margin.bottom - y(d["Employees"]); })
             .attr("fill", "#69b3a2")
+            .attr("class", "rects")
     } else if (selectedOption == "states") {
         // d3.select("#barChartNoScopeStatesButton").style("display", "none");
         // d3.select("#barChartNoScopeAreasButton").style("display", "none");
@@ -440,6 +441,7 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
             .attr("width", x.bandwidth())
             .attr("height", function (d) { return self.svgHeight - self.margin.bottom - y(d["TotalEmployees"]); })
             .attr("fill", "#69b3a2")
+            .attr("class", "rects")
     }
 
 
