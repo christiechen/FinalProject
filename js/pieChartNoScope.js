@@ -271,6 +271,9 @@ PieChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
     var pie = d3.pie()
         .value(function (d) { return d["TotalEmployees"] });
 
+    d3.select("#pieChartNoScopeStatesButton").style("display", "none");
+    d3.select("#pieChartNoScopeAreasButton").style("display", "none");
+
 
     var currAreas = self.functions.getAllAreasInState(selectedState);
 
@@ -311,15 +314,15 @@ PieChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
 
 
     if (selectedOption == "areas") {
-        d3.select("#pieChartNoScopeStatesButton").style("display", "block");
-        d3.select("#pieChartNoScopeAreasButton").style("display", "none");
+        // d3.select("#pieChartNoScopeStatesButton").style("display", "block");
+        // d3.select("#pieChartNoScopeAreasButton").style("display", "none");
         $(`#${self.sectionId} .industryLegend`).parent().css("display", "none");
         $(`#${self.sectionId} .areaLegend`).parent().css("display", "block");
         currArcData = areaArcData
     }
     else if (selectedOption == "industries") {
-        d3.select("#pieChartNoScopeStatesButton").style("display", "block");
-        d3.select("#pieChartNoScopeAreasButton").style("display", "block");
+        // d3.select("#pieChartNoScopeStatesButton").style("display", "block");
+        // d3.select("#pieChartNoScopeAreasButton").style("display", "block");
         pie = d3.pie().value(function (d) { return d["Employees"] })
         // selectedArea = d3.select("#pieChartNoScopeAreasButton").property("value");
         var indData = self.functions.getCitySpecificsByYear(selectedState, currYear, self.selectedArea)
@@ -328,8 +331,8 @@ PieChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
         $(`#${self.sectionId} .areaLegend`).parent().css("display", "block");
 
     } else if (selectedOption == "states") {
-        d3.select("#pieChartNoScopeStatesButton").style("display", "none");
-        d3.select("#pieChartNoScopeAreasButton").style("display", "none");
+        // d3.select("#pieChartNoScopeStatesButton").style("display", "none");
+        // d3.select("#pieChartNoScopeAreasButton").style("display", "none");
         $(`#${self.sectionId} .industryLegend`).parent().css("display", "none");
         $(`#${self.sectionId} .areaLegend`).parent().css("display", "none");
         var stateData = self.functions.getStateByYear(currYear);

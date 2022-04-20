@@ -272,6 +272,8 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
     var barData = [];
 
     var currYear = parseInt(selectedYear)
+    d3.select("#barChartNoScopeStatesButton").style("display", "none");
+    d3.select("#barChartNoScopeAreasButton").style("display", "none");
 
 
     var currAreas = self.functions.getAllAreasInState(selectedState);
@@ -318,8 +320,8 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
         .attr("value", function (d) { return d; });
 
     if (selectedOption == "areas") {
-        d3.select("#barChartNoScopeStatesButton").style("display", "block");
-        d3.select("#barChartNoScopeAreasButton").style("display", "none");
+        // d3.select("#barChartNoScopeStatesButton").style("display", "block");
+        // d3.select("#barChartNoScopeAreasButton").style("display", "none");
         $(`#${self.sectionId} .industryLegend`).parent().css("display", "none");
         $(`#${self.sectionId} .areaLegend`).parent().css("display", "block");
         // var areaData = self.functions.getCityTotalsForStateByYear(selectedState, currYear)
@@ -360,8 +362,8 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
             .attr("class", "yAxis")
     }
     else if (selectedOption == "industries") {
-        d3.select("#barChartNoScopeStatesButton").style("display", "block");
-        d3.select("#barChartNoScopeAreasButton").style("display", "block");
+        // d3.select("#barChartNoScopeStatesButton").style("display", "block");
+        // d3.select("#barChartNoScopeAreasButton").style("display", "block");
         $(`#${self.sectionId} .industryLegend`).parent().css("display", "block");
         $(`#${self.sectionId} .areaLegend`).parent().css("display", "block");
         selectedArea = d3.select("#barChartNoScopeAreasButton").property("value");
@@ -401,8 +403,8 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
             .attr("height", function (d) { return self.svgHeight - self.margin.bottom - y(d["Employees"]); })
             .attr("fill", "#69b3a2")
     } else if (selectedOption == "states") {
-        d3.select("#barChartNoScopeStatesButton").style("display", "none");
-        d3.select("#barChartNoScopeAreasButton").style("display", "none");
+        // d3.select("#barChartNoScopeStatesButton").style("display", "none");
+        // d3.select("#barChartNoScopeAreasButton").style("display", "none");
         $(`#${self.sectionId} .industryLegend`).parent().css("display", "none");
         $(`#${self.sectionId} .areaLegend`).parent().css("display", "none");
         // var stateData = self.functions.getStateByYear(currYear);
