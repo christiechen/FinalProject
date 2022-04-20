@@ -15,6 +15,29 @@
 
 <body>
     <h1> Final Project </h1>
+    <div id="start-screen">
+        <p class="important">
+           IMPORTANT!!! Please make sure your window is FULL SCREEN. PLEASE READ THE FOLLOWING:
+        </p>
+        <p>
+            You will see a data visualization that shows employment numbers in states, areas, and industries in 
+            the 15 of the most-employed states of America. Please interact with the visualizations and answer the 
+            10 questions on the right. Please fill out all questions to the best of your ability.
+        </p>
+        <p>
+            The first set of questions is timed; please try to answer as quickly and accurately as possible. 
+            After you submit, you will be asked to fill out a short survey for demographics and self-evaluation. 
+            In this portion, feel free to skip any questions that you are not comfortable answering.
+        </p>
+        <p>
+            We are testing the visualizations, not you! Any information you provide will be kept anonymous and 
+            do not reflect on you. 
+        </p>
+        <p class="important">
+            Press "Start" when you are ready to begin. The study will begin immediately.
+        </p>
+        <button id="start"> Start </button>
+    </div>
     <div id="intro">
         <div class="options">
             <p>
@@ -30,7 +53,7 @@
             <button value="lineChartNoScopeSection"> Line Chart No Scope </button>
         </div>
         <div class="new">
-            <button> New Session </button>
+            <!-- <button> New Session </button> -->
         </div>
     </div>
 
@@ -39,6 +62,7 @@
         <section id='svgs'class="body-section">
             <section id="barChartScopeSection" class="scope">
                 <h2> bar chart scope </h2>
+                <p> Please click on each bar to view more information (there are three total levels).</p>
                 <div class='svg-div' id="BCSS">
                     <select id="barChartScopeYearButton"></select>
                     
@@ -47,6 +71,7 @@
 
             <section id="barChartNoScopeSection">
                 <h2> bar chart no scope </h2>
+                <p> Please use the select menu and the clickable legends to navigate the data. </p>
                 <div class="selectGroup">
                     <select id="barChartNoScopeButton"></select>
                     <select id="barChartNoScopeYearButton"></select>
@@ -61,6 +86,8 @@
 
             <section id="scatterChartScopeSection" class="scope">
                 <h2> scatter chart scope </h2>
+                <p> Please click on each point to view more information (there are three total levels).</p>
+
                 <select id="yearGroupButton"></select>
                 <h5 class="loc"> </h5>
                 <div class='svg-div' id="SCSS">
@@ -75,6 +102,8 @@
             
             <section id="scatterChartNoScopeSection">
                 <h2> scatter chart no scope </h2>
+                <p> Please use the select menu and the clickable legends to navigate the data. </p>
+                
                 <div class="selectGroup">
                     <select id="scatterLevel"></select>
                     <select id="scatterYear"></select>
@@ -103,6 +132,8 @@
 
             <section id="pieChartScopeSection" class="scope">
                 <h2> pie chart scope </h2>
+                <p> Please click on each section to view more information (there are three total levels).</p>
+
                 <select id="pieChartScopeYearButton"></select>
                 <div class='svg-div' id="PCSS">
                     <div class = 'multipleLegendDiv'>
@@ -114,6 +145,8 @@
 
             <section id="pieChartNoScopeSection">
                 <h2> pie chart no scope </h2>
+                <p> Please use the select menu and the clickable legends to navigate the data. </p>
+
                 <div class="selectGroup">
                     <select id="pieChartNoScopeButton"></select>
                     <select id="pieChartNoScopeYearButton"></select>
@@ -144,6 +177,8 @@
 
             <section id="lineChartScopeSection" class="scope">
                 <h2> line chart scope </h2>
+                <p> Please click on each line to view more information (there are three total levels).</p>
+
                 <div class='svg-div' id="LCSS">
                     <div class = 'multipleLegendDiv'>
                         <div class="svgLegend lineScopeColorLegend"> </div>
@@ -154,6 +189,8 @@
 
             <section id="lineChartNoScopeSection">
                 <h2> line chart no scope </h2>
+                <p> Please use the select menu and the clickable legends to navigate the data. </p>
+
                 <select id="selectButton"></select>
                 <div class='svg-div' id="LCNSS">
                     <div class = 'multipleLegendDiv'>
@@ -166,124 +203,122 @@
         </section>
 
         <section class="body-section" id="questions">
-            <h2> questions </h2>
-            <ol>
-                <li>
-                    first question here
-                    <div>
-                        <form>
-                            <input class='correct' type="radio" id='q1-1' name="q1" value="q1-1">
-                            <label for="q1-1">1st answer</label><br>
-                            <input type="radio" id="q1-2" name="q1" value="q1-2">
-                            <label for="q1-2">2nd answer</label><br>
-                            <input type="radio" id="q1-3" name="q1" value="q1-3">
-                            <label for="q1-3"> 3rd answer </label><br><br>
-                        </form>
-                    </div>
-                </li>
-                <li>
-                    second question here
-                    <div>
-                        <form>
-                            <input class='correct' type="radio" id='q2-1' name="q2" value="q2-1">
-                            <label for="q2-1">1st answer</label><br>
-                            <input type="radio" id="q2-2" name="q2" value="q2-2">
-                            <label for="q2-2">2nd answer</label><br>
-                            <input type="radio" id="q2-3" name="q2" value="q2-3">
-                            <label for="q2-3"> 3rd answer </label><br><br>
-                        </form>
-                    </div>
-                </li>
-                <li>
-                    third question here
-                    <div>
-                        <form>
-                            <input class='correct' type="radio" id='q3-1' name="q3" value="q3-1">
-                            <label for="q3-1">1st answer</label><br>
-                            <input type="radio" id="q3-2" name="q3" value="q3-2">
-                            <label for="q3-2">2nd answer</label><br>
-                            <input type="radio" id="q3-3" name="q3" value="q3-3">
-                            <label for="q3-3"> 3rd answer </label><br><br>
-                        </form>
-                    </div>
-                </li>
-                <li>
-                    fourth question here
-                    <div>
-                        <form>
-                            <input class='correct' type="radio" id='q4-1' name="q4" value="q4-1">
-                            <label for="q4-1">1st answer</label><br>
-                            <input type="radio" id="q4-2" name="q4" value="q4-2">
-                            <label for="q4-2">2nd answer</label><br>
-                            <input type="radio" id="q4-3" name="q4" value="q4-3">
-                            <label for="q4-3"> 3rd answer </label><br><br>
-                        </form>
-                    </div>
-                </li>
+            <div id="questions-timed">
+                <h2> Questions </h2>
+                <ol>
+                    <li>
+                        first question here
+                        <div>
+                            <form>
+                                <input class='correct' type="radio" id='q1-1' name="q1" value="q1-1">
+                                <label for="q1-1">1st answer</label><br>
+                                <input type="radio" id="q1-2" name="q1" value="q1-2">
+                                <label for="q1-2">2nd answer</label><br>
+                                <input type="radio" id="q1-3" name="q1" value="q1-3">
+                                <label for="q1-3"> 3rd answer </label><br><br>
+                            </form>
+                        </div>
+                    </li>
+                    <li>
+                        second question here
+                        <div>
+                            <form>
+                                <input class='correct' type="radio" id='q2-1' name="q2" value="q2-1">
+                                <label for="q2-1">1st answer</label><br>
+                                <input type="radio" id="q2-2" name="q2" value="q2-2">
+                                <label for="q2-2">2nd answer</label><br>
+                                <input type="radio" id="q2-3" name="q2" value="q2-3">
+                                <label for="q2-3"> 3rd answer </label><br><br>
+                            </form>
+                        </div>
+                    </li>
+                    <li>
+                        third question here
+                        <div>
+                            <form>
+                                <input class='correct' type="radio" id='q3-1' name="q3" value="q3-1">
+                                <label for="q3-1">1st answer</label><br>
+                                <input type="radio" id="q3-2" name="q3" value="q3-2">
+                                <label for="q3-2">2nd answer</label><br>
+                                <input type="radio" id="q3-3" name="q3" value="q3-3">
+                                <label for="q3-3"> 3rd answer </label><br><br>
+                            </form>
+                        </div>
+                    </li>
+                    <li>
+                        fourth question here
+                        <div>
+                            <form>
+                                <input class='correct' type="radio" id='q4-1' name="q4" value="q4-1">
+                                <label for="q4-1">1st answer</label><br>
+                                <input type="radio" id="q4-2" name="q4" value="q4-2">
+                                <label for="q4-2">2nd answer</label><br>
+                                <input type="radio" id="q4-3" name="q4" value="q4-3">
+                                <label for="q4-3"> 3rd answer </label><br><br>
+                            </form>
+                        </div>
+                    </li>
+                </ol>
+                <button id='finalSubmit' class='submit'> Submit </button>
+            </div>
 
-            </ol>
-            <button id='finalSubmit' class='submit'> Submit </button>
+            <div id="questions-hide">
+                <h2> Further Questions </h2>
+                    
+                <form id="final-form" 
+                method="POST" 
+                action="https://script.google.com/macros/s/AKfycbykqm9x0bXqPOYsTrIxwH7B-UYcJ2taK3B5EWsimz_EbPpbJxqHlpvApHQmmMPcS3mB/exec"
+                >
+                <!-- <form> -->
+                    <span>first question here </span>
+                    <input class='selfreflect' type="radio" id='q12-1' name="sf1" value="q1-1">
+                    <label for="q12-1">1st answer</label><br>
+                    <input class='selfreflect' type="radio" id="q12-2" name="sf1" value="q12-2">
+                    <label for="q1-2">2nd answer</label><br>
+                    <input class='selfreflect' type="radio" id="q12-3" name="sf1" value="q12-3">
+                    <label for="q12-3"> 3rd answer </label><br><br>
 
-            <h2> Further Questions </h2>
-            <ol>
-                <li>
-                    first question here
-                    <div>
-                        <form>
-                            <input class='selfreflect' type="radio" id='q12-1' name="q12" value="q1-1">
-                            <label for="q12-1">1st answer</label><br>
-                            <input class='selfreflect' type="radio" id="q12-2" name="q12" value="q12-2">
-                            <label for="q1-2">2nd answer</label><br>
-                            <input class='selfreflect' type="radio" id="q12-3" name="q12" value="q12-3">
-                            <label for="q12-3"> 3rd answer </label><br><br>
-                        </form>
-                    </div>
-                </li>
-                <li>
-                    second question here
-                    <div>
-                        <form>
-                            <input class='selfreflect' type="radio" id='q22-1' name="q22" value="q22-1">
-                            <label for="q22-1">1st answer</label><br>
-                            <input class='selfreflect' type="radio" id="q22-2" name="q22" value="q22-2">
-                            <label for="q22-2">2nd answer</label><br>
-                            <input class='selfreflect' type="radio" id="q22-3" name="q22" value="q22-3">
-                            <label for="q22-3"> 3rd answer </label><br><br>
-                        </form>
-                    </div>
-                </li>
-                <li>
-                    third question here
-                    <div>
-                        <form>
-                            <input class='selfreflect' type="radio" id='q32-1' name="q32" value="q32-1">
-                            <label for="q32-1">1st answer</label><br>
-                            <input class='selfreflect' type="radio" id="q32-2" name="q32" value="q32-2">
-                            <label for="q32-2">2nd answer</label><br>
-                            <input class='selfreflect' type="radio" id="q32-3" name="q32" value="q32-3">
-                            <label for="q32-3"> 3rd answer </label><br><br>
-                        </form>
-                    </div>
-                </li>
-                <li>
-                    fourth question here
-                    <div>
-                        <form>
-                            <input class='selfreflect' type="radio" id='q42-1' name="q42" value="q42-1">
-                            <label for="q42-1">1st answer</label><br>
-                            <input class='selfreflect' type="radio" id="q42-2" name="q42" value="q42-2">
-                            <label for="q42-2">2nd answer</label><br>
-                            <input class='selfreflect' type="radio" id="q42-3" name="q42" value="q42-3">
-                            <label for="q42-3"> 3rd answer </label><br><br>
-                        </form>
-                    </div>
-                </li>
+                    <span>second question here </span>
+                    <input class='selfreflect' type="radio" id='q22-1' name="sf2" value="q22-1">
+                    <label for="q22-1">1st answer</label><br>
+                    <input class='selfreflect' type="radio" id="q22-2" name="sf2" value="q22-2">
+                    <label for="q22-2">2nd answer</label><br>
+                    <input class='selfreflect' type="radio" id="q22-3" name="sf2" value="q22-3">
+                    <label for="q22-3"> 3rd answer </label><br><br>
 
-            </ol>
+                    <span>third question here </span>
+                    <input class='selfreflect' type="radio" id='q32-1' name="sf3" value="q32-1">
+                    <label for="q32-1">1st answer</label><br>
+                    <input class='selfreflect' type="radio" id="q32-2" name="sf3" value="q32-2">
+                    <label for="q32-2">2nd answer</label><br>
+                    <input class='selfreflect' type="radio" id="q32-3" name="sf3" value="q32-3">
+                    <label for="q32-3"> 3rd answer </label><br><br>
+                
+                    <span>fourth question here </span>
+                    <input class='selfreflect' type="radio" id='q42-1' name="sf4" value="q42-1">
+                    <label for="q42-1">1st answer</label><br>
+                    <input class='selfreflect' type="radio" id="q42-2" name="sf4" value="q42-2">
+                    <label for="q42-2">2nd answer</label><br>
+                    <input class='selfreflect' type="radio" id="q42-3" name="sf4" value="q42-3">
+                    <label for="q42-3"> 3rd answer </label><br><br>
+
+
+                    <input class="hidden" id = "chart_type" name="chart_type" type = "text">
+                    <input class="hidden" id = "incorrect_qs" name="incorrect_qs" type = "text">
+                    <input class="hidden" id = "time" name="time" type = "text">
+                    
+                    <button id="sheets-submit">Send</button>
+                </form>
+            </div>
             
         </section>
 
     </section>
+    <div id="end-screen">
+        <p>
+            This is the end of this study. Thank you for participating! You may now close the browser. 
+        </p>
+    </div>
     <!-- entire body end  -->
 
     <script src="js/jquery.min.js"></script>

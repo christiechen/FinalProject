@@ -1,15 +1,17 @@
-window.onbeforeunload = function(event)
-{
-    return confirm("Confirm refresh");
-};
+// window.onbeforeunload = function(event)
+// {
+//     return confirm("Confirm refresh");
+// };
 // beginning page — disabled hidden for now
 
   let startTime;
+  let selectedVis;
 $("#intro .options button").click(function(){
   $('.entire-body').css('display', 'flex'); //show vis
   $("#intro .options").css('display', 'none'); //hide choices
   $("#intro .new").css('display', 'block'); //visible new button
   $(`#${this.value}`).css('display', 'block');
+  selectedVis = this.value;
 
   console.log("=======================");
   console.log("START SESSION");
@@ -30,6 +32,11 @@ $("#intro .new button").click(()=>{
 })
 
 
+$('#start').click( ()=>{
+  let rand = Math.floor(Math.random() * 8);
+  Array.from($(`#intro button`))[rand].click();
+  $('#start-screen').css("display", "none");
+})
 
 
 let correctAnswers = Array.from($('input.correct'));
@@ -45,7 +52,7 @@ $('#finalSubmit').click(()=>{
   }
   if(incorrect.length !== 0){
     console.log("INCORRECT:");
-    console.log(incorrect);
+    console.log(incorrect.toString());
   }
   else{
     console.log("NO INCORRECT ANSWERS")
@@ -54,7 +61,42 @@ $('#finalSubmit').click(()=>{
   let date = new Date();
   let endTime = date.getTime();
 
+  let time = (endTime - startTime) / 1000
+  $('#chart_type').attr("value", selectedVis);
+  $('#incorrect_qs').attr("value", incorrect.toString());
+  $('#time').attr("value", time);
+
+
+  // Array.from($('input.selfreflect:checked')).forEach((el, i) => {
+  //   $(`#sf${i+1}`).attr("value", el.value);    
+  // });
+
+
+
   console.log("TIME TAKEN IN SECONDS:")
-  console.log((endTime-startTime) / 1000); //time in seconds
+  console.log(time); //time in seconds
   console.log("=======================");
+
+
+  $('#questions-hide').css("display", "block");
+  $('#svgs').css("display", "none");
+  $('#questions-timed').css("display", "none");
 })
+
+window.addEventListener("load", function() {
+  const form = document.getElementById('final-form');
+  form.addEventListener("submit", function(e) {
+    e.preventDefault();
+    const data = new FormData(form);
+    const action = e.target.action;
+    fetch(action, {
+      method: 'POST',
+      body: data,
+    })
+    .then(() => {
+      $('.entire-body').css('display', 'none');
+      $('#end-screen').css('display', 'block');
+      // alert("Thank you for participating!");
+    })
+  });
+});

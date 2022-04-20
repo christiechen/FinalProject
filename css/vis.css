@@ -94,6 +94,15 @@
     stroke-width: 2px;
 }
 
+#barChartNoScopeSection .rects:hover{
+    stroke: white;
+    stroke-width: 1.5px;
+
+}
+#barChartScopeSection .rects:hover{
+    stroke: white;
+    stroke-width: 1.5px;
+}
 select{
     display: block;
     height: fit-content;
