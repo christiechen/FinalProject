@@ -86,6 +86,7 @@ $('#finalSubmit').click(()=>{
 window.addEventListener("load", function() {
   const form = document.getElementById('final-form');
   form.addEventListener("submit", function(e) {
+    $('#sheets-submit').attr('disabled', 'disabled');
     e.preventDefault();
     const data = new FormData(form);
     const action = e.target.action;
@@ -98,5 +99,6 @@ window.addEventListener("load", function() {
       $('#end-screen').css('display', 'block');
       // alert("Thank you for participating!");
     })
+    return true;
   });
 });
