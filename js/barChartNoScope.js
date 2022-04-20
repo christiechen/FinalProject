@@ -342,7 +342,7 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
             .text(function (d, i) {
                 return barData[i]["State"]
             })
-            .attr("transform", "translate(-10,0)rotate(-90)")
+            .attr("transform", "translate(-10,20)rotate(-90)")
             .style("text-anchor", "end")
         self.svg.select(".yAxis").call(d3.axisLeft(y))
             .selectAll("text")
@@ -388,7 +388,7 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
             .text(function (d, i) {
                 return barData[i]["State"]
             })
-            .attr("transform", "translate(-10,0)rotate(-90)")
+            .attr("transform", "translate(-10,20)rotate(-90)")
             .style("text-anchor", "end")
         self.svg.select(".yAxis").call(d3.axisLeft(y))
             .selectAll("text")
@@ -425,7 +425,7 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
             .text(function (d, i) {
                 return barData[i]["State"]
             })
-            .attr("transform", "translate(-10,0)rotate(-90)")
+            .attr("transform", "translate(-10,20)rotate(-90)")
             .style("text-anchor", "end")
         self.svg.select(".yAxis").call(d3.axisLeft(y))
             .selectAll("text")
