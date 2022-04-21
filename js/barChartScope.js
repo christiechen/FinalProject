@@ -60,6 +60,13 @@ BarChartScope.prototype.initVis = function () {
         .attr("class", "xAxis")
         .attr("transform", `translate(50, ${self.svgHeight - self.margin.bottom})`)
 
+    self.svg.append("text")
+        .attr("x", self.svgHeight / 2)
+        .attr("y", 15)
+        .attr("fill", "white")
+        .attr("class", "barChartScopeLabel")
+        .text("All States")
+
     //fill state legend
     // let allStates = self.functions.getAllStates();
 
@@ -122,6 +129,9 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
     var bars = self.svg.selectAll("rect");
 
     if (scopeLevel == "industries") {
+
+        d3.select(".barChartScopeLabel")
+        .text("All States > " + selectedState + " > " + selectedArea)
         var indData = self.functions.getCitySpecificsByYear(selectedState, currYear, selectedArea)
         barData = indData;
         barData = barData.filter(d => { return !isNaN(d["Employees"]) })
@@ -173,6 +183,8 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
             .style("font-size", "8px")
     }
     else if (scopeLevel == "states") {
+        d3.select(".barChartScopeLabel")
+        .text("All States")
         var stateData = self.functions.getStateByYear(currYear);
         barData = stateData;
         barData = barData.filter(d => { return !isNaN(d["TotalEmployees"]) })
@@ -222,6 +234,9 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
             .selectAll("text")
             .style("font-size", "8px")
     } else if (scopeLevel == "areas") {
+
+        d3.select(".barChartScopeLabel")
+        .text("All States > " + selectedState)
 
 
         var areaData = self.functions.getCityTotalsForStateByYear(selectedState, currYear)

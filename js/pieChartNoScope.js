@@ -252,6 +252,12 @@ PieChartNoScope.prototype.initVis = function () {
 
         })
     }
+    self.svg.append("text")
+        .attr("x", self.svgHeight / 2)
+        .attr("y", 15)
+        .attr("fill", "white")
+        .attr("class", "pieChartNoScopeLabel")
+        .text("All States")
 
     self.update(self.selectedOption, self.selectedYear, self.selectedState, self.selectedArea)
 
@@ -266,6 +272,7 @@ PieChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
     var self = this;
 
     var currArcData = [];
+
 
     var currYear = parseInt(selectedYear)
     var pie = d3.pie()
@@ -314,6 +321,9 @@ PieChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
 
 
     if (selectedOption == "areas") {
+        d3.select(".pieChartNoScopeLabel")
+            .text("All Areas")
+
         // d3.select("#pieChartNoScopeStatesButton").style("display", "block");
         // d3.select("#pieChartNoScopeAreasButton").style("display", "none");
         $(`#${self.sectionId} .industryLegend`).parent().css("display", "none");
@@ -321,6 +331,9 @@ PieChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
         currArcData = areaArcData
     }
     else if (selectedOption == "industries") {
+
+        d3.select(".pieChartNoScopeLabel")
+            .text("All Industries")
         // d3.select("#pieChartNoScopeStatesButton").style("display", "block");
         // d3.select("#pieChartNoScopeAreasButton").style("display", "block");
         pie = d3.pie().value(function (d) { return d["Employees"] })
@@ -331,6 +344,9 @@ PieChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
         $(`#${self.sectionId} .areaLegend`).parent().css("display", "block");
 
     } else if (selectedOption == "states") {
+
+        d3.select(".pieChartNoScopeLabel")
+            .text("All States")
         // d3.select("#pieChartNoScopeStatesButton").style("display", "none");
         // d3.select("#pieChartNoScopeAreasButton").style("display", "none");
         $(`#${self.sectionId} .industryLegend`).parent().css("display", "none");

@@ -31,7 +31,7 @@ PieChartScope.prototype.initVis = function () {
 
 
     self.color = d3.scaleOrdinal()
-        .range(['#377eb8','#4daf4a','#984ea3','#ff7f00','#ffff33','#a65628','#f781bf','#999999','#aafaeb', '#d41c34'])
+        .range(['#377eb8', '#4daf4a', '#984ea3', '#ff7f00', '#ffff33', '#a65628', '#f781bf', '#999999', '#aafaeb', '#d41c34'])
 
     self.svg = d3.select(`#${self.sectionId}`)
         .append("svg")
@@ -46,6 +46,13 @@ PieChartScope.prototype.initVis = function () {
         .text(function (d) { return d; })
         .attr("value", function (d) { return d; });
 
+    self.svg.append("text")
+        .attr("x", self.svgHeight / 2)
+        .attr("y", 15)
+        .attr("fill", "white")
+        .attr("class", "pieChartScopeLabel")
+        .text("All States")
+
 
     var arc = d3.arc()
         .innerRadius(0)
@@ -54,7 +61,7 @@ PieChartScope.prototype.initVis = function () {
         .value(function (d) { return d["TotalEmployees"] });
 
     var g = self.svg.append("g")
-        .attr("transform", `translate(${self.svgWidth/2},${self.svgHeight/2})`)
+        .attr("transform", `translate(${self.svgWidth / 2},${self.svgHeight / 2})`)
         .attr("class", "arcGroup")
         .attr("width", 500)
         .attr("height", 400);
@@ -105,11 +112,11 @@ PieChartScope.prototype.initVis = function () {
         // recover the option that has been chosen
         self.currYear = d3.select(this).property("value")
         self.currYear = parseInt(self.currYear)
-        if(self.scopeLevel == "areas"){
+        if (self.scopeLevel == "areas") {
             self.scopeLevel = "states"
-        }else if(self.scopeLevel == "industries"){
+        } else if (self.scopeLevel == "industries") {
             self.scopeLevel = "areas"
-        }else if(self.scopeLevel == "states"){
+        } else if (self.scopeLevel == "states") {
             self.scopeLevel = "industries"
         }
         self.update(self.scopeLevel, self.currObj, self.currYear)
@@ -125,7 +132,7 @@ PieChartScope.prototype.initVis = function () {
         .enter()
         .append("div")
         .attr("class", 'legendBubble')
-        .attr("style", (d)=> `color: ${self.color(d)}`)
+        .attr("style", (d) => `color: ${self.color(d)}`)
         .text((d) => {
             return d;
         });
@@ -141,11 +148,14 @@ PieChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
 
     //     // adapt this for the pie chart
     var self = this;
+
     self.svg.selectAll(".arcs").remove();
+
+    // self.svg.selectAll(".arcs").remove();
 
     var g = d3.select(".arcGroup")
 
-    
+
 
     var currArcData = []
 
@@ -155,13 +165,13 @@ PieChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
     var pie = d3.pie()
         .value(function (d) { return d["TotalEmployees"] });
 
-        var selectedState = null
-        var selectedArea = null
+    var selectedState = null
+    var selectedArea = null
 
-        if(self.currObj != null){
-            selectedState = scopedInto["State"]
-            selectedArea = scopedInto ["Area"]
-        }
+    if (self.currObj != null) {
+        selectedState = scopedInto["State"]
+        selectedArea = scopedInto["Area"]
+    }
 
     if (scopeLevel == "areas") {
         self.scopeLevel = "industries"
@@ -176,29 +186,35 @@ PieChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
             .data(allIndustries)
             .join("div")
             .attr("class", 'legendBubble')
-            .attr("style", (d)=> `color: ${self.color(d)}`)
+            .attr("style", (d) => `color: ${self.color(d)}`)
             .text((d) => {
                 return d;
             });
-        
+
+            d3.select(".pieChartScopeLabel")
+            .text("All States > " + selectedState + " > " + selectedArea)
+
     }
     else if (scopeLevel == "industries") {
         self.scopeLevel = "states"
         var stateData = self.functions.getStateByYear(currYear);
         currArcData = stateData;
 
-         //fill state legend
-         let allStates = self.functions.getAllStates();
+        //fill state legend
+        let allStates = self.functions.getAllStates();
 
-         d3.select(`#${self.sectionId} .pieLegend`)
-             .selectAll('.legendBubble')
-             .data(allStates)
-             .join("div")
-             .attr("class", 'legendBubble')
-             .attr("style", (d)=> `color: ${self.color(d)}`)
-             .text((d) => {
-                 return d;
-             });
+        d3.select(`#${self.sectionId} .pieLegend`)
+            .selectAll('.legendBubble')
+            .data(allStates)
+            .join("div")
+            .attr("class", 'legendBubble')
+            .attr("style", (d) => `color: ${self.color(d)}`)
+            .text((d) => {
+                return d;
+            });
+
+            d3.select(".pieChartScopeLabel")
+            .text("All States")
 
 
     } else if (scopeLevel == "states") {
@@ -208,7 +224,7 @@ PieChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
         currArcData = areaData;
 
         let allAreas = [];
-        areaData.forEach((el)=>{
+        areaData.forEach((el) => {
             allAreas.push(el.Area);
         })
 
@@ -219,29 +235,32 @@ PieChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
             .data(allAreas)
             .join('div')
             .attr("class", 'legendBubble')
-            .attr("style", (d)=> `color: ${self.color(d)}`)
+            .attr("style", (d) => `color: ${self.color(d)}`)
             .text((d) => {
                 return d;
             });
+
+            d3.select(".pieChartScopeLabel")
+            .text("All States > " + selectedState)
     }
 
-    g.selectAll(".arcs")
+  g.selectAll(".arcs")
         .data(pie(currArcData))
         .enter()
         .append("path")
         .attr("fill", (data, i) => {
             let value = data.data;
-            
-            if(self.scopeLevel === "states"){
+
+            if (self.scopeLevel === "states") {
                 return self.color(value.State);
             }
-            if(self.scopeLevel === "areas"){
+            if (self.scopeLevel === "areas") {
                 return self.color(value.Area);
             }
-            if(self.scopeLevel === "industries"){
+            if (self.scopeLevel === "industries") {
                 return self.color(value.Industry);
             }
-            
+
         })
         .attr("d", arc)
         .attr("class", "arcs")
@@ -251,7 +270,7 @@ PieChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
 
             self.currObj = i["data"]
             self.update(self.scopeLevel, self.currObj, self.currYear)
-        });
+        })
 
 
     self.tip = d3.tip().attr('class', "d3-tip")
@@ -268,7 +287,10 @@ PieChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
 
         });
 
-        self.svg.selectAll(".arcs").exit().remove();
+    // g.selectAll(".arcs").transition().duration(2000);
+
+
+    self.svg.selectAll(".arcs").exit().remove();
 
 
 

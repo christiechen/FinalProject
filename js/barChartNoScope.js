@@ -271,6 +271,13 @@ BarChartNoScope.prototype.initVis = function () {
         })
     }
 
+    self.svg.append("text")
+    .attr("x", self.svgHeight / 2)
+    .attr("y", 15)
+    .attr("fill", "white")
+    .attr("class", "barChartNoScopeLabel")
+    .text("All States")
+
 
     self.update(self.selectedOption, self.selectedYear, self.selectedState, self.selectedArea)
 
@@ -341,6 +348,8 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
         .attr("value", function (d) { return d; });
 
     if (selectedOption == "areas") {
+        d3.select(".barChartNoScopeLabel")
+        .text("All Areas")
         // d3.select("#barChartNoScopeStatesButton").style("display", "block");
         // d3.select("#barChartNoScopeAreasButton").style("display", "none");
         d3.select("#barChartNoScopeIndustriesButton").style("display", "none");
@@ -386,6 +395,7 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
             .attr("class", (d) => "rects " + d.State.split(" ").join("-") + " " + d.Area.replaceAll(',', '').split(" ").join("-"));
     }
     else if (selectedOption == "industries") {
+
         d3.select("#barChartNoScopeIndustriesButton").style("display", "block");
         // d3.select("#barChartNoScopeAreasButton").style("display", "block");
         // $(`#barChartNoScopeSection .industryLegend`).parent().css("display", "block");
@@ -399,6 +409,9 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
         }else{
             barData = indBars.filter(d => d["Industry"] == currInd)
         }
+
+        d3.select(".barChartNoScopeLabel")
+        .text(currInd)
 
         // barData = indBars;
         barData = barData.filter(d => { return !isNaN(d["Employees"]) })
@@ -444,6 +457,8 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
                 return "rects " + d.State.split(" ").join("-") + " " + d.Area.replaceAll(',', '').split(" ").join("-") + " " +  d.Industry.replaceAll(',', '').split(" ").join("-");
             })
     } else if (selectedOption == "states") {
+        d3.select(".barChartNoScopeLabel")
+        .text("All States")
         // d3.select("#barChartNoScopeStatesButton").style("display", "none");
         // d3.select("#barChartNoScopeAreasButton").style("display", "none");
         d3.select("#barChartNoScopeIndustriesButton").style("display", "none");
