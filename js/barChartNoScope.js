@@ -102,10 +102,7 @@ BarChartNoScope.prototype.initVis = function () {
 
     // var allInds = self.functions.getAllIndustries().filter((el)=> el!=="Total");
     var allInds = self.functions.getAllIndustries();
-    var indButtonInput = ["All Industries"];
-    indButtonInput.concat(allInds);
-    console.log(allInds)
-    console.log(indButtonInput)
+    allInds[0] = "All Industries"
 
     d3.select("#barChartNoScopeIndustriesButton")
     .selectAll('option')
@@ -393,15 +390,15 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
         // var indData = self.functions.getCitySpecificsByYear(selectedState, currYear, selectedArea)
 
         var currInd = d3.select("#barChartNoScopeIndustriesButton").property("value");
-        if (currInd == "Total"){
+        if (currInd == "All Industries"){
             barData = indBars;
         }else{
-            barData = self.functions.getIndustryForYear(currInd, currYear)
+            barData = indBars.filter(d => d["Industry"] == currInd)
         }
 
         // barData = indBars;
         barData = barData.filter(d => { return !isNaN(d["Employees"]) })
-        console.log(barData)
+        // console.log(barData)
 
         // REMOVING TOTALS
         barData = barData.filter(d => { return d.Area !== "Total" })
