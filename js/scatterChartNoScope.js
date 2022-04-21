@@ -5,6 +5,7 @@ function ScatterChartNoScope (id, functions){
     self.functions = functions;
     self.num = 'x';
     self.denom = 'US';
+    self.level='state';
 
 
     self.initVis();
@@ -437,9 +438,6 @@ ScatterChartNoScope.prototype.initVis = function(){
                 $(el).attr("class", currentClass);
             })
 
-            //redraw new circles potentially
-            
-
         })
     }
 
@@ -456,6 +454,7 @@ ScatterChartNoScope.prototype.initVis = function(){
  */
 ScatterChartNoScope.prototype.update = function(level, year){
     var self = this;
+    self.level = level;
     console.log("update");
     let selectedOption = d3.select("#scatterLevel").property("value");
 

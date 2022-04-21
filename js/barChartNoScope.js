@@ -169,21 +169,21 @@ BarChartNoScope.prototype.initVis = function () {
         }
         if (self.selectedOption === "industries") {
             self.areaFill(this.innerText, 'white', true);
-            self.industryFill();
+            // self.industryFill();
         }
 
     })
 
     // //industry Legend
-    self.industryFill = function () {
-        d3.select(`#barChartNoScopeSection .industryLegend`)
-            .selectAll('.industryLegend .entry')
-            .data(self.functions.getAllIndustries())
-            .enter()
-            .append('div')
-            .attr('class', 'entry')
-            .text((d) => d)
-    }
+    // self.industryFill = function () {
+    //     d3.select(`#barChartNoScopeSection .industryLegend`)
+    //         .selectAll('.industryLegend .entry')
+    //         .data(self.functions.getAllIndustries())
+    //         .enter()
+    //         .append('div')
+    //         .attr('class', 'entry')
+    //         .text((d) => d)
+    // }
 
 
     //area Legend
@@ -282,9 +282,13 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
     var self = this;
 
 
+    //get selection
+    let selEntry = $(`.entry.selected`);
+    let selLegend= $(`.legendBubble.selected`)
     // clear selection
-    $(`.entry.selected`).trigger("click");
-    $(`.legendBubble.selected`).trigger("click");
+    selEntry.trigger("click");
+    selLegend.trigger("click");
+
   
     var barData = [];
 
@@ -341,7 +345,7 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
         // d3.select("#barChartNoScopeAreasButton").style("display", "none");
         d3.select("#barChartNoScopeIndustriesButton").style("display", "none");
 
-        $(`#barChartNoScopeSection .industryLegend`).parent().css("display", "none");
+        // $(`#barChartNoScopeSection .industryLegend`).parent().css("display", "none");
         $(`#barChartNoScopeSection .areaLegend`).parent().css("display", "block");
         // var areaData = self.functions.getCityTotalsForStateByYear(selectedState, currYear)
         barData = areaBars;
@@ -384,7 +388,7 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
     else if (selectedOption == "industries") {
         d3.select("#barChartNoScopeIndustriesButton").style("display", "block");
         // d3.select("#barChartNoScopeAreasButton").style("display", "block");
-        $(`#barChartNoScopeSection .industryLegend`).parent().css("display", "block");
+        // $(`#barChartNoScopeSection .industryLegend`).parent().css("display", "block");
         $(`#barChartNoScopeSection .areaLegend`).parent().css("display", "block");
         selectedArea = d3.select("#barChartNoScopeAreasButton").property("value");
         // var indData = self.functions.getCitySpecificsByYear(selectedState, currYear, selectedArea)
@@ -444,7 +448,7 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
         // d3.select("#barChartNoScopeAreasButton").style("display", "none");
         d3.select("#barChartNoScopeIndustriesButton").style("display", "none");
 
-        $(`#barChartNoScopeSection .industryLegend`).parent().css("display", "none");
+        // $(`#barChartNoScopeSection .industryLegend`).parent().css("display", "none");
         $(`#barChartNoScopeSection .areaLegend`).parent().css("display", "none");
         // var stateData = self.functions.getStateByYear(currYear);
         barData = stateBars;
@@ -522,6 +526,9 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
 
 
 
+    // reclick
+    selEntry.trigger("click");
+    selLegend.trigger("click");
     // bars.exit().remove();
 
 }

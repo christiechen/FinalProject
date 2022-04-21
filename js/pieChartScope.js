@@ -31,7 +31,7 @@ PieChartScope.prototype.initVis = function () {
 
 
     self.color = d3.scaleOrdinal()
-        .range(['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00','#ffff33','#a65628','#f781bf','#999999'])
+        .range(['#377eb8','#4daf4a','#984ea3','#ff7f00','#ffff33','#a65628','#f781bf','#999999','#aafaeb', '#d41c34'])
 
     self.svg = d3.select(`#${self.sectionId}`)
         .append("svg")

@@ -44,8 +44,12 @@ let correctAnswers = Array.from($('input.correct'));
 $('#finalSubmit').click(()=>{
   let selectedAnswers = Array.from($('input:not(.selfreflect):checked'));
 
+  if(selectedAnswers.length !== correctAnswers.length){
+    alert("Please fill out all 10 questions!")
+    return;
+  }
   let incorrect = [];
-  for(let i = 0; i< selectedAnswers.length; ++i){
+  for(let i = 0; i< correctAnswers.length; ++i){
     if(selectedAnswers[i].value != correctAnswers[i].value){
       incorrect.push(selectedAnswers[i].name);
     }
