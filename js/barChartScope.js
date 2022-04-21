@@ -16,7 +16,7 @@ function BarChartScope(id, functions) {
 BarChartScope.prototype.initVis = function () {
     var self = this;
 
-    self.margin = { top: 30, right: 20, bottom: 80, left: 50 };
+    self.margin = { top: 30, right: 20, bottom: 150, left: 50 };
     self.svgWidth = 700; //get current width of container on page
     self.svgHeight = 600;
 
@@ -166,7 +166,7 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
             .text(function (d, i) {
                 return barData[i]["Industry"]
             })
-            .attr("transform", "translate(-10,20)rotate(-90)")
+            .attr("transform", "translate(-10,0)rotate(-45)")
             .style("text-anchor", "end")
         self.svg.select(".yAxis").call(d3.axisLeft(y))
             .selectAll("text")
@@ -216,7 +216,7 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
             .text(function (d, i) {
                 return barData[i]["State"]
             })
-            .attr("transform", "translate(-10,20)rotate(-90)")
+            .attr("transform", "translate(-10,0)rotate(-45)")
             .style("text-anchor", "end")
         self.svg.select(".yAxis").call(d3.axisLeft(y))
             .selectAll("text")
@@ -272,7 +272,7 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
             .text(function (d, i) {
                 return barData[i]["Area"]
             })
-            .attr("transform", "translate(-10,20)rotate(-90)")
+            .attr("transform", "translate(-10,0)rotate(-45)")
             .style("text-anchor", "end")
         self.svg.select(".yAxis").call(d3.axisLeft(y))
             .selectAll("text")
@@ -282,7 +282,7 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
 
 
     self.svg.append("text")
-        .attr("transform", "rotate(-90)")
+        .attr("transform", "rotate(-45)")
         .attr("y", (2))
         .attr("x", (0 - (self.svgHeight / 2)))
         .attr("dy", "1em")

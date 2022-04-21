@@ -259,5 +259,7 @@ DataFunctions.prototype.getAllAreasInState = function(state){
 DataFunctions.prototype.getAllIndustries = function(){
     var self = this;
 
-    return Array.from(self.dataByIndustry.keys());
+    let workingData = Array.from(self.dataByIndustry.keys());
+    workingData = workingData.filter((el)=> el !== "Total");
+    return workingData;
 }

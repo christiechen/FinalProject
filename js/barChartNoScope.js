@@ -23,7 +23,7 @@ function BarChartNoScope(id, functions) {
 BarChartNoScope.prototype.initVis = function () {
     var self = this;
 
-    self.margin = { top: 5, right: 20, bottom: 100, left: 50 };
+    self.margin = { top: 5, right: 20, bottom: 150, left: 50 };
     self.svgWidth = 1200; //get current width of container on page
     self.svgHeight = 600;
 
@@ -100,6 +100,7 @@ BarChartNoScope.prototype.initVis = function () {
 
     // legends
 
+    // var allInds = self.functions.getAllIndustries().filter((el)=> el!=="Total");
     var allInds = self.functions.getAllIndustries();
     var indButtonInput = ["All Industries"];
     indButtonInput.concat(allInds);
@@ -128,7 +129,6 @@ BarChartNoScope.prototype.initVis = function () {
         .text((d) => {
             return d;
         });
-    console.log("HERE");
 
     //click on state legend
     $(`#barChartNoScopeSection .barLegend .legendBubble`).click(function (event) {
@@ -285,6 +285,10 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
     var self = this;
 
 
+    // clear selection
+    $(`.entry.selected`).trigger("click");
+    $(`.legendBubble.selected`).trigger("click");
+  
     var barData = [];
 
     var currYear = parseInt(selectedYear)
@@ -397,6 +401,11 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
 
         // barData = indBars;
         barData = barData.filter(d => { return !isNaN(d["Employees"]) })
+        console.log(barData)
+
+        // REMOVING TOTALS
+        barData = barData.filter(d => { return d.Area !== "Total" })
+        // console.log(barData)
 
         barData.sort(function (a, b) {
             return a["Employees"] - b["Employees"]
@@ -429,7 +438,10 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
             .attr("width", x.bandwidth())
             .attr("height", function (d) { return self.svgHeight - self.margin.bottom - y(d["Employees"]); })
             .attr("fill", "#69b3a2")
-            .attr("class", (d) => "rects " + d.State.split(" ").join("-") + " " + d.Area.replaceAll(',', '').split(" ").join("-") + " " +  d.Industry.replaceAll(',', '').split(" ").join("-"))
+            .attr("class", (d) => {
+                // console.log(d);
+                return "rects " + d.State.split(" ").join("-") + " " + d.Area.replaceAll(',', '').split(" ").join("-") + " " +  d.Industry.replaceAll(',', '').split(" ").join("-");
+            })
     } else if (selectedOption == "states") {
         // d3.select("#barChartNoScopeStatesButton").style("display", "none");
         // d3.select("#barChartNoScopeAreasButton").style("display", "none");
