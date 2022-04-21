@@ -191,7 +191,7 @@ PieChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
                 return d;
             });
 
-            d3.select(".pieChartScopeLabel")
+        d3.select(".pieChartScopeLabel")
             .text("All States > " + selectedState + " > " + selectedArea)
 
     }
@@ -213,7 +213,7 @@ PieChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
                 return d;
             });
 
-            d3.select(".pieChartScopeLabel")
+        d3.select(".pieChartScopeLabel")
             .text("All States")
 
 
@@ -240,11 +240,11 @@ PieChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
                 return d;
             });
 
-            d3.select(".pieChartScopeLabel")
+        d3.select(".pieChartScopeLabel")
             .text("All States > " + selectedState)
     }
 
-  g.selectAll(".arcs")
+    g.selectAll(".arcs")
         .data(pie(currArcData))
         .enter()
         .append("path")

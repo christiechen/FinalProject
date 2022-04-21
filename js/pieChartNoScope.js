@@ -302,6 +302,7 @@ PieChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
 
     })
 
+    console.log(indArcData)
 
 
     //remove previous legend filtering
@@ -336,7 +337,7 @@ PieChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
             .text("All Industries")
         // d3.select("#pieChartNoScopeStatesButton").style("display", "block");
         // d3.select("#pieChartNoScopeAreasButton").style("display", "block");
-        pie = d3.pie().value(function (d) { return d["Employees"] })
+        pie = d3.pie().value(function (d) { return d["Employees"] }).sort(null)
         // selectedArea = d3.select("#pieChartNoScopeAreasButton").property("value");
         var indData = self.functions.getCitySpecificsByYear(selectedState, currYear, self.selectedArea)
         currArcData = indArcData
