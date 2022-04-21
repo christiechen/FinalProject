@@ -55,7 +55,7 @@ section.entire-body{
 }
 
 .body-section > section{
-    /* display:none; */
+    display:none;
 }
 
 #questions-timed{
