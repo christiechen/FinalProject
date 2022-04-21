@@ -253,11 +253,12 @@ PieChartNoScope.prototype.initVis = function () {
         })
     }
     self.svg.append("text")
-        .attr("x", self.svgHeight / 2)
+        .attr("x", self.svgWidth / 2)
         .attr("y", 15)
         .attr("fill", "white")
         .attr("class", "pieChartNoScopeLabel")
         .text("All States")
+        .style("text-anchor", "middle")
 
     self.update(self.selectedOption, self.selectedYear, self.selectedState, self.selectedArea)
 
@@ -295,6 +296,11 @@ PieChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
         tempAreas.forEach(function (g) {
             areaArcData.push(g)
             var tempInds = self.functions.getCitySpecificsByYear(f["State"], currYear, g["Area"])
+            tempInds.sort(function(a, b){
+                if(a["State"] == b["State"]){
+                    return a["Employees"] - b["Employees"]
+                }
+            })
             tempInds.forEach(function (h) {
                 indArcData.push(h)
             })
@@ -302,7 +308,7 @@ PieChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
 
     })
 
-    console.log(indArcData)
+    // console.log(indArcData)
 
 
     //remove previous legend filtering
@@ -395,7 +401,9 @@ PieChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
 
         });
 
+
     // Appending path 
+
 
     arcs.append("path")
         .attr("fill", (data, i) => {

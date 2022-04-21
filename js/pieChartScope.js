@@ -47,11 +47,13 @@ PieChartScope.prototype.initVis = function () {
         .attr("value", function (d) { return d; });
 
     self.svg.append("text")
-        .attr("x", self.svgHeight / 2)
+        .attr("x", self.svgWidth / 2)
         .attr("y", 15)
         .attr("fill", "white")
         .attr("class", "pieChartScopeLabel")
         .text("All States")
+        .style("text-anchor", "middle")
+
 
 
     var arc = d3.arc()
@@ -246,8 +248,7 @@ PieChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
 
     g.selectAll(".arcs")
         .data(pie(currArcData))
-        .enter()
-        .append("path")
+        .join("path")
         .attr("fill", (data, i) => {
             let value = data.data;
 
@@ -262,8 +263,8 @@ PieChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
             }
 
         })
-        .attr("d", arc)
         .attr("class", "arcs")
+        .attr("d", arc)
         .on("mouseover", self.tip.show)
         .on("mouseout", self.tip.hide)
         .on("click", function (d, i) {
@@ -271,7 +272,6 @@ PieChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
             self.currObj = i["data"]
             self.update(self.scopeLevel, self.currObj, self.currYear)
         })
-
 
     self.tip = d3.tip().attr('class', "d3-tip")
         .direction('se')
@@ -290,7 +290,7 @@ PieChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
     // g.selectAll(".arcs").transition().duration(2000);
 
 
-    self.svg.selectAll(".arcs").exit().remove();
+    g.selectAll(".arcs").exit().remove();
 
 
 
