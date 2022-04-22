@@ -143,7 +143,7 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
             .attr("width", x.bandwidth())
             // .attr("height", 0);
 
-        bars.transition()
+        self.svg.selectAll("rect").transition()
             .duration(1000)
             .attr("width", x.bandwidth())
             .attr("height", function (d) { return self.svgHeight - self.margin.bottom - y(d["Employees"]); })
@@ -161,7 +161,7 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
             .text(function (d, i) {
                 return barData[i]["Industry"]
             })
-            .attr("transform", "translate(-10,0)rotate(-45)")
+            .attr("transform", "translate(0,0)rotate(-45)")
             .style("text-anchor", "end")
         self.svg.select(".yAxis").call(d3.axisLeft(y))
             .selectAll("text")
@@ -211,7 +211,7 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
             .text(function (d, i) {
                 return barData[i]["State"]
             })
-            .attr("transform", "translate(-10,0)rotate(-45)")
+            .attr("transform", "translate(0,0)rotate(-45)")
             .style("text-anchor", "end")
         self.svg.select(".yAxis").call(d3.axisLeft(y))
             .selectAll("text")
@@ -273,7 +273,7 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
             .text(function (d, i) {
                 return barData[i]["Area"]
             })
-            .attr("transform", "translate(-10,0)rotate(-45)")
+            .attr("transform", "translate(0,0)rotate(-45)")
             .style("text-anchor", "end")
         self.svg.select(".yAxis").call(d3.axisLeft(y))
             .selectAll("text")
