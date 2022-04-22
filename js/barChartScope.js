@@ -17,7 +17,7 @@ BarChartScope.prototype.initVis = function () {
     var self = this;
 
     self.margin = { top: 30, right: 20, bottom: 150, left: 50 };
-    self.svgWidth = 700; //get current width of container on page
+    self.svgWidth = 1100; //get current width of container on page
     self.svgHeight = 600;
 
     self.radius = (Math.min(self.svgWidth, self.svgHeight) / 2) - 20;
@@ -63,7 +63,7 @@ BarChartScope.prototype.initVis = function () {
         .attr("transform", `translate(50, ${self.svgHeight - self.margin.bottom})`)
 
     self.svg.append("text")
-        .attr("x", self.svgHeight / 2)
+        .attr("x", self.svgWidth / 2)
         .attr("y", 15)
         .attr("fill", "white")
         .attr("class", "barChartScopeLabel scopeLabel")

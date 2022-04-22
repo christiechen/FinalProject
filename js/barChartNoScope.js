@@ -244,7 +244,7 @@ BarChartNoScope.prototype.initVis = function () {
     // label
 
     self.svg.append("text")
-        .attr("x", self.svgHeight / 2)
+        .attr("x", self.svgWidth / 2)
         .attr("y", 15)
         .attr("fill", "white")
         .attr("class", "barChartNoScopeLabel scopeLabel")
