@@ -83,7 +83,7 @@ LineChartScope.prototype.initVis = function(){
     self.svg
         .select(".y-axis")
         .append("text")
-        .text("# employment")
+        .text("# employment (thousands)")
         .attr("x", 0)
         .attr("y", -43)
         .attr("class", "axis-label")
