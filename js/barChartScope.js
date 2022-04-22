@@ -139,14 +139,16 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
             .join("rect")
             .attr("class","rects")
             .attr("x", function (d, i) { return self.margin.left + x(i); })
-            .attr("y", function (d) { return y(d["Employees"]); })
             .attr("width", x.bandwidth())
-            // .attr("height", 0);
+            .attr("height", 0)
+            .attr("y", y(0));
+
 
         self.svg.selectAll("rect").transition()
             .duration(1000)
             .attr("width", x.bandwidth())
             .attr("height", function (d) { return self.svgHeight - self.margin.bottom - y(d["Employees"]); })
+            .attr("y", function (d) { return y(d["Employees"]); })
             .attr("fill", "#69b3a2")
         
         bars.on("mouseover", self.tip.show)
@@ -187,15 +189,16 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
             .data(barData)
             .join("rect")
             .attr("class","rects")
-            .attr("y", function (d) { return y(d["TotalEmployees"]); })
             .attr("x", function (d, i) { return self.margin.left + x(i); })
             .attr("width", x.bandwidth())
-            // .attr("height", 0)
+            .attr("height", 0)
+            .attr("y", y(0));
 
         bars.transition()
             .duration(1000)
             .attr("width", x.bandwidth())
             .attr("height", function (d) { return self.svgHeight - self.margin.bottom - y(d["TotalEmployees"]); })
+            .attr("y", function (d) { return y(d["TotalEmployees"]); })
             .attr("fill", "#69b3a2")
         
         
@@ -248,15 +251,17 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
             .join("rect")
             .attr("class", "rects")
             .attr("x", function (d, i) { return self.margin.left + x(i); })
-            .attr("y", function (d) { return y(d["TotalEmployees"]); })
             .attr("width", x.bandwidth())
-            // .attr("height", 0)
+            .attr("height", 0)
+            .attr("y", y(0));
+
         
         bars
             .transition()
             .duration(1000)
             .attr("width", x.bandwidth())
             .attr("height", function (d) { return self.svgHeight - self.margin.bottom - y(d["TotalEmployees"]); })
+            .attr("y", function (d) { return y(d["TotalEmployees"]); })
             .attr("fill", "#69b3a2")
         
         
