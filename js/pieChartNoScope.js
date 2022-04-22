@@ -15,8 +15,8 @@ function PieChartNoScope(id, functions) {
 
 // Pie chart  (toggle by year)
 // Level 1: split total employment up by state first
-// Level 2: each area in a single state’s total employment
-// Level 3: each industry in each area’s employment
+// Level 2: all areas in all state’s total employment
+// Level 3: all industries in all area's employment
 
 
 
@@ -43,14 +43,6 @@ PieChartNoScope.prototype.initVis = function () {
     var allGroup = ["states", "areas", "industries"]
 
     var allStates = self.functions.getAllStates();
-    d3.select("#pieChartNoScopeStatesButton")
-        .selectAll('option')
-        .data(allStates)
-        .enter()
-        .append('option')
-        .text(function (d) { return d; })
-        .attr("value", function (d) { return d; });
-
 
     //Add the options to the dropdown button
     d3.select("#pieChartNoScopeButton")
@@ -69,29 +61,10 @@ PieChartNoScope.prototype.initVis = function () {
         .text(function (d) { return d; })
         .attr("value", function (d) { return d; });
 
-
-    d3.select("#pieChartNoScopeStatesButton").on("change", function () {
-        // recover the option that has been chosen
-
-        var currAreas = self.functions.getAllAreasInState(d3.select(this).property("value"));
-
-        d3.select("#pieChartNoScopeAreasButton")
-            .selectAll('option')
-            .data(currAreas)
-            .join("option")
-            .text(function (d) { return d; })
-            .attr("value", function (d) { return d; });
-
-    })
-
-
-
     d3.select(`#pieChartNoScopeUpdateButton`).on("click", function (event, d) {
         // recover the option that has been chosen
         self.selectedYear = d3.select("#pieChartNoScopeYearButton").property("value");
         self.selectedOption = d3.select("#pieChartNoScopeButton").property("value");
-        // self.selectedState = d3.select("#pieChartNoScopeStatesButton").property("value");
-        // self.selectedArea = d3.select("#pieChartNoScopeAreasButton").property("value");
         self.update(self.selectedOption, self.selectedYear, self.selectedState, self.selectedArea)
     });
 
@@ -135,7 +108,6 @@ PieChartNoScope.prototype.initVis = function () {
         $(this).addClass("selected");
 
 
-        // console.log(selected);
         // turn all other circles low opacity
         let otherPaths = Array.from($(`#${self.sectionId} svg g g:not(.${selected})`));
         otherPaths.forEach((el) => {
@@ -211,7 +183,6 @@ PieChartNoScope.prototype.initVis = function () {
             })
 
 
-
             //if there is a state selected
             let state = '';
 
@@ -227,8 +198,6 @@ PieChartNoScope.prototype.initVis = function () {
                 })
 
             }
-
-
 
             //if we're unselecting
             if ($(this).hasClass('selected')) {
@@ -252,6 +221,19 @@ PieChartNoScope.prototype.initVis = function () {
 
         })
     }
+
+    // industry dropdown toggle
+    var allInds = self.functions.getAllIndustries();
+    allInds[0] = "All Industries"
+
+    d3.select("#pieChartNoScopeIndustriesButton")
+        .selectAll('option')
+        .data(allInds)
+        .enter()
+        .append('option')
+        .text(function (d) { return d; })
+        .attr("value", function (d) { return d; });
+    // centered vis label
     self.svg.append("text")
         .attr("x", self.svgWidth / 2)
         .attr("y", 15)
@@ -259,7 +241,7 @@ PieChartNoScope.prototype.initVis = function () {
         .attr("class", "pieChartNoScopeLabel")
         .text("All States")
         .style("text-anchor", "middle")
-
+    // auto update, because we don't initialize the pieChart with data
     self.update(self.selectedOption, self.selectedYear, self.selectedState, self.selectedArea)
 
 
@@ -279,16 +261,10 @@ PieChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
     var pie = d3.pie()
         .value(function (d) { return d["TotalEmployees"] });
 
-    d3.select("#pieChartNoScopeStatesButton").style("display", "none");
-    d3.select("#pieChartNoScopeAreasButton").style("display", "none");
-
-
-    var currAreas = self.functions.getAllAreasInState(selectedState);
-
     var areaArcData = []
     var stateArcData = []
     var indArcData = []
-
+    // sort through the data, so that we can create large groups of all of the necessary data
     var stateData = self.functions.getStateByYear(currYear);
     stateData.forEach(function (f) {
         stateArcData.push(f)
@@ -296,8 +272,8 @@ PieChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
         tempAreas.forEach(function (g) {
             areaArcData.push(g)
             var tempInds = self.functions.getCitySpecificsByYear(f["State"], currYear, g["Area"])
-            tempInds.sort(function(a, b){
-                if(a["State"] == b["State"]){
+            tempInds.sort(function (a, b) {
+                if (a["State"] == b["State"]) {
                     return a["Employees"] - b["Employees"]
                 }
             })
@@ -308,8 +284,11 @@ PieChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
 
     })
 
-    // console.log(indArcData)
+    // filter all arcData to get rid of nonValues
 
+    areaArcData = areaArcData.filter(d => { return !isNaN(d["TotalEmployees"]) })
+    stateArcData = stateArcData.filter(d => { return !isNaN(d["TotalEmployees"]) })
+    indArcData = indArcData.filter(d => { return !isNaN(d["Employees"]) })
 
     //remove previous legend filtering
     $(`#${self.sectionId} .pieLegend .selected`).removeClass('selected');
@@ -317,51 +296,42 @@ PieChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
     self.areaClear();
 
 
-
-    d3.select("#pieChartNoScopeAreasButton")
-        .selectAll('option')
-        .data(currAreas)
-        .join("option")
-        .text(function (d) { return d; })
-        .attr("value", function (d) { return d; });
-
-
-
     if (selectedOption == "areas") {
         d3.select(".pieChartNoScopeLabel")
             .text("All Areas")
-
-        // d3.select("#pieChartNoScopeStatesButton").style("display", "block");
-        // d3.select("#pieChartNoScopeAreasButton").style("display", "none");
+        d3.select("#pieChartNoScopeIndustriesButton").style("display", "none");
         $(`#${self.sectionId} .industryLegend`).parent().css("display", "none");
         $(`#${self.sectionId} .areaLegend`).parent().css("display", "block");
         currArcData = areaArcData
     }
     else if (selectedOption == "industries") {
 
+        d3.select("#pieChartNoScopeIndustriesButton").style("display", "block");
         d3.select(".pieChartNoScopeLabel")
             .text("All Industries")
-        // d3.select("#pieChartNoScopeStatesButton").style("display", "block");
-        // d3.select("#pieChartNoScopeAreasButton").style("display", "block");
+        var currInd = d3.select("#pieChartNoScopeIndustriesButton").property("value");
+        if (currInd == "All Industries") {
+            currArcData = indArcData;
+        } else {
+            currArcData = indArcData.filter(d => d["Industry"] == currInd)
+            currArcData.sort(function (a, b) {
+                return a["Employees"] - b["Employees"]
+            })
+            console.log(currArcData)
+        }
+        // reassigning the pieData
         pie = d3.pie().value(function (d) { return d["Employees"] }).sort(null)
-        // selectedArea = d3.select("#pieChartNoScopeAreasButton").property("value");
-        var indData = self.functions.getCitySpecificsByYear(selectedState, currYear, self.selectedArea)
-        currArcData = indArcData
         $(`#${self.sectionId} .industryLegend`).parent().css("display", "block");
         $(`#${self.sectionId} .areaLegend`).parent().css("display", "block");
 
     } else if (selectedOption == "states") {
-
+        d3.select("#pieChartNoScopeIndustriesButton").style("display", "none");
         d3.select(".pieChartNoScopeLabel")
             .text("All States")
-        // d3.select("#pieChartNoScopeStatesButton").style("display", "none");
-        // d3.select("#pieChartNoScopeAreasButton").style("display", "none");
         $(`#${self.sectionId} .industryLegend`).parent().css("display", "none");
         $(`#${self.sectionId} .areaLegend`).parent().css("display", "none");
-        var stateData = self.functions.getStateByYear(currYear);
         currArcData = stateArcData;
     }
-
     // sort the arc data by state so that the hover is more useful
 
     // Creating arc
@@ -369,17 +339,12 @@ PieChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
         .innerRadius(0)
         .outerRadius(self.radius);
 
-
-    // run the updateChart function with this selected option
-
     self.svg.selectAll("g")
         .remove();
 
     var g = self.svg.append("g")
         .attr("transform", `translate(${self.svgWidth / 2},${self.svgHeight / 2})`)
-
-
-
+    // initial arcs, using the data that has been altered within the if statements
     var arcs = g.selectAll("arc")
         .data(pie(currArcData))
         .enter()
@@ -401,10 +366,6 @@ PieChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
 
         });
 
-
-    // Appending path 
-
-
     arcs.append("path")
         .attr("fill", (data, i) => {
             let value = data.data;
@@ -418,7 +379,7 @@ PieChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
         })
         .attr("d", arc);
 
-
+    // initialize hover tooltip
     self.tip = d3.tip().attr('class', "d3-tip")
         .direction('se')
 
@@ -433,14 +394,14 @@ PieChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
 
         });
 
+    // call the tooltip
+
     self.svg.selectAll('path')
         .on("mouseover", self.tip.show)
         .on("mouseout", self.tip.hide);
 
     self.svg.call(self.tip);
-
+    // exit and remove arcs
     arcs.exit().remove();
-    d3.select("#pieChartNoScopeAreasButton")
-        .selectAll('option').exit().remove();
 
 }

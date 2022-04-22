@@ -15,8 +15,7 @@ function PieChartScope(id, functions) {
 // Pie chart  (toggle by year)
 // Level 1: split total employment up by state first
 // Level 2: each area in a single state’s total employment
-// Level 3: each industry in each area’s employment
-
+// Level 3: each industry in a single area’s employment
 
 
 //initialize vis
@@ -26,18 +25,19 @@ PieChartScope.prototype.initVis = function () {
     self.margin = { top: 60, right: 20, bottom: 60, left: 50 };
     self.svgWidth = 700; //get current width of container on page
     self.svgHeight = 600;
-
+    // the radius, to ensure that our pieChart is big enough
     self.radius = (Math.min(self.svgWidth, self.svgHeight) / 2) - 20;
 
-
+    // color scale
     self.color = d3.scaleOrdinal()
         .range(['#377eb8', '#4daf4a', '#984ea3', '#ff7f00', '#ffff33', '#a65628', '#f781bf', '#999999', '#aafaeb', '#d41c34'])
-
+    // the svg
     self.svg = d3.select(`#${self.sectionId}`)
         .append("svg")
         .attr("width", self.svgWidth)
         .attr("height", self.svgHeight);
 
+    // year dropdown button
     d3.select("#pieChartScopeYearButton")
         .selectAll('option')
         .data([2018, 2019, 2020])
@@ -45,7 +45,7 @@ PieChartScope.prototype.initVis = function () {
         .append('option')
         .text(function (d) { return d; })
         .attr("value", function (d) { return d; });
-
+    // chart label that indicates what information is being shown
     self.svg.append("text")
         .attr("x", self.svgWidth / 2)
         .attr("y", 15)
@@ -53,8 +53,6 @@ PieChartScope.prototype.initVis = function () {
         .attr("class", "pieChartScopeLabel")
         .text("All States")
         .style("text-anchor", "middle")
-
-
 
     var arc = d3.arc()
         .innerRadius(0)
@@ -69,7 +67,7 @@ PieChartScope.prototype.initVis = function () {
         .attr("height", 400);
 
     var stateData = self.functions.getStateByYear(self.currYear);
-
+    // initial plot that is just allStates
     g.selectAll(".arcs")
         .data(pie(stateData))
         .enter()
@@ -81,11 +79,9 @@ PieChartScope.prototype.initVis = function () {
 
         })
         .attr("d", arc);
-
-
+    // tooltip that is shown on hover
     self.tip = d3.tip().attr('class', "d3-tip")
         .direction('se')
-
         .html(function (event, d) {
             d = d["data"]
             let state = d.State ? `<p> State: ${d.State} </p>` : '';
@@ -96,6 +92,7 @@ PieChartScope.prototype.initVis = function () {
             return text;
 
         });
+
     self.currYear = parseInt(d3.select("#pieChartScopeYearButton").property("value"));
 
     self.svg.selectAll('path')
@@ -107,9 +104,7 @@ PieChartScope.prototype.initVis = function () {
         });
 
     self.svg.call(self.tip);
-
-
-
+    // if the year is changed, making sure that the scope doesn't change
     d3.select("#pieChartScopeYearButton").on("change", function () {
         // recover the option that has been chosen
         self.currYear = d3.select(this).property("value")
@@ -138,8 +133,6 @@ PieChartScope.prototype.initVis = function () {
         .text((d) => {
             return d;
         });
-
-    // self.update(self.scopeLevel, self.currObj, self.currYear)
 }
 
 
@@ -153,17 +146,14 @@ PieChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
 
     self.svg.selectAll(".arcs").remove();
 
-    // self.svg.selectAll(".arcs").remove();
-
     var g = d3.select(".arcGroup")
-
-
-
+    // creating the arcData that will be plotted
     var currArcData = []
 
     var arc = d3.arc()
         .innerRadius(0)
         .outerRadius(self.radius);
+
     var pie = d3.pie()
         .value(function (d) { return d["TotalEmployees"] });
 
@@ -171,18 +161,25 @@ PieChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
     var selectedArea = null
 
     if (self.currObj != null) {
+        // giving us the correct value, if it is accessible
         selectedState = scopedInto["State"]
         selectedArea = scopedInto["Area"]
     }
 
     if (scopeLevel == "areas") {
+        // scoping into an area, thus reassigning scopeLevel to another level up
         self.scopeLevel = "industries"
+        // reassign d3.pie() because the value is now "Employees" and not "TotalEmployees"
         pie = d3.pie().value(function (d) { return d["Employees"] })
+        // array of all the industry data from the selected year, state, and area
         var indData = self.functions.getCitySpecificsByYear(selectedState, currYear, selectedArea)
+        // assign the plotted arcData to this
         currArcData = indData;
+        currArcData = currArcData.filter(d => { return !isNaN(d["Employees"]) })
 
+        // array of all industry names
         let allIndustries = self.functions.getAllIndustries();
-
+        // update Legend
         d3.select(`#${self.sectionId} .pieLegend`)
             .selectAll('.legendBubble')
             .data(allIndustries)
@@ -192,19 +189,26 @@ PieChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
             .text((d) => {
                 return d;
             });
-
+        // update label
         d3.select(".pieChartScopeLabel")
             .text("All States > " + selectedState + " > " + selectedArea)
 
     }
     else if (scopeLevel == "industries") {
+        // scoping into an industry, thus reassigning scopeLevel to another level up
         self.scopeLevel = "states"
+        //array of all the state data from the selected year
         var stateData = self.functions.getStateByYear(currYear);
+
+        // assign the plotted arcData to this
+
         currArcData = stateData;
+        // filter out values we don't want, this helps sorting
+        currArcData = currArcData.filter(d => { return !isNaN(d["TotalEmployees"]) })
+
 
         //fill state legend
         let allStates = self.functions.getAllStates();
-
         d3.select(`#${self.sectionId} .pieLegend`)
             .selectAll('.legendBubble')
             .data(allStates)
@@ -214,24 +218,24 @@ PieChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
             .text((d) => {
                 return d;
             });
-
+        // update label
         d3.select(".pieChartScopeLabel")
             .text("All States")
 
-
     } else if (scopeLevel == "states") {
+        //scoping into a state, thus reassigning scopeLevel to another level up
         self.scopeLevel = "areas"
-
+        // data from each area in the current state and year
         var areaData = self.functions.getCityTotalsForStateByYear(selectedState, currYear)
         currArcData = areaData;
+        currArcData = currArcData.filter(d => { return !isNaN(d["TotalEmployees"]) })
 
+        // array of each area name
         let allAreas = [];
         areaData.forEach((el) => {
             allAreas.push(el.Area);
         })
-
         //remove all
-
         d3.select(`#${self.sectionId} .pieLegend`)
             .selectAll('.legendBubble')
             .data(allAreas)
@@ -241,7 +245,7 @@ PieChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
             .text((d) => {
                 return d;
             });
-
+        // update label
         d3.select(".pieChartScopeLabel")
             .text("All States > " + selectedState)
     }
@@ -268,14 +272,14 @@ PieChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
         .on("mouseover", self.tip.show)
         .on("mouseout", self.tip.hide)
         .on("click", function (d, i) {
-
+            //when the arcs are clicked, the update function runs again
             self.currObj = i["data"]
             self.update(self.scopeLevel, self.currObj, self.currYear)
         })
 
+    // instantiate hover tooltip
     self.tip = d3.tip().attr('class', "d3-tip")
         .direction('se')
-
         .html(function (event, d) {
             d = d["data"]
             let state = d.State ? `<p> State: ${d.State} </p>` : '';
@@ -286,15 +290,9 @@ PieChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
             return text;
 
         });
-
-    // g.selectAll(".arcs").transition().duration(2000);
-
-
-    g.selectAll(".arcs").exit().remove();
-
-
-
     self.svg.call(self.tip);
 
+    // exiting and removing arcs
+    g.selectAll(".arcs").exit().remove();
 
 }
