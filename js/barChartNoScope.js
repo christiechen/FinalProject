@@ -329,10 +329,12 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
         barData.sort(function (a, b) {
             return a["TotalEmployees"] - b["TotalEmployees"]
         })
+        // setting axes
         var max = barData[barData.length - 1]["TotalEmployees"]
         var currRange = d3.range(0, barData.length)
         x.domain(currRange)
         y.domain([0, max])
+        // calling axes
 
         self.svg.select(".xAxis").call(d3.axisBottom(x))
             .selectAll("text")
@@ -345,8 +347,7 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
         self.svg.select(".yAxis").call(d3.axisLeft(y))
             .selectAll("text")
             .style("font-size", "8px")
-
-
+// appending bars
         bars    
             .data(barData)
             .join("rect")
