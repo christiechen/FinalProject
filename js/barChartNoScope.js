@@ -53,7 +53,7 @@ BarChartNoScope.prototype.initVis = function () {
         .text(function (d) { return d; })
         .attr("value", function (d) { return d; });
 
-        // year select button
+    // year select button
 
     d3.select("#barChartNoScopeYearButton")
         .selectAll('option')
@@ -73,27 +73,10 @@ BarChartNoScope.prototype.initVis = function () {
 
 
 
-    d3.select("#barChartNoScopeStatesButton").on("change", function () {
-        // recover the option that has been chosen
-
-        var currAreas = self.functions.getAllAreasInState(d3.select(this).property("value"));
-
-        d3.select("#barChartNoScopeAreasButton")
-            .selectAll('option')
-            .data(currAreas)
-            .join("option")
-            .text(function (d) { return d; })
-            .attr("value", function (d) { return d; });
-    })
-
-
-
     d3.select(`#barChartNoScopeUpdateButton`).on("click", function (event, d) {
         // recover the option that has been chosen
         self.selectedYear = d3.select("#barChartNoScopeYearButton").property("value");
         self.selectedOption = d3.select("#barChartNoScopeButton").property("value");
-        self.selectedState = d3.select("#barChartNoScopeStatesButton").property("value");
-        self.selectedArea = d3.select("#barChartNoScopeAreasButton").property("value");
         self.update(self.selectedOption, self.selectedYear, self.selectedState, self.selectedArea)
     });
 
@@ -104,12 +87,12 @@ BarChartNoScope.prototype.initVis = function () {
     allInds[0] = "All Industries"
 
     d3.select("#barChartNoScopeIndustriesButton")
-    .selectAll('option')
-    .data(allInds)
-    .enter()
-    .append('option')
-    .text(function (d) { return d; })
-    .attr("value", function (d) { return d; });
+        .selectAll('option')
+        .data(allInds)
+        .enter()
+        .append('option')
+        .text(function (d) { return d; })
+        .attr("value", function (d) { return d; });
 
 
     var allStates = self.functions.getAllStates();
@@ -250,14 +233,22 @@ BarChartNoScope.prototype.initVis = function () {
 
         })
     }
+
+    // update when selected industry is changedTouches
+    d3.select("#barChartNoScopeIndustriesButton").on("click", function () {
+        // recover the option that has been chosen
+        self.selectedYear = d3.select("#barChartNoScopeYearButton").property("value");
+        self.selectedOption = d3.select("#barChartNoScopeButton").property("value");
+        self.update(self.selectedOption, self.selectedYear, self.selectedState, self.selectedArea)
+    })
     // label
 
     self.svg.append("text")
-    .attr("x", self.svgHeight / 2)
-    .attr("y", 15)
-    .attr("fill", "white")
-    .attr("class", "barChartNoScopeLabel")
-    .text("All States")
+        .attr("x", self.svgHeight / 2)
+        .attr("y", 15)
+        .attr("fill", "white")
+        .attr("class", "barChartNoScopeLabel")
+        .text("All States")
 
 
     self.update(self.selectedOption, self.selectedYear, self.selectedState, self.selectedArea)
@@ -269,12 +260,12 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
 
     //get selection
     let selEntry = $(`.entry.selected`);
-    let selLegend= $(`.legendBubble.selected`)
+    let selLegend = $(`.legendBubble.selected`)
     // clear selection
     selEntry.trigger("click");
     selLegend.trigger("click");
 
-  
+
     var barData = [];
 
     var currYear = parseInt(selectedYear)
@@ -305,7 +296,7 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
     $(`#barChartNoScopeSection .barLegend .selected`).removeClass('selected');
     //clear area 
     self.areaClear();
-// axes
+    // axes
 
     var x = d3.scaleBand()
         .range([0, self.svgWidth - self.margin.left - self.margin.right])
@@ -316,10 +307,10 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
 
     var bars = self.svg.selectAll("rect");
 
-// 
+    // 
     if (selectedOption == "areas") {
         d3.select(".barChartNoScopeLabel")
-        .text("All Areas")
+            .text("All Areas")
         d3.select("#barChartNoScopeIndustriesButton").style("display", "none");
 
         $(`#barChartNoScopeSection .areaLegend`).parent().css("display", "block");
@@ -347,8 +338,8 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
         self.svg.select(".yAxis").call(d3.axisLeft(y))
             .selectAll("text")
             .style("font-size", "8px")
-// appending bars
-        bars    
+        // appending
+        bars
             .data(barData)
             .join("rect")
             .attr("x", function (d, i) { return self.margin.left + x(i); })
@@ -362,17 +353,16 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
 
         d3.select("#barChartNoScopeIndustriesButton").style("display", "block");
         $(`#barChartNoScopeSection .areaLegend`).parent().css("display", "block");
-        selectedArea = d3.select("#barChartNoScopeAreasButton").property("value");
 
         var currInd = d3.select("#barChartNoScopeIndustriesButton").property("value");
-        if (currInd == "All Industries"){
+        if (currInd == "All Industries") {
             barData = indBars;
-        }else{
+        } else {
             barData = indBars.filter(d => d["Industry"] == currInd)
         }
 
         d3.select(".barChartNoScopeLabel")
-        .text(currInd)
+            .text(currInd)
 
         // filtering data
 
@@ -385,12 +375,12 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
             return a["Employees"] - b["Employees"]
         })
 
-// setting domains
+        // setting domains
         var max = barData[barData.length - 1]["Employees"]
         var currRange = d3.range(0, barData.length)
         x.domain(currRange)
         y.domain([0, max])
-// calling axes
+        // calling axes
         self.svg.select(".xAxis").call(d3.axisBottom(x))
             .selectAll("text")
             .text(function (d, i) {
@@ -411,11 +401,11 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
             .attr("height", function (d) { return self.svgHeight - self.margin.bottom - y(d["Employees"]); })
             .attr("fill", "#69b3a2")
             .attr("class", (d) => {
-                return "rects " + d.State.split(" ").join("-") + " " + d.Area.replaceAll(',', '').split(" ").join("-") + " " +  d.Industry.replaceAll(',', '').split(" ").join("-");
+                return "rects " + d.State.split(" ").join("-") + " " + d.Area.replaceAll(',', '').split(" ").join("-") + " " + d.Industry.replaceAll(',', '').split(" ").join("-");
             })
     } else if (selectedOption == "states") {
         d3.select(".barChartNoScopeLabel")
-        .text("All States")
+            .text("All States")
         d3.select("#barChartNoScopeIndustriesButton").style("display", "none");
 
         $(`#barChartNoScopeSection .areaLegend`).parent().css("display", "none");
@@ -441,6 +431,8 @@ BarChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
         self.svg.select(".yAxis").call(d3.axisLeft(y))
             .selectAll("text")
             .style("font-size", "8px")
+
+        console.log(barData)
 
         bars
             .data(barData)
