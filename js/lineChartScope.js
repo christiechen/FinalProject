@@ -12,13 +12,16 @@ function LineChartScope (id, functions){
 
 
 
-//initialize vis
+// Initialize line chart (scoping) visualization
+// Level 1: x axis: year, y axis: total employment in each state
+// Level 2: x axis: year, y axis: total employment in each area in the selected state
+// Level 3: x axis: year, y axis: total employment in each industry in the selected area
+// Zooming/Scoping again at level 3 returns to level 1
 LineChartScope.prototype.initVis = function(){
     var self = this;
 
     self.margin = { top: 60, right: 20, bottom: 60, left: 50 };
-    self.svgWidth = 500; //get current width of container on page
-    // self.svgHeight = 400;
+    self.svgWidth = 500;
     self.svgHeight = 700;
     
     self.svg = d3.select(`#${self.sectionId}`)
@@ -26,27 +29,34 @@ LineChartScope.prototype.initVis = function(){
             .attr("width", self.svgWidth)
             .attr("height", self.svgHeight);
 
+    // DATA PROCESSING FOR LEVEL 1
+
+    // Getting # employments in each state for each year (2018, 2019, 2020)
     let state2018 = self.functions.getStateByYear(2018);
     let state2019 = self.functions.getStateByYear(2019);
     let state2020 = self.functions.getStateByYear(2020);
 
+    // Data processing to add year property
     state2018.forEach(function (element, index) {
         element.year = 2018;
     });
-
     state2019.forEach(function (element, index) {
         element.year = 2019;
     });
-
     state2020.forEach(function (element, index) {
         element.year = 2020;
     });
 
+    // Gathering all data together
     self.stateData = state2018;
     self.stateData.push(...state2019);
     self.stateData.push(...state2020);
 
+    // Grouping by state
     self.sumState = d3.group(self.stateData, (d) => d.State);
+
+
+    // Initial Axis Setup
 
     self.x = d3
         .scaleLinear()
@@ -94,12 +104,12 @@ LineChartScope.prototype.initVis = function(){
     self.color = d3.scaleOrdinal()
         .range(['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00','#ffff33','#a65628','#f781bf','#999999'])
 
-    self.zoomStatus = "states";
+    self.zoomStatus = "states"; // Initialize current zoom level 1 (states)
 
+    // Tooltip setup
     self.tip = d3.tip().attr('class', "d3-tip")
         .direction('se')
         .html(function (event, d) {
-            //console.log(d);
 
             let state = d[1][0].State ? `<p> State: ${d[1][0].State} </p>` : '';
             let area = d[1][0].Area ? `<p> Area: ${d[1][0].Area} </p>` : '';
@@ -113,6 +123,7 @@ LineChartScope.prototype.initVis = function(){
             return text;
         });
 
+    // Initial Line Chart (Level 1) Implementation
     self.svg.selectAll(".line")
         .data(self.sumState)
         .join("path")
@@ -135,8 +146,11 @@ LineChartScope.prototype.initVis = function(){
 
     self.svg.call(self.tip);
 
+    // LEGEND
+
     let allStates = self.functions.getAllStates();
 
+    // Fill state (initial level) legend
     d3.select(`#${self.sectionId} .lineScopeColorLegend`)
         .selectAll('.legendBubble')
         .data(allStates)
@@ -153,39 +167,43 @@ LineChartScope.prototype.initVis = function(){
 //Update the chart
 LineChartScope.prototype.update = function(group) {
     var self = this;
-    //console.log(group);
 
+    // When the chart was at level 1 (states)
     if (self.zoomStatus==="states"){
-        self.zoomStatus = "areas";
-        self.stateStatus = group;
+        self.zoomStatus = "areas"; // Now the chart is at level 2
+        self.stateStatus = group; // group is the selected state
 
+        // DATA PROCESSING FOR LEVEL 2
+
+        // Getting # employments in each area in the selected state for each year (2018, 2019, 2020)
         let areas2018 = self.functions.getCityTotalsForStateByYear(group, 2018);
         let areas2019 = self.functions.getCityTotalsForStateByYear(group, 2019);
         let areas2020 = self.functions.getCityTotalsForStateByYear(group, 2020);
 
+        // Data processing to add year property
         areas2018.forEach(function (element, index) {
             element.year = 2018;
         });
-
         areas2019.forEach(function (element, index) {
             element.year = 2019;
         });
-
         areas2020.forEach(function (element, index) {
             element.year = 2020;
         });
 
+        // Gathering all data together
         self.areaData = areas2018;
         self.areaData.push(...areas2019);
         self.areaData.push(...areas2020);
 
+        // Grouping by area
         self.sumArea = d3.group(self.areaData, (d) => d.Area);
 
-        //console.log(self.sumArea);
-
+        // Update y axis
         self.y.domain([0, d3.max(self.areaData, function(d) { return d.TotalEmployees; })])
         self.svg.select("#yAxis").call(d3.axisLeft(self.y));
 
+        // Line chart implementation
         self.svg.selectAll(".line")
             .data(self.sumArea)
             .join("path")
@@ -200,14 +218,16 @@ LineChartScope.prototype.update = function(group) {
                     (d[1])
             })
             .on("click",function(event,d){
-                //console.log(d[0]);
                 self.update(d[0]);
             })
             .on("mouseover", self.tip.show)
             .on("mouseout", self.tip.hide);
 
+        // LEGEND
+
         let allAreas = self.functions.getAllAreasInState(self.stateStatus);
 
+        // Fill area legend
         d3.select(`#${self.sectionId} .lineScopeColorLegend`)
             .selectAll('.legendBubble')
             .data(allAreas)
@@ -219,38 +239,39 @@ LineChartScope.prototype.update = function(group) {
             });
 
     }
+    // When the chart was at level 2 (areas)
     else if (self.zoomStatus==="areas"){
-        self.zoomStatus = "industries";
+        self.zoomStatus = "industries"; // Now the chart is at level 3
 
+        // Getting # employments in each industry in the selected area for each year (2018, 2019, 2020)
         let industries2018 = self.functions.getCitySpecificsByYear(self.stateStatus, 2018, group);
         let industries2019 = self.functions.getCitySpecificsByYear(self.stateStatus, 2019, group);
         let industries2020 = self.functions.getCitySpecificsByYear(self.stateStatus, 2020, group);
 
+        // Data processing to add year property
         industries2018.forEach(function (element, index) {
             element.year = 2018;
         });
-
         industries2019.forEach(function (element, index) {
             element.year = 2019;
         });
-
         industries2020.forEach(function (element, index) {
             element.year = 2020;
         });
 
+        // Gathering all data together
         self.industryData = industries2018;
         self.industryData.push(...industries2019);
         self.industryData.push(...industries2020);
 
-        //console.log(self.industryData);
-
+        // Grouping by industry
         self.sumIndustry = d3.group(self.industryData, (d) => d.Industry);
 
-        //console.log(self.sumIndustry);
-
+        // Update y axis
         self.y.domain([0, d3.max(self.industryData, function(d) { return d.Employees; })])
         self.svg.select("#yAxis").call(d3.axisLeft(self.y));
 
+        // Line chart implementation
         self.svg.selectAll(".line")
             .data(self.sumIndustry)
             .join("path")
@@ -265,14 +286,16 @@ LineChartScope.prototype.update = function(group) {
                     (d[1])
             })
             .on("click",function(event,d){
-                //console.log(d[0]);
                 self.update(d[0]);
             })
             .on("mouseover", self.tip.show)
             .on("mouseout", self.tip.hide);
 
+        // LEGEND
+
         let allIndustries = self.functions.getAllIndustries();
 
+        // Fill industry legend
         d3.select(`#${self.sectionId} .lineScopeColorLegend`)
             .selectAll('.legendBubble')
             .data(allIndustries)
@@ -283,11 +306,15 @@ LineChartScope.prototype.update = function(group) {
                 return d;
             });
     }
+    // When the chart was at level 3 (industries)
     else {
-        self.zoomStatus = "states";
+        self.zoomStatus = "states"; // Now the chart is at level 1 again
+
+        // Update y axis
         self.y.domain([0, d3.max(self.stateData, function(d) { return d.TotalEmployees; })])
         self.svg.select("#yAxis").call(d3.axisLeft(self.y));
 
+        // Line chart implementation
         self.svg.selectAll(".line")
             .data(self.sumState)
             .join("path")
@@ -302,14 +329,16 @@ LineChartScope.prototype.update = function(group) {
                     (d[1])
             })
             .on("click",function(event,d){
-                //console.log(d[0]);
                 self.update(d[0]);
             })
             .on("mouseover", self.tip.show)
             .on("mouseout", self.tip.hide);
 
+        // LEGEND
+
         let allStates = self.functions.getAllStates();
 
+        // Fill state legend
         d3.select(`#${self.sectionId} .lineScopeColorLegend`)
             .selectAll('.legendBubble')
             .data(allStates)
