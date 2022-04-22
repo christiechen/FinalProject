@@ -120,14 +120,28 @@ PieChartNoScope.prototype.initVis = function () {
             self.areaFill(this.innerText, null, false);
         }
         if (self.selectedOption === "industries") {
-            self.areaFill(this.innerText, 'white', true);
-            self.industryFill();
+            if(self.currInd === "All Industries"){
+                self.areaFill(this.innerText, 'white', true);
+                // self.industryClear();
+                // self.industryFill(null)
+            }
+            else{
+                self.areaFill(this.innerText, null, true);
+                // self.industryClear();
+                // self.industryFill("white")
+            }
+            // self.industryFill();
         }
 
     })
 
     // //industry Legend
-    self.industryFill = function () {
+    self.industryClear = function(){
+        d3.select(`#${self.sectionId} .industryLegend`)
+            .selectAll('.entry')
+            .remove();
+    }
+    self.industryFill = function (color) {
         d3.select(`#${self.sectionId} .industryLegend`)
             .selectAll('.industryLegend .entry')
             .data(self.functions.getAllIndustries())
@@ -135,15 +149,14 @@ PieChartNoScope.prototype.initVis = function () {
             .append('div')
             .attr('class', 'entry')
             .text((d) => d)
-            .attr("style", (d) => `color:${self.color(d)}`);
+            .attr("style", (d) => color ? "white" : `color:${self.color(d)}`);
     }
 
 
     //area Legend
     self.areaClear = function () {
-        d3.select(`#${self.sectionId} .areaLegend`)
-            .selectAll('.entry')
-            .remove();
+        $(`#${self.sectionId} .areaLegend`)
+            .empty();
     }
     self.areaFill = function (state, color, clickable) {
         self.areaClear();
@@ -309,20 +322,31 @@ PieChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
         d3.select("#pieChartNoScopeIndustriesButton").style("display", "block");
         d3.select(".pieChartNoScopeLabel")
             .text("All Industries")
-        var currInd = d3.select("#pieChartNoScopeIndustriesButton").property("value");
-        if (currInd == "All Industries") {
+        self.currInd = d3.select("#pieChartNoScopeIndustriesButton").property("value");
+        if (self.currInd === "All Industries") {
             currArcData = indArcData;
+            self.industryClear();
+            self.industryFill(null); //legend
+
         } else {
-            currArcData = indArcData.filter(d => d["Industry"] == currInd)
+            currArcData = indArcData.filter(d => d["Industry"] == self.currInd)
             currArcData.sort(function (a, b) {
                 return a["Employees"] - b["Employees"]
             })
             console.log(currArcData)
+            self.industryClear();
+            self.industryFill("white"); //legend
+            console.log("HERE");
+
         }
         // reassigning the pieData
         pie = d3.pie().value(function (d) { return d["Employees"] }).sort(null)
         $(`#${self.sectionId} .industryLegend`).parent().css("display", "block");
         $(`#${self.sectionId} .areaLegend`).parent().css("display", "block");
+            
+
+
+
 
     } else if (selectedOption == "states") {
         d3.select("#pieChartNoScopeIndustriesButton").style("display", "none");
@@ -375,6 +399,8 @@ PieChartNoScope.prototype.update = function (selectedOption, selectedYear, selec
             if (selectedOption === 'areas')
                 return self.color(value.Area);
             if (selectedOption === 'industries')
+                if(self.currInd !== "All Industries")
+                    return self.color(value.Area);
                 return self.color(value.Industry);
         })
         .attr("d", arc);
