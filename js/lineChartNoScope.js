@@ -4,6 +4,8 @@ function LineChartNoScope (id, functions){
     self.sectionId = id;
     self.functions = functions;
 
+    self.showing = '';
+
     self.initVis();
 }
 
@@ -314,6 +316,9 @@ LineChartNoScope.prototype.initVis = function(){
         }
     }
 
+    // Adding showing label
+    $(`#${self.sectionId} .scopeLabel`)
+        .text(self.showing + " All States")
 }
 
 //Update the chart
@@ -349,6 +354,8 @@ LineChartNoScope.prototype.update = function(){
             })
             .on("mouseover", self.tip.show)
             .on("mouseout", self.tip.hide);
+        $('.scopeLabel')
+            .text(self.showing + "All States");
     }
     // When the chart is at level 2 (areas)
     else if (self.selectedOption==="areas"){
@@ -378,6 +385,9 @@ LineChartNoScope.prototype.update = function(){
             })
             .on("mouseover", self.tip.show)
             .on("mouseout", self.tip.hide);
+        
+        $('.scopeLabel')
+            .text(self.showing + "All Areas");
     }
     // When the chart is at level 3 (industries)
     else {
@@ -407,6 +417,9 @@ LineChartNoScope.prototype.update = function(){
             })
             .on("mouseover", self.tip.show)
             .on("mouseout", self.tip.hide);
+        
+        $('.scopeLabel')
+            .text(self.showing + "All Industries");
     }
 
 }
@@ -465,6 +478,7 @@ LineChartNoScope.prototype.updateAreaLegend = function(stateThis){
             });
         });
     }
+    
 }
 
 

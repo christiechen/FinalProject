@@ -4,6 +4,8 @@ function LineChartScope (id, functions){
     self.sectionId = id;
     self.functions = functions;
 
+    self.showing = '';
+
     self.initVis();
 }
 
@@ -162,6 +164,9 @@ LineChartScope.prototype.initVis = function(){
             return d;
         });
 
+    // Adding showing label
+    $(`#${self.sectionId} .scopeLabel`)
+        .text(self.showing + " All States")
 }
 
 //Update the chart
@@ -238,6 +243,8 @@ LineChartScope.prototype.update = function(group) {
                 return d;
             });
 
+        $('.scopeLabel')
+            .text(self.showing + "All States > " + self.stateStatus);
     }
     // When the chart was at level 2 (areas)
     else if (self.zoomStatus==="areas"){
@@ -305,6 +312,8 @@ LineChartScope.prototype.update = function(group) {
             .text((d) => {
                 return d;
             });
+        $('.scopeLabel')
+            .text(self.showing + "All States > " + self.stateStatus + " > " + group);
     }
     // When the chart was at level 3 (industries)
     else {
@@ -348,6 +357,8 @@ LineChartScope.prototype.update = function(group) {
             .text((d) => {
                 return d;
             });
+        $('.scopeLabel')
+            .text(self.showing + "All States");
     }
 
 }

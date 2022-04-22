@@ -4,7 +4,11 @@ function ScatterChartScope (id, functions){
     self.sectionId = id;
     self.functions = functions;
 
+    // for y-axis label
     self.num = 'each state'
+
+    // labels
+    self.showing = '';
     // self.currentState = [];
     self.initVis();
 }
@@ -18,10 +22,12 @@ function ScatterChartScope (id, functions){
 ScatterChartScope.prototype.initVis = function(){
     var self = this;
 
+    // SVG dimensions
     self.margin = { top: 60, right: 20, bottom: 40, left: 50 };
     self.svgWidth = 600; //get current width of container on page
     self.svgHeight = 600;
     
+    // append SVG
     self.svg = d3.select(`#${self.sectionId}`)
             .append("svg")
             .attr("width", self.svgWidth)
@@ -29,7 +35,7 @@ ScatterChartScope.prototype.initVis = function(){
 
     let allYearGroup = ["2018","2019","2020"]
 
-    //Add the options to the dropdown button
+    //Add the year options to the dropdown button
     d3.select("#yearGroupButton")
         .selectAll('option')
         .data(allYearGroup)
@@ -48,23 +54,24 @@ ScatterChartScope.prototype.initVis = function(){
         element.population = +statePop;
     });
 
-    //some of the populations are unknown:(?
-    //Also, maybe self.state2018 if want to store it
+    //accounting for bad data
     let state2018 = tempState2018.filter(function (value) {
         return !Number.isNaN(value.population);
     });
 
-    //Further data processing can be done here and stored as self.XX so that it could be simply called when update function is called (like in linecharts)
+    //potential: Further data processing can be done here and stored as self.XX so that it could be simply called when update function is called (like in linecharts)
 
-    console.log(state2018);
+    // console.log(state2018);
 
 
+    // === AXES === 
+    // x axis
     self.x = d3
         .scaleLinear()
         .domain([0,d3.max(state2018, function(d){return d.TotalEmployees*1000/d.population * 100})])
         .range([self.margin.left, self.svgWidth - self.margin.right]);
 
-    console.log(d3.max(state2018, function(d){return d.TotalEmployees*1000/d.population * 100}));
+    // console.log(d3.max(state2018, function(d){return d.TotalEmployees*1000/d.population * 100}));
 
     self.xAxisGroup = self.svg
         .append("g")
@@ -73,6 +80,7 @@ ScatterChartScope.prototype.initVis = function(){
     
     self.xAxis = d3.axisBottom().scale(self.x);  
 
+    //y axis
     self.y = d3
         .scaleLinear()
         .domain([0, d3.max(state2018, function(d) { return d.TotalEmployees * 1000; })])
@@ -87,7 +95,7 @@ ScatterChartScope.prototype.initVis = function(){
             .tickFormat(d3.format(".2s"));
 
 
-
+    // appending axis to svg
     self.svg
         .select(".x-axis")
         .append("text")
@@ -96,8 +104,6 @@ ScatterChartScope.prototype.initVis = function(){
         .attr("y", 30)
         .attr("class", "axis-label")
         .attr("text-anchor", "end");
-
-
 
     self.svg
         .select(".y-axis")
@@ -109,12 +115,15 @@ ScatterChartScope.prototype.initVis = function(){
         .attr("transform", "rotate(-90)")
         .attr("text-anchor", "end");
 
+
     // color palette
     self.color = d3.scaleOrdinal()
         .range(['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00','#e5e540','#a65628','#f781bf','#999999'])
 
+    // which zoom level we are in
     self.zoomStatus = "states";
 
+    // d3 tool tip
     self.tip = d3.tip().attr('class', "d3-tip")
         .direction('se')
         .html(function(event, d) {
@@ -127,6 +136,8 @@ ScatterChartScope.prototype.initVis = function(){
            
         });
 
+
+    // initial load of scatterplot data
     self.svg.selectAll(".dot")
         .data(state2018)
         .join("circle")
@@ -159,6 +170,7 @@ ScatterChartScope.prototype.initVis = function(){
         });
     
 
+    // Calling axes
     self.xAxisGroup = self.svg 
         .select(".x-axis")
         .call(self.xAxis)
@@ -168,6 +180,16 @@ ScatterChartScope.prototype.initVis = function(){
         .select(".y-axis")
         .call(self.yAxis)
         .attr("transform", `translate( ${self.margin.left},0)`);
+
+
+    // Adding showing label
+    self.svg
+        .append('text')
+        .attr('class', "scopeLabel")
+        .attr('x', self.svgWidth/2)
+        .attr('y', self.margin.top)
+        .text(self.showing + " All States")
+
 
     // When the button is changed, run the updateChart function
     d3.select("#yearGroupButton").on("change", function(event,d) {
@@ -182,11 +204,13 @@ ScatterChartScope.prototype.initVis = function(){
 ScatterChartScope.prototype.updateYear = function(year){
     var self = this;
     let workingData;
-    self.num = "each state"
 
-    //all areas in selected state in selected yeaer
+    self.num = "each state" //y-axis label
+
+    //get all areas in selected state in selected yeaer
     workingData = self.functions.getStateByYear(year);
     console.log(workingData);
+
     //update x and y axis scale
     self.y.domain([0, d3.max(workingData, function(d) { return d.TotalEmployees * 1000; })]);    
     self.yAxis.scale(self.y);
@@ -199,18 +223,21 @@ ScatterChartScope.prototype.updateYear = function(year){
     self.xAxis.scale(self.x);
 
 
-    self.tip = d3.tip().attr('class', "d3-tip")
-        .direction('se')
-        .html(function(event, d) {
-        let state = d.State? `<p> State: ${d.State} </p>` : '';
-        let area = d.Area ? `<p> Area: ${d.Area} </p>` : ``;
-        let industry = d.Industry ? `<p> Industry: ${d.Industry} </p>` : ``;
-        let emp = d.Employees ? `<p> Employment: ${d.Employees * 1000} </p>` : `<p> Employment: ${d.TotalEmployees * 1000} </p>`;
-        let text = `<div> ${state} ${area} ${industry} ${emp} </div>`;
-        return text;
+    // d3 tool tip 
+    // self.tip = d3.tip().attr('class', "d3-tip")
+    //     .direction('se')
+    //     .html(function(event, d) {
+    //     let state = d.State? `<p> State: ${d.State} </p>` : '';
+    //     let area = d.Area ? `<p> Area: ${d.Area} </p>` : ``;
+    //     let industry = d.Industry ? `<p> Industry: ${d.Industry} </p>` : ``;
+    //     let emp = d.Employees ? `<p> Employment: ${d.Employees * 1000} </p>` : `<p> Employment: ${d.TotalEmployees * 1000} </p>`;
+    //     let text = `<div> ${state} ${area} ${industry} ${emp} </div>`;
+    //     return text;
         
-        });
+    //     });
 
+
+    // draw updated circles for years
     self.svg.selectAll(".dot")
         .data(workingData)
         .join("circle")
@@ -255,12 +282,15 @@ ScatterChartScope.prototype.update = function(zoom, year){
     console.log(year);
 
     let workingData;
-    //get new data  
+
+    //get new data depending on the current zoom level
     if(self.zoomStatus === "states"){
         self.zoomStatus = "areas";
+
         //all areas in selected state in selected yeaer
         workingData = self.functions.getCityTotalsForStateByYear(zoom.State, year);
         console.log(workingData);
+        
         //update x and y axis scale
         self.y.domain([0, d3.max(workingData, function(d) { return d.TotalEmployees * 1000; })]);    
         self.yAxis.scale(self.y);
@@ -269,6 +299,7 @@ ScatterChartScope.prototype.update = function(zoom, year){
         self.functions.getStatePopulationForYear(zoom.State, year) * 100; });
         self.x.domain([0, max]);
         self.xAxis.scale(self.x);
+        
         //fill area legend
         let allAreas = [];
         workingData.forEach((el)=>{
@@ -287,12 +318,18 @@ ScatterChartScope.prototype.update = function(zoom, year){
 
         self.num = "each area in " + zoom.State;
         
+        // changing showing label
+        self.svg.select('.scopeLabel')
+            .text(self.showing + "All States > " + zoom.State);
+        
     }
     else if(self.zoomStatus === "areas"){
         self.zoomStatus = "industries";
+        
         //all areas in selected state in selected yeaer
         workingData = self.functions.getCitySpecificsByYear(zoom.State, year, zoom.Area);
         console.log(workingData);
+        
         //update x and y axis scale
         self.y.domain([0, d3.max(workingData, function(d) { return d.Employees * 1000; })]);    
         self.yAxis.scale(self.y);
@@ -318,6 +355,10 @@ ScatterChartScope.prototype.update = function(zoom, year){
             });
         
         self.num = "each industry in " + zoom.Area;
+        // changing showing label
+        self.svg.select('.scopeLabel')
+          .text(self.showing + "All States > " + zoom.State + " > " + zoom.Area);
+    
     }
     else if(self.zoomStatus === "industries"){
         self.zoomStatus = "states";
@@ -345,6 +386,9 @@ ScatterChartScope.prototype.update = function(zoom, year){
                 return d;
             });
         self.num = "each state";
+
+        self.svg.select('.scopeLabel')
+            .text(self.showing + "All States");
     }
 
     self.tip = d3.tip().attr('class', "d3-tip")
@@ -359,10 +403,17 @@ ScatterChartScope.prototype.update = function(zoom, year){
         
         });
 
-    self.svg.selectAll(".dot")
+
+
+    // DRAWING CIRCLES W TRANSITION
+    let circs = self.svg.selectAll(".dot")
         .data(workingData)
         .join("circle")
         .attr("class","dot")
+        
+
+    circs.transition()
+        .duration(1000)
         .attr("cx", function (d) { 
             if(d.TotalEmployees){
                 return self.x(d.TotalEmployees*1000/self.functions.getStatePopulationForYear(d.State, year) * 100); 
@@ -386,12 +437,16 @@ ScatterChartScope.prototype.update = function(zoom, year){
             if(self.zoomStatus === 'industries'){
                 return self.color(d.Industry)
             }
-        })
+        });
+    
+
+    circs
         .on("click",function(event,d){
             self.update(d, +$("#yearGroupButton option:selected").text());
         })
         .on("mouseover", self.tip.show)
         .on("mouseout", self.tip.hide);
+   
    
     self.svg.call(self.tip);
     

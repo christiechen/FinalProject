@@ -3,10 +3,14 @@ function ScatterChartNoScope (id, functions){
     var self = this;
     self.sectionId = id;
     self.functions = functions;
+    // axis labels
     self.num = 'x';
     self.denom = 'US';
+
+    //level of data
     self.level='state';
 
+    self.showing = '';
 
     self.initVis();
 }
@@ -286,7 +290,7 @@ ScatterChartNoScope.prototype.initVis = function(){
         }
         if(selectedOption === "Industries"){
             self.areaFill(this.innerText, "white", true);
-            self.industryFill();
+            // self.industryFill();
         }
 
     })
@@ -361,12 +365,10 @@ ScatterChartNoScope.prototype.initVis = function(){
 
     // })
     
+
     //area Legend
-   
     self.areaClear = function() {
-        d3.select(`#${self.sectionId} .areaLegend`)
-            .selectAll('.entry')
-            .remove();
+        $(`#${self.sectionId} .areaLegend`).empty();
     }
     self.areaFill = function(state, color, clickable){
         self.areaClear();
@@ -441,6 +443,13 @@ ScatterChartNoScope.prototype.initVis = function(){
         })
     }
 
+    // Adding showing label
+    self.svg
+        .append('text')
+        .attr('class', "scopeLabel")
+        .attr('x', self.svgWidth/2)
+        .attr('y', self.margin.top)
+        .text(self.showing + " All States")
    
     
     self.update("States", 2018)
@@ -461,6 +470,7 @@ ScatterChartNoScope.prototype.update = function(level, year){
     if(selectedOption === "Industries"){
         $(`#${self.sectionId} .areaLegend`).parent().css("display", "block");
         $(`#${self.sectionId} .industryLegend`).parent().css("display", "block");
+        self.industryFill();
     }
     else if (selectedOption === "States"){
         $(`#${self.sectionId} .areaLegend`).parent().css("display", "none");
@@ -473,13 +483,13 @@ ScatterChartNoScope.prototype.update = function(level, year){
 
     $(`#${self.sectionId} .loc`).text("Total Employment Per " + level + " in " + year);
 
-    //make industry level legend show up
-    if(level === "Industries"){
-        $(`#${self.sectionId} .industryLegend`).attr("style", "display:block");
-    }
-    else{
-        $(`#${self.sectionId} .industryLegend`).attr("style", "display:none");
-    }
+    // //make industry level legend show up
+    // if(level === "Industries"){
+    //     $(`#${self.sectionId} .industryLegend`).attr("style", "display:block");
+    // }
+    // else{
+    //     $(`#${self.sectionId} .industryLegend`).attr("style", "display:none");
+    // }
 
     //GET WORKING DATA
     switch (level){
@@ -487,15 +497,21 @@ ScatterChartNoScope.prototype.update = function(level, year){
             self.stateLevel(year);
             self.num = "each state"
             // $(`.entry.selected`).toggleClass('selected');
+            self.svg.select('.scopeLabel')
+                .text(self.showing + "All States");
             break;
         case "Areas":
             self.areaLevel(year);
             self.num = "each area"
             // $(`.entry.selected`).toggleClass('selected');
+            self.svg.select('.scopeLabel')
+            .text(self.showing + "All Areas");
             break;
         case "Industries":
             self.industryLevel(year);
             self.num = "each industry in all areas"
+            self.svg.select('.scopeLabel')
+             .text(self.showing + "All Industries");
             break;
     }
     
@@ -593,6 +609,9 @@ ScatterChartNoScope.prototype.update = function(level, year){
         .attr("transform", `translate( ${self.margin.left},0)`);
     
 
+    self.svg
+        .select(".y-axis .axis-label")
+        .text("#employment in " + self.num)
 
     //reclick anything selected
     $(`.entry.selected`).trigger("click");

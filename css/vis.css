@@ -143,3 +143,21 @@ select{
 .d3-tip *{
     color: black;
 }
+
+
+.scopeLabel{
+    text-anchor: middle;
+    fill: rgb(226, 226, 226);
+    color: rgb(226, 226, 226);
+    font-family:sans-serif;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+span.scopeLabel{
+    display: block;
+    margin-top: 10px;
+    position: absolute;
+    left: 280px;
+}

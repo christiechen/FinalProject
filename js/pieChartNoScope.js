@@ -238,7 +238,7 @@ PieChartNoScope.prototype.initVis = function () {
         .attr("x", self.svgWidth / 2)
         .attr("y", 15)
         .attr("fill", "white")
-        .attr("class", "pieChartNoScopeLabel")
+        .attr("class", "pieChartNoScopeLabel scopeLabel")
         .text("All States")
         .style("text-anchor", "middle")
     // auto update, because we don't initialize the pieChart with data

@@ -50,7 +50,7 @@ PieChartScope.prototype.initVis = function () {
         .attr("x", self.svgWidth / 2)
         .attr("y", 15)
         .attr("fill", "white")
-        .attr("class", "pieChartScopeLabel")
+        .attr("class", "pieChartScopeLabel scopeLabel")
         .text("All States")
         .style("text-anchor", "middle")
 

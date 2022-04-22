@@ -247,7 +247,7 @@ BarChartNoScope.prototype.initVis = function () {
         .attr("x", self.svgHeight / 2)
         .attr("y", 15)
         .attr("fill", "white")
-        .attr("class", "barChartNoScopeLabel")
+        .attr("class", "barChartNoScopeLabel scopeLabel")
         .text("All States")
 
 
