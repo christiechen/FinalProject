@@ -38,7 +38,7 @@ BarChartScope.prototype.initVis = function () {
 
 
 
-// appending the year button
+    // appending the year button
     d3.select("#barChartScopeYearButton").on("change", function () {
         // recover the option that has been chosen
         self.currYear = parseInt(d3.select(this).property("value"))
@@ -82,7 +82,7 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
 
     //     // adapt this for the bar chart
     var self = this;
-// appending the hover tooltip
+    // appending the hover tooltip
     self.tip = d3.tip().attr('class', "d3-tip")
         .direction('se')
 
@@ -119,7 +119,7 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
     if (scopeLevel == "industries") {
 
         d3.select(".barChartScopeLabel")
-        .text("All States > " + selectedState + " > " + selectedArea)
+            .text("All States > " + selectedState + " > " + selectedArea)
         var indData = self.functions.getCitySpecificsByYear(selectedState, currYear, selectedArea)
         barData = indData;
         barData = barData.filter(d => { return !isNaN(d["Employees"]) })
@@ -132,7 +132,7 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
         var currRange = d3.range(0, barData.length)
         x.domain(currRange)
         y.domain([0, max])
-// appending bars
+        // appending bars
 
         bars
             .data(barData)
@@ -162,7 +162,7 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
     }
     else if (scopeLevel == "states") {
         d3.select(".barChartScopeLabel")
-        .text("All States")
+            .text("All States")
         var stateData = self.functions.getStateByYear(currYear);
         barData = stateData;
         barData = barData.filter(d => { return !isNaN(d["TotalEmployees"]) })
@@ -175,7 +175,7 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
         var currRange = d3.range(0, barData.length)
         x.domain(currRange)
         y.domain([0, max])
-// appending the bars
+        // appending the bars
         bars
             .data(barData)
             .join("rect")
@@ -191,7 +191,7 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
                 self.currObj = i
                 self.update(self.scopeLevel, self.currObj, self.currYear)
             });
-            // appending axis
+        // appending axis
         self.svg.select(".xAxis").call(d3.axisBottom(x))
             .selectAll("text")
             .text(function (d, i) {
@@ -205,9 +205,9 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
     } else if (scopeLevel == "areas") {
 
         d3.select(".barChartScopeLabel")
-        .text("All States > " + selectedState)
+            .text("All States > " + selectedState)
 
-// getting all the areas
+        // getting all the areas
         var areaData = self.functions.getCityTotalsForStateByYear(selectedState, currYear)
         barData = areaData;
         barData = barData.filter(d => { return !isNaN(d["TotalEmployees"]) })
@@ -227,7 +227,7 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
         areaData.forEach((el) => {
             allAreas.push(el.Area);
         })
-// appending bars
+        // appending bars
         bars
             .data(barData)
             .join("rect")
@@ -243,7 +243,7 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
                 self.currObj = i
                 self.update(self.scopeLevel, self.currObj, self.currYear)
             });
-            // appencing labels
+        // appencing labels
         self.svg.select(".xAxis").call(d3.axisBottom(x))
             .selectAll("text")
             .text(function (d, i) {
@@ -256,10 +256,10 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
             .style("font-size", "8px")
     }
 
-// y axis label
+    // y axis label
 
     self.svg.append("text")
-        .attr("transform", "rotate(-45)")
+        .attr("transform", "rotate(-90)")
         .attr("y", (2))
         .attr("x", (0 - (self.svgHeight / 2)))
         .attr("dy", "1em")
@@ -270,7 +270,7 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
 
 
     self.svg.call(self.tip);
-// changing the scope after every update
+    // changing the scope after every update
     if (scopeLevel == "areas") {
         self.scopeLevel = "industries"
     }
@@ -279,8 +279,4 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
     } else if (scopeLevel == "states") {
         self.scopeLevel = "areas"
     }
-
-
-
-
 }
