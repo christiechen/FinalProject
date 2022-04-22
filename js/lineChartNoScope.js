@@ -12,13 +12,15 @@ function LineChartNoScope (id, functions){
 
 
 
-//initialize vis
+// Initialize line chart (no scoping) visualization
+// Level 1: x axis: year, y axis: total employment in each state
+// Level 2: x axis: year, y axis: total employment in each area
+// Level 3: x axis: year, y axis: total employment in each industry in each area
 LineChartNoScope.prototype.initVis = function(){
     var self = this;
 
     self.margin = { top: 60, right: 20, bottom: 60, left: 50 };
-    self.svgWidth = 500; //get current width of container on page
-    // self.svgHeight = 400;
+    self.svgWidth = 500;
     self.svgHeight = 700;
     
     self.svg = d3.select(`#${self.sectionId}`)
@@ -26,35 +28,38 @@ LineChartNoScope.prototype.initVis = function(){
             .attr("width", self.svgWidth)
             .attr("height", self.svgHeight);
 
+    // DATA PROCESSING FOR LEVEL 1
+
+    // Getting # employments in each state for each year (2018, 2019, 2020)
     let state2018 = self.functions.getStateByYear(2018);
     let state2019 = self.functions.getStateByYear(2019);
     let state2020 = self.functions.getStateByYear(2020);
 
+    // Data processing to add year property
     state2018.forEach(function (element, index) {
         element.year = 2018;
     });
-
     state2019.forEach(function (element, index) {
         element.year = 2019;
     });
-
     state2020.forEach(function (element, index) {
         element.year = 2020;
     });
 
+    // Gathering all data together
     self.stateData = state2018;
     self.stateData.push(...state2019);
     self.stateData.push(...state2020);
 
+    // Grouping by state
     self.sumState = d3.group(self.stateData, (d) => d.State);
 
-    //console.log(state2019);
-    //console.log(self.sumState);
 
-    //console.log(self.functions.dataByState);
+    // DATA PROCESSING FOR LEVEL 2
 
     self.areaData = [];
 
+    // Data gathering- for each state, get data for each area and store them with appropriate properties
     self.functions.dataByState.forEach(function(element,state){
         for (var key in element) {
             let el = element[key];
@@ -64,44 +69,40 @@ LineChartNoScope.prototype.initVis = function(){
         }
     });
 
-    //self.sumArea = d3.group(tempAreaArr, (d)=>d.State, (d)=>d.Area);
+    // Grouping by area
     self.sumArea = d3.group(self.areaData, (d)=>d.Class);
 
-    //console.log(self.sumArea);
+
+    // DATA PROCESSING FOR LEVEL 3
 
     self.industryData = [];
 
+    // Data gathering- for each area, get data for each industry and store them with appropriate properties
     self.functions.dataByIndustry.forEach(function(element,industry){
-        //console.log(element);
         if (industry!=="Total"){
             element.forEach(function(el,year){
-                //console.log(el);
-                //let sumTotalforIndustry = 0;
                 el.forEach(function(e,state){
-                    //console.log(e);
                     e.forEach(function(numEmployees,area){
                         if (area!=="Total"){
                             if (isNaN(numEmployees)) {
                                 numEmployees = 0;
                             }
                             self.industryData.push({"Industry": industry, "Employees":numEmployees, "Year": year, "State":state,"Area":area, "Class":state+"-"+area+"-"+industry});
-                            //sumTotalforIndustry+=numEmployees;
                         }
                     });
                 });
-                //self.industryData.push({"Industry": industry, "Employees":sumTotalforIndustry, "Year": year})
             });
         }
     });
 
-    //console.log(self.industryData);
-
+    // Grouping by area+industry
     self.sumIndustry = d3.group(self.industryData,(d)=>d.Class);
-    //console.log(self.sumIndustry);
 
+
+    // Options of the dropdown menu (level 1, 2, 3)
     let allGroup = ["states","areas","industries"]
 
-    //Add the options to the dropdown button
+    // Add the options to the dropdown button
     d3.select("#selectButton")
         .selectAll('option')
         .data(allGroup)
@@ -109,6 +110,9 @@ LineChartNoScope.prototype.initVis = function(){
         .append('option')
         .text(function(d){return d;})
         .attr("value",function(d){return d;});
+
+
+    // Initial Axis Setup
 
     self.x = d3
         .scaleLinear()
@@ -152,15 +156,16 @@ LineChartNoScope.prototype.initVis = function(){
         .attr("transform", "rotate(-90)")
         .attr("text-anchor", "end");
 
-    // color palette
+
+    // Color palette
     self.color = d3.scaleOrdinal()
         .range(['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00','#ffff33','#a65628','#f781bf','#999999']);
 
+
+    // Tooltip setup
     self.tip = d3.tip().attr('class', "d3-tip")
         .direction('se')
         .html(function(event, d) {
-
-            //console.log(d);
 
             let state = d[1][0].State ? `<p> State: ${d[1][0].State} </p>` : '';
             let area = d[1][0].Area ? `<p> Area: ${d[1][0].Area} </p>` : '';
@@ -175,6 +180,8 @@ LineChartNoScope.prototype.initVis = function(){
 
         });
 
+
+    // Initial Line Chart (Level 1) Implementation
     self.svg.selectAll(".line")
         .data(self.sumState)
         .join("path")
@@ -201,11 +208,13 @@ LineChartNoScope.prototype.initVis = function(){
 
     self.svg.call(self.tip);
 
-    // get all states
+
+    // Get all states
     let allStates = self.functions.getAllStates();
 
-    // legends
-    //fill state legend
+
+    // LEGENDS
+    // Fill state (initial level) legend
     d3.select(`#${self.sectionId} .lineLegend`)
         .selectAll('.legendBubble')
         .data(allStates)
@@ -216,26 +225,25 @@ LineChartNoScope.prototype.initVis = function(){
             return d;
         });
 
+    // Initially the other two legends for deeper levels are not displayed
     $(`#${self.sectionId} .lineAreaLegend`).css("display", "none");
     $(`#${self.sectionId} .colorLegend`).css("display", "none");
-    self.stateStatus = "All";
+    self.stateStatus = "All"; // Initially all states are displayed; none is selected
 
-    //click on state legend
+    // Click on state legend
     $(`#${self.sectionId} .lineLegend .legendBubble`).click(function(event){
         self.stateStatus = this.innerText;
-        self.updateAreaLegend(this);
-        self.colorLegendFill();
+        self.updateAreaLegend(this); // Update area legend appropriately
+        self.colorLegendFill(); // Update color legend appropriately
         if($(`.legendAreaBubble.selected`).length <= 0) {
             let selected = this.innerText.split(" ").join("-");
 
-            // turn all circles full opacity, remove background class
+            // Turn all circles full opacity, remove background class
             let allLines = Array.from($(`#${self.sectionId} svg .line`));
             allLines.forEach((el) => {
                 let currentClass = ($(el).attr("class"));
-                //console.log(currentClass);
                 if (currentClass.indexOf(' background') !== -1) {
                     currentClass = currentClass.substring(0, currentClass.indexOf(" background"));
-                    //console.log(currentClass);
                 }
                 $(el).attr("class", currentClass);
             });
@@ -243,11 +251,12 @@ LineChartNoScope.prototype.initVis = function(){
             //if we're unselecting
             if ($(this).hasClass('selected')) {
                 $(this).removeClass('selected');
-                self.stateStatus = "All";
+                self.stateStatus = "All"; // none of the states is selected
+                // remove entries in area legend
                 d3.select(`#${self.sectionId} .lineAreaLegend`)
                     .selectAll('.legendAreaBubble')
                     .remove();
-                self.colorLegendFill();
+                self.colorLegendFill(); // update color legend accordingly
                 return;
             }
 
@@ -258,25 +267,24 @@ LineChartNoScope.prototype.initVis = function(){
 
             // turn all other circles low opacity
             let otherLines = Array.from($(`#${self.sectionId} svg .line:not(.${selected})`));
-            //console.log(otherLines);
             otherLines.forEach((el) => {
-                //console.log(el);
                 let currentClass = ($(el).attr("class")) + ' background';
                 $(el).attr("class", currentClass);
             });
         }
     });
 
-    // color Legend
+    // Color Legend (Non-clickable)
     self.colorLegendFill = function() {
+        // when the chart is at level 2 (areas)
         if (self.selectedOption==="areas"){
-            //console.log("selectedArea");
-            //console.log(self.stateStatus);
+            // when none of the states is selected, remove all entries in color legend
             if (self.stateStatus==="All"){
                 d3.select(`#${self.sectionId} .colorLegend`)
                     .selectAll('.colorLegend .entry')
                     .remove();
             }
+            // when a state is selected, fill in the color legend with areas
             else {
                 d3.select(`#${self.sectionId} .colorLegend`)
                     .selectAll('.colorLegend .entry')
@@ -287,6 +295,7 @@ LineChartNoScope.prototype.initVis = function(){
                     .attr("style", (d) => `color:${self.color(d)}`);
             }
         }
+        // when the chart is at level 3 (industries), fill in the color legend with industries
         else if (self.selectedOption==="industries"){
             d3.select(`#${self.sectionId} .colorLegend`)
                 .selectAll('.colorLegend .entry')
@@ -297,8 +306,8 @@ LineChartNoScope.prototype.initVis = function(){
                 .text((d)=>d)
                 .attr("style", (d) => `color:${self.color(d)}`);
         }
+        // when the chart is at level 1 (states), remove all the entries in color legend
         else {
-            //console.log("selectedState");
             d3.select(`#${self.sectionId} .colorLegend`)
                 .selectAll('.colorLegend .entry')
                 .remove();
@@ -310,19 +319,21 @@ LineChartNoScope.prototype.initVis = function(){
 //Update the chart
 LineChartNoScope.prototype.update = function(){
     var self = this;
-    //console.log(selectedOption);
-    //self.svg.selectAll(".line").remove();
 
+    // When the chart is at level 1 (states)
     if (self.selectedOption==="states"){
-        self.y.domain([0, d3.max(self.stateData, function(d) { return d.TotalEmployees; })])
 
+        // Update y axis
+        self.y.domain([0, d3.max(self.stateData, function(d) { return d.TotalEmployees; })])
         self.svg.select("#yAxis").call(d3.axisLeft(self.y));
 
+        // Do not display 2nd and 3rd legends
         $(`#${self.sectionId} .lineAreaLegend`).css("display", "none");
         $(`#${self.sectionId} .colorLegend`).css("display", "none");
 
-        self.colorLegendFill();
+        self.colorLegendFill(); // Update color legend
 
+        // Line chart implementation
         self.svg.selectAll(".line")
             .data(self.sumState)
             .join("path")
@@ -339,19 +350,19 @@ LineChartNoScope.prototype.update = function(){
             .on("mouseover", self.tip.show)
             .on("mouseout", self.tip.hide);
     }
+    // When the chart is at level 2 (areas)
     else if (self.selectedOption==="areas"){
+
+        // Update y axis
         self.y.domain([0, d3.max(self.areaData, function(d) { return d.Employees; })])
-
-        //console.log(self.sumArea);
-
         self.svg.select("#yAxis").call(d3.axisLeft(self.y));
 
+        // Only display color legend. Do not display 2nd legend
         $(`#${self.sectionId} .lineAreaLegend`).css("display", "none");
         $(`#${self.sectionId} .colorLegend`).css("display", "block");
-        self.colorLegendFill();
+        self.colorLegendFill(); // Update color legend
 
-        //console.log(self.sumArea);
-
+        // Line chart implementation
         self.svg.selectAll(".line")
             .data(self.sumArea)
             .join("path")
@@ -368,17 +379,19 @@ LineChartNoScope.prototype.update = function(){
             .on("mouseover", self.tip.show)
             .on("mouseout", self.tip.hide);
     }
+    // When the chart is at level 3 (industries)
     else {
-        self.y.domain([0, d3.max(self.industryData, function(d) { return d.Employees; })])
 
+        // Update y axis
+        self.y.domain([0, d3.max(self.industryData, function(d) { return d.Employees; })])
         self.svg.select("#yAxis").call(d3.axisLeft(self.y));
 
+        // Display all three legends
         $(`#${self.sectionId} .lineAreaLegend`).css("display", "block");
         $(`#${self.sectionId} .colorLegend`).css("display", "block");
-        self.colorLegendFill();
+        self.colorLegendFill(); // Update color legend
 
-        //console.log(self.sumIndustry);
-
+        // Line chart implementation
         self.svg.selectAll(".line")
             .data(self.sumIndustry)
             .join("path")
@@ -398,7 +411,7 @@ LineChartNoScope.prototype.update = function(){
 
 }
 
-//Update the second legend
+// Update the second legend
 LineChartNoScope.prototype.updateAreaLegend = function(stateThis){
     var self = this;
     if (self.stateStatus !== "All") {
@@ -414,35 +427,26 @@ LineChartNoScope.prototype.updateAreaLegend = function(stateThis){
 
         //click on area legend
         $(`#${self.sectionId} .lineAreaLegend .legendAreaBubble`).click(function (event) {
-            event.stopImmediatePropagation();
+            event.stopImmediatePropagation(); // Prevent clicking event happening twice
             let selected = this.innerText.split(" ").join("-");
-            //console.log(event);
-            //console.log(selected);
-            self.colorLegendFill();
+            self.colorLegendFill(); // Update color legend
 
             // turn all lines full opacity, remove background class
             let allLines = Array.from($(`#${self.sectionId} svg .line`));
-            //console.log(allLines);
             allLines.forEach((el) => {
                 let currentClass = ($(el).attr("class"));
                 if (currentClass.indexOf(' background') !== -1) {
                     currentClass = currentClass.substring(0, currentClass.indexOf(" background"));
-                    //console.log(currentClass);
                 }
                 $(el).attr("class", currentClass);
             });
 
-            //console.log(this);
-
             //if we're unselecting
             if ($(this).hasClass('selected')) {
-                //console.log(stateThis);
                 $(this).removeClass('selected');
                 // turn all other lines low opacity
                 let otherStateLines = Array.from($(`#${self.sectionId} svg .line:not(.${self.stateStatus.split(" ").join("-")})`));
-                //console.log(otherStateLines);
                 otherStateLines.forEach((el) => {
-                    //console.log(el);
                     let currentClass = ($(el).attr("class")) + ' background';
                     $(el).attr("class", currentClass);
                 });
@@ -456,7 +460,6 @@ LineChartNoScope.prototype.updateAreaLegend = function(stateThis){
             // turn all other lines low opacity
             let otherLines = Array.from($(`#${self.sectionId} svg .line:not(.${self.stateStatus.split(" ").join("-") + "-" + selected})`));
             otherLines.forEach((el) => {
-                //console.log(el);
                 let currentClass = ($(el).attr("class")) + ' background';
                 $(el).attr("class", currentClass);
             });
