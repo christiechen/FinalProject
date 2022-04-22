@@ -209,11 +209,14 @@ LineChartScope.prototype.update = function(group) {
         self.svg.select("#yAxis").call(d3.axisLeft(self.y));
 
         // Line chart implementation
-        self.svg.selectAll(".line")
+        let lines = self.svg.selectAll(".line")
             .data(self.sumArea)
             .join("path")
             .attr("class","line")
             .attr("fill", "none")
+
+        lines.transition()
+            .duration(1000)
             .attr("stroke", function(d){ return self.color(d[0]) })
             .attr("stroke-width", 1.8)
             .attr("d", function(d){
@@ -222,6 +225,8 @@ LineChartScope.prototype.update = function(group) {
                     .y(function(d) { return self.y(d.TotalEmployees)+20; })
                     (d[1])
             })
+        
+        lines
             .on("click",function(event,d){
                 self.update(d[0]);
             })
@@ -279,11 +284,15 @@ LineChartScope.prototype.update = function(group) {
         self.svg.select("#yAxis").call(d3.axisLeft(self.y));
 
         // Line chart implementation
-        self.svg.selectAll(".line")
+        let lines = self.svg.selectAll(".line")
             .data(self.sumIndustry)
             .join("path")
             .attr("class","line")
             .attr("fill", "none")
+        
+        lines
+            .transition()
+            .duration(1000)
             .attr("stroke", function(d){ return self.color(d[0]) })
             .attr("stroke-width", 1.8)
             .attr("d", function(d){
@@ -292,6 +301,8 @@ LineChartScope.prototype.update = function(group) {
                     .y(function(d) { return self.y(d.Employees)+20; })
                     (d[1])
             })
+      
+        lines
             .on("click",function(event,d){
                 self.update(d[0]);
             })
@@ -324,11 +335,14 @@ LineChartScope.prototype.update = function(group) {
         self.svg.select("#yAxis").call(d3.axisLeft(self.y));
 
         // Line chart implementation
-        self.svg.selectAll(".line")
+        let lines = self.svg.selectAll(".line")
             .data(self.sumState)
             .join("path")
             .attr("class","line")
             .attr("fill", "none")
+        
+        lines.transition()
+            .duration(1000)
             .attr("stroke", function(d){ return self.color(d[0]) })
             .attr("stroke-width", 1.8)
             .attr("d", function(d){
@@ -337,6 +351,8 @@ LineChartScope.prototype.update = function(group) {
                     .y(function(d) { return self.y(d.TotalEmployees)+20; })
                     (d[1])
             })
+
+        lines
             .on("click",function(event,d){
                 self.update(d[0]);
             })

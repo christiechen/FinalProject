@@ -134,21 +134,28 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
         y.domain([0, max])
         // appending bars
 
-        bars
+        bars = bars
             .data(barData)
             .join("rect")
-            .attr("class", "rects")
+            .attr("class","rects")
             .attr("x", function (d, i) { return self.margin.left + x(i); })
             .attr("y", function (d) { return y(d["Employees"]); })
             .attr("width", x.bandwidth())
+            // .attr("height", 0);
+
+        bars.transition()
+            .duration(1000)
+            .attr("width", x.bandwidth())
             .attr("height", function (d) { return self.svgHeight - self.margin.bottom - y(d["Employees"]); })
             .attr("fill", "#69b3a2")
-            .on("mouseover", self.tip.show)
+        
+        bars.on("mouseover", self.tip.show)
             .on("mouseout", self.tip.hide)
             .on("click", function (d, i) {
                 self.currObj = i
                 self.update(self.scopeLevel, self.currObj, self.currYear)
             });
+
         self.svg.select(".xAxis").call(d3.axisBottom(x))
             .selectAll("text")
             .text(function (d, i) {
@@ -176,16 +183,23 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
         x.domain(currRange)
         y.domain([0, max])
         // appending the bars
-        bars
+        bars = bars
             .data(barData)
             .join("rect")
-            .attr("class", "rects")
-            .attr("x", function (d, i) { return self.margin.left + x(i); })
+            .attr("class","rects")
             .attr("y", function (d) { return y(d["TotalEmployees"]); })
+            .attr("x", function (d, i) { return self.margin.left + x(i); })
+            .attr("width", x.bandwidth())
+            // .attr("height", 0)
+
+        bars.transition()
+            .duration(1000)
             .attr("width", x.bandwidth())
             .attr("height", function (d) { return self.svgHeight - self.margin.bottom - y(d["TotalEmployees"]); })
             .attr("fill", "#69b3a2")
-            .on("mouseover", self.tip.show)
+        
+        
+        bars.on("mouseover", self.tip.show)
             .on("mouseout", self.tip.hide)
             .on("click", function (d, i) {
                 self.currObj = i
@@ -228,15 +242,25 @@ BarChartScope.prototype.update = function (scopeLevel, scopedInto, currYear) {
             allAreas.push(el.Area);
         })
         // appending bars
-        bars
+        
+        bars= bars
             .data(barData)
             .join("rect")
             .attr("class", "rects")
             .attr("x", function (d, i) { return self.margin.left + x(i); })
             .attr("y", function (d) { return y(d["TotalEmployees"]); })
             .attr("width", x.bandwidth())
+            // .attr("height", 0)
+        
+        bars
+            .transition()
+            .duration(1000)
+            .attr("width", x.bandwidth())
             .attr("height", function (d) { return self.svgHeight - self.margin.bottom - y(d["TotalEmployees"]); })
             .attr("fill", "#69b3a2")
+        
+        
+        bars
             .on("mouseover", self.tip.show)
             .on("mouseout", self.tip.hide)
             .on("click", function (d, i) {
