@@ -248,8 +248,8 @@ $(function() {
             let scatterChartNoScope = new ScatterChartNoScope("scatterChartNoScopeSection #SCNSS", functions);
             let pieChartScope = new PieChartScope("pieChartScopeSection #PCSS", functions);
             let pieChartNoScope = new PieChartNoScope("pieChartNoScopeSection #PCNSS", functions);
-            let lineChartScope = new LineChartScope("lineChartScopeSection #LCSS", functions);
-            let lineChartNoScope = new LineChartNoScope("lineChartNoScopeSection #LCNSS", functions);
+            // let lineChartScope = new LineChartScope("lineChartScopeSection #LCSS", functions);
+            // let lineChartNoScope = new LineChartNoScope("lineChartNoScopeSection #LCNSS", functions);
 
 
             // GET ALL STATES AND AREAS FOR LEGENDS
