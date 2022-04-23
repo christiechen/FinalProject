@@ -179,7 +179,28 @@ ScatterChartNoScope.prototype.initVis = function(){
     //     .style("opacity", 0);
 
     self.color = d3.scaleOrdinal()
-        .range(['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00','#e5e540','#a65628','#f781bf','#999999'])
+    .range([
+        "#d3d3d3",
+        "#7fafaf",
+        "#2e8b57",
+        "#8b0000",
+        "#808000",
+        "#5151ff",
+        "#ff4500",
+        "#ffa500",
+        "#ffff00",
+        "#c71585",
+        "#8bc700",
+        "#00fa9a",
+        "#4169e1",
+        "#00ffff",
+        "#00bfff",
+        "#dbfcff",
+        "#ff00ff",
+        "#f0e68c",
+        "#fa8072",
+        "#dda0dd",
+    ]);
 
 
 

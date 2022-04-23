@@ -69,12 +69,17 @@ $('#finalSubmit').click(()=>{
   $('#chart_type').attr("value", selectedVis);
   $('#incorrect_qs').attr("value", incorrect.toString());
   $('#time').attr("value", time);
+  
 
 
   // Array.from($('input.selfreflect:checked')).forEach((el, i) => {
   //   $(`#sf${i+1}`).attr("value", el.value);    
   // });
 
+
+  if(!confirm("Are you sure you want to submit?")){
+    return;
+  }
 
 
   console.log("TIME TAKEN IN SECONDS:")
