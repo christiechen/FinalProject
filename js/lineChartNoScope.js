@@ -227,6 +227,9 @@ LineChartNoScope.prototype.initVis = function(){
         self.selectedOption = d3.select(this).property("value");
         // run the updateChart function with this selected option
         self.update();
+        $(`#${self.sectionId} .lineLegend .legendBubble`).removeClass("selected");
+        $(`#${self.sectionId} .lineAreaLegend .legendBubble`).removeClass("selected");
+        $(`#${self.sectionId} .colorLegend .legendBubble`).removeClass("selected");
     });
 
     self.svg.call(self.tip);
@@ -323,8 +326,7 @@ LineChartNoScope.prototype.initVis = function(){
             d3.select(`#${self.sectionId} .colorLegend`)
                 .selectAll('.colorLegend .entry')
                 .data(self.functions.getAllIndustries())
-                .enter()
-                .append('div')
+                .join('div')
                 .attr('class', 'entry')
                 .text((d)=>d)
                 .attr("style", (d) => `color:${self.color(d)}`);
