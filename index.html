@@ -17,7 +17,7 @@
     <h1> Final Project </h1>
     <div id="start-screen">
         <p class="important">
-            IMPORTANT!!! Please make sure your window is in <b>FULL SCREEN</b>. PLEASE READ THE FOLLOWING:
+            IMPORTANT!!! Please make sure your window is in <b>FULL SCREEN</b> and you are on a <b> DESKTOP BROWSER </b> (not mobile). PLEASE READ THE FOLLOWING:
         </p>
         <p>
             You will see a data visualization that shows employment numbers in states, areas, and industries in
@@ -59,183 +59,7 @@
 
 
     <section class="entire-body">
-        <section id='svgs' class="body-section">
-            <section id="barChartScopeSection" class="scope">
-                <h2>Total Employment in the United States*</h2>
-                <p style="color:white;font-size:11px;">*All employment totals are measured in the thousands (Data sourced from US Bureau of Labor)</p>
-                <p> Please click on each bar to view more information (there are three total levels).</p>
-                <div class='svg-div' id="BCSS">
-                    <select id="barChartScopeYearButton"></select>
-                    <!-- <div class='multipleLegendDiv'>
-
-                        <div class="svgLegend barLegend"> </div>
-                    </div> -->
-
-                </div>
-            </section>
-
-            <section id="barChartNoScopeSection">
-                <h2>Total Employment in the United States*</h2>
-                <p style="color:white;font-size:11px;">*All employment totals are measured in the thousands (Data sourced from US Bureau of Labor)</p>
-                <p> Please use the select menu and the clickable legends to navigate the data. </p>
-                <div class="selectGroup">
-                    <select id="barChartNoScopeButton"></select>
-                    <select id="barChartNoScopeYearButton"></select>
-                    <select id="barChartNoScopeIndustriesButton" display="none"></select>
-                    <button id="barChartNoScopeUpdateButton">Update Chart</button>
-                </div>
-                <div class='multipleLegendDiv row'>
-                    <div>
-                        <p>States </p>
-                        <div class="svgLegend clickable barLegend" style="height: 50px; overflow: scroll"> </div>
-                    </div>
-                    <div>
-                        <p> Areas </p>
-                        <div class="svgLegend clickable areaLegend" style="height: 50px; overflow: scroll"> </div>
-                    </div>
-                    <!-- <div>
-                        <p>Industries </p>
-                        <div class="svgLegend industryLegend" style="height: 50px; overflow: scroll"> </div>
-                    </div> -->
-                </div>
-                <div class='svg-div' id="BCNSS">
-
-                </div>
-
-            </section>
-
-
-            <section id="scatterChartScopeSection" class="scope">
-                <h2>Total Employment in the United States*</h2>
-                <p style="color:white;font-size:11px;">*All employment totals are measured in the thousands (Data sourced from US Bureau of Labor)</p>
-                <p> Please click on each point to view more information (there are three total levels).</p>
-
-                <select id="yearGroupButton"></select>
-                <h5 class="loc"> </h5>
-                <div class='svg-div' id="SCSS">
-
-                    <div class='multipleLegendDiv'>
-                        <div class="svgLegend scatterLegend"> </div>
-                        <!-- <div class="svgLegend industryLegend"> </div>  -->
-                    </div>
-                </div>
-            </section>
-
-
-            <section id="scatterChartNoScopeSection">
-                <h2>Total Employment in the United States*</h2>
-                <p style="color:white;font-size:11px;">*All employment totals are measured in the thousands (Data sourced from US Bureau of Labor)</p>
-                <p> Please use the select menu and the clickable legends to navigate the data. </p>
-
-                <div class="selectGroup">
-                    <select id="scatterLevel"></select>
-                    <select id="scatterYear"></select>
-                    <button id="scatterFilter"> Update Chart </button>
-                </div>
-                <h5 class="loc"> </h5>
-                <div class='svg-div' id="SCNSS">
-
-                    <div class='multipleLegendDiv'>
-                        <div>
-                            <p>States</p>
-                            <div class="svgLegend clickable scatterLegend"> </div>
-                        </div>
-                        <div>
-                            <p>Areas</p>
-                            <div class="svgLegend clickable areaLegend">
-                                <span> click a state above to see areas </span>
-                            </div>
-                        </div>
-                        <div>
-                            <p>Industries</p>
-                            <div class="svgLegend industryLegend"> </div>
-                        </div>
-                    </div>
-                </div>
-
-            </section>
-
-            <section id="pieChartScopeSection" class="scope">
-                <h2>Total Employment in the United States*</h2>
-                <p style="color:white;font-size:11px;">*All employment totals are measured in the thousands (Data sourced from US Bureau of Labor)</p>
-                <p> Please click on each section to view more information (there are three total levels).</p>
-
-                <select id="pieChartScopeYearButton"></select>
-                <div class='svg-div' id="PCSS">
-                    <div class='multipleLegendDiv'>
-
-                        <div class="svgLegend pieLegend"> </div>
-                    </div>
-
-            </section>
-
-            <section id="pieChartNoScopeSection">
-                <h2>Total Employment in the United States*</h2>
-                <p style="color:white;font-size:11px;">*All employment totals are measured in the thousands (Data sourced from US Bureau of Labor)</p>
-                <p> Please use the select menu and the clickable legends to navigate the data. </p>
-
-                <div class="selectGroup">
-                    <select id="pieChartNoScopeButton"></select>
-                    <select id="pieChartNoScopeYearButton"></select>
-                    <select id="pieChartNoScopeIndustriesButton" display="none"></select>
-                    <button id="pieChartNoScopeUpdateButton">Update Chart</button>
-                </div>
-                <div class='svg-div' id="PCNSS">
-
-                    <div class='multipleLegendDiv'>
-                        <div>
-                            <p>States </p>
-                            <div class="svgLegend clickable pieLegend"> </div>
-                        </div>
-                        <div>
-                            <p> Areas </p>
-                            <div class="svgLegend clickable areaLegend">
-                                <span> click a state above to see areas </span>
-                            </div>
-                        </div>
-                        <div>
-                            <p>Industries </p>
-                            <div class="svgLegend industryLegend"> </div>
-                        </div>
-                    </div>
-                </div>
-
-            </section>
-
-
-            <section id="lineChartScopeSection" class="scope">
-                <h2>Total Employment in the United States*</h2>
-                <p style="color:white;font-size:11px;">*All employment totals are measured in the thousands (Data sourced from US Bureau of Labor)</p>
-                <p> Please click on each line to view more information (there are three total levels).</p>
-
-                <div class='svg-div' id="LCSS">
-                    <span class="scopeLabel"></span>
-                    <div class='multipleLegendDiv'>
-                        <div class="svgLegend lineScopeColorLegend"> </div>
-                    </div>
-                </div>
-
-            </section>
-
-            <section id="lineChartNoScopeSection">
-                <h2>Total Employment in the United States*</h2>
-                <p style="color:white;font-size:11px;">*All employment totals are measured in the thousands (Data sourced from US Bureau of Labor)</p>
-                <p> Please use the select menu and the clickable legends to navigate the data. </p>
-
-                <select id="selectButton"></select>
-                <div class='svg-div' id="LCNSS">
-                    <span class="scopeLabel"></span>
-
-                    <div class='multipleLegendDiv'>
-                        <div class="svgLegend clickable lineLegend"> </div>
-                        <div class="svgLegend clickable lineAreaLegend"> </div>
-                        <div class="svgLegend colorLegend"></div>
-                    </div>
-                </div>
-            </section>
-        </section>
-
-        <section class="body-section" id="questions">
+             <section class="body-section" id="questions">
             <div id="questions-timed">
                 <h2> Questions </h2>
                 <ol>
@@ -450,6 +274,183 @@
             </div>
 
         </section>
+        <section id='svgs' class="body-section">
+            <section id="barChartScopeSection" class="scope">
+                <h2>Total Employment in the United States*</h2>
+                <p style="color:white;font-size:11px;">*All employment totals are measured in the thousands (Data sourced from US Bureau of Labor)</p>
+                <p> Please click on each bar to view more information (there are three total levels).</p>
+                <div class='svg-div' id="BCSS">
+                    <select id="barChartScopeYearButton"></select>
+                    <!-- <div class='multipleLegendDiv'>
+
+                        <div class="svgLegend barLegend"> </div>
+                    </div> -->
+
+                </div>
+            </section>
+
+            <section id="barChartNoScopeSection">
+                <h2>Total Employment in the United States*</h2>
+                <p style="color:white;font-size:11px;">*All employment totals are measured in the thousands (Data sourced from US Bureau of Labor)</p>
+                <p> Please use the select menu and the clickable legends to navigate the data. </p>
+                <div class="selectGroup">
+                    <select id="barChartNoScopeButton"></select>
+                    <select id="barChartNoScopeYearButton"></select>
+                    <select id="barChartNoScopeIndustriesButton" display="none"></select>
+                    <button id="barChartNoScopeUpdateButton">Update Chart</button>
+                </div>
+                <div class='multipleLegendDiv row'>
+                    <div>
+                        <p>States </p>
+                        <div class="svgLegend clickable barLegend" style="height: 50px; overflow: scroll"> </div>
+                    </div>
+                    <div>
+                        <p> Areas </p>
+                        <div class="svgLegend clickable areaLegend" style="height: 50px; overflow: scroll"> </div>
+                    </div>
+                    <!-- <div>
+                        <p>Industries </p>
+                        <div class="svgLegend industryLegend" style="height: 50px; overflow: scroll"> </div>
+                    </div> -->
+                </div>
+                <div class='svg-div' id="BCNSS">
+
+                </div>
+
+            </section>
+
+
+            <section id="scatterChartScopeSection" class="scope">
+                <h2>Total Employment in the United States*</h2>
+                <p style="color:white;font-size:11px;">*All employment totals are measured in the thousands (Data sourced from US Bureau of Labor)</p>
+                <p> Please click on each point to view more information (there are three total levels).</p>
+
+                <select id="yearGroupButton"></select>
+                <h5 class="loc"> </h5>
+                <div class='svg-div' id="SCSS">
+
+                    <div class='multipleLegendDiv'>
+                        <div class="svgLegend scatterLegend"> </div>
+                        <!-- <div class="svgLegend industryLegend"> </div>  -->
+                    </div>
+                </div>
+            </section>
+
+
+            <section id="scatterChartNoScopeSection">
+                <h2>Total Employment in the United States*</h2>
+                <p style="color:white;font-size:11px;">*All employment totals are measured in the thousands (Data sourced from US Bureau of Labor)</p>
+                <p> Please use the select menu and the clickable legends to navigate the data. </p>
+
+                <div class="selectGroup">
+                    <select id="scatterLevel"></select>
+                    <select id="scatterYear"></select>
+                    <button id="scatterFilter"> Update Chart </button>
+                </div>
+                <h5 class="loc"> </h5>
+                <div class='svg-div' id="SCNSS">
+
+                    <div class='multipleLegendDiv'>
+                        <div>
+                            <p>States</p>
+                            <div class="svgLegend clickable scatterLegend"> </div>
+                        </div>
+                        <div>
+                            <p>Areas</p>
+                            <div class="svgLegend clickable areaLegend">
+                                <span> click a state above to see areas </span>
+                            </div>
+                        </div>
+                        <div>
+                            <p>Industries</p>
+                            <div class="svgLegend industryLegend"> </div>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+            <section id="pieChartScopeSection" class="scope">
+                <h2>Total Employment in the United States*</h2>
+                <p style="color:white;font-size:11px;">*All employment totals are measured in the thousands (Data sourced from US Bureau of Labor)</p>
+                <p> Please click on each section to view more information (there are three total levels).</p>
+
+                <select id="pieChartScopeYearButton"></select>
+                <div class='svg-div' id="PCSS">
+                    <div class='multipleLegendDiv'>
+
+                        <div class="svgLegend pieLegend"> </div>
+                    </div>
+
+            </section>
+
+            <section id="pieChartNoScopeSection">
+                <h2>Total Employment in the United States*</h2>
+                <p style="color:white;font-size:11px;">*All employment totals are measured in the thousands (Data sourced from US Bureau of Labor)</p>
+                <p> Please use the select menu and the clickable legends to navigate the data. </p>
+
+                <div class="selectGroup">
+                    <select id="pieChartNoScopeButton"></select>
+                    <select id="pieChartNoScopeYearButton"></select>
+                    <select id="pieChartNoScopeIndustriesButton" display="none"></select>
+                    <button id="pieChartNoScopeUpdateButton">Update Chart</button>
+                </div>
+                <div class='svg-div' id="PCNSS">
+
+                    <div class='multipleLegendDiv'>
+                        <div>
+                            <p>States </p>
+                            <div class="svgLegend clickable pieLegend"> </div>
+                        </div>
+                        <div>
+                            <p> Areas </p>
+                            <div class="svgLegend clickable areaLegend">
+                                <span> click a state above to see areas </span>
+                            </div>
+                        </div>
+                        <div>
+                            <p>Industries </p>
+                            <div class="svgLegend industryLegend"> </div>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+
+            <section id="lineChartScopeSection" class="scope">
+                <h2>Total Employment in the United States*</h2>
+                <p style="color:white;font-size:11px;">*All employment totals are measured in the thousands (Data sourced from US Bureau of Labor)</p>
+                <p> Please click on each line to view more information (there are three total levels).</p>
+
+                <div class='svg-div' id="LCSS">
+                    <span class="scopeLabel"></span>
+                    <div class='multipleLegendDiv'>
+                        <div class="svgLegend lineScopeColorLegend"> </div>
+                    </div>
+                </div>
+
+            </section>
+
+            <section id="lineChartNoScopeSection">
+                <h2>Total Employment in the United States*</h2>
+                <p style="color:white;font-size:11px;">*All employment totals are measured in the thousands (Data sourced from US Bureau of Labor)</p>
+                <p> Please use the select menu and the clickable legends to navigate the data. </p>
+
+                <select id="selectButton"></select>
+                <div class='svg-div' id="LCNSS">
+                    <span class="scopeLabel"></span>
+
+                    <div class='multipleLegendDiv'>
+                        <div class="svgLegend clickable lineLegend"> </div>
+                        <div class="svgLegend clickable lineAreaLegend"> </div>
+                        <div class="svgLegend colorLegend"></div>
+                    </div>
+                </div>
+            </section>
+        </section>
+
+   
 
     </section>
     <div id="end-screen">

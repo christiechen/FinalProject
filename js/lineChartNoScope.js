@@ -22,7 +22,7 @@ LineChartNoScope.prototype.initVis = function(){
     var self = this;
 
     self.margin = { top: 60, right: 20, bottom: 60, left: 50 };
-    self.svgWidth = 500;
+    self.svgWidth = 600;
     self.svgHeight = 700;
     
     self.svg = d3.select(`#${self.sectionId}`)

@@ -25,8 +25,8 @@ PieChartNoScope.prototype.initVis = function () {
     var self = this;
 
     self.margin = { top: 60, right: 20, bottom: 60, left: 50 };
-    self.svgWidth = 750; //get current width of container on page
-    self.svgHeight = 750;
+    self.svgWidth = 700; //get current width of container on page
+    self.svgHeight = 700;
 
     self.radius = (Math.min(self.svgWidth, self.svgHeight) / 2) - 20;
 

@@ -21,7 +21,7 @@ BarChartNoScope.prototype.initVis = function () {
     var self = this;
 
     self.margin = { top: 5, right: 20, bottom: 150, left: 50 };
-    self.svgWidth = 1200; //get current width of container on page
+    self.svgWidth = 1000; //get current width of container on page
     self.svgHeight = 600;
 
 

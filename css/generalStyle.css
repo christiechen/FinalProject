@@ -60,37 +60,48 @@ section.entire-body{
 
 #questions-timed{
     position: fixed;
-    right: 50px;
+    left: 50px;
     top: 50px;
     height: 80vh;
-    width: 220px;
+    width: 240px;
     overflow: scroll;
 }
 
 #questions-timed li{
     font-weight: bold;
     color: rgb(219, 195, 174);
-    font-size: 13px;
+    font-size: 16px;
+    margin-bottom: 10px;
 }
 #questions-timed li > div *{
     font-weight: normal;
     color: white;
     font-family: sans-serif;
-    font-size: 12px;
+    font-size: 16px;
 }
 
 #questions{
-    margin-left: auto;
-    margin-right: auto;
+    /* margin-left: auto;
+    margin-right: auto; */
+    width: 300px;
 }
 
 #questions-hide{
-    /* position: fixed; */
-    /* right: 50px; */
-    /* top: 50px; */
+    position: absolute;
     height: 80vh;
     overflow: scroll;
-    width: 500px;
+    width: 30%;
+    font-size: 16px;
+    margin-left: 35%;
+    margin-right: 35%;
+}
+#questions-hide span{
+    margin-bottom: 10px;
+    margin-top: 15px;
+}
+#questions-hide input, #questions-hide label{
+    margin-left: 20px;
+    margin-bottom: 7px;
 }
 
 .hidden{
