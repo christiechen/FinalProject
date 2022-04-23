@@ -33,7 +33,8 @@ $("#intro .new button").click(()=>{
 
 
 $('#start').click( ()=>{
-  let rand = Math.floor(Math.random() * 8);
+  let len = Array.from($(`#intro button`)).length;
+  let rand = Math.floor(Math.random() * len);
   Array.from($(`#intro button`))[rand].click();
   $('#start-screen').css("display", "none");
 })
